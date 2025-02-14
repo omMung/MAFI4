@@ -13,6 +13,7 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
+import { LikesModule } from './likes/likes.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -72,6 +73,7 @@ const typeOrmModuleOptions = {
    GamesModule,
    StatisticsModule,
    UsersAchievementsModule,
+   LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
