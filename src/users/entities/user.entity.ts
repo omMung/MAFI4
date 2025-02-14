@@ -21,15 +21,15 @@ import {
     @Column({ type: 'varchar', length: 255 })
     nickName: string;
     @Column({ type: 'boolean', default: false })
-    is_verified: boolean;
+    isVerified: boolean;
     @Column({ type: 'varchar', length: 6 })
-    verify_code: string;
+    verifyCode: string;
     @Column({ type: 'varchar', length: 255 })
     title: string;
     @CreateDateColumn({ type: 'timestamp' })
-    created_at: Date;
+    createdAt: Date;
     @UpdateDateColumn({ type: 'timestamp' })
-    updated_at: Date;
+    updatedAt: Date;
     // 관계 설정
     @OneToMany(() => Post, (post) => post.user)
     posts: Post[];

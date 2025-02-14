@@ -23,9 +23,9 @@ import {
     @Column({ type: 'text' })
     content: string;
     @CreateDateColumn({ type: 'timestamp' })
-    created_at: Date;
+    createdAt: Date;
     @UpdateDateColumn({ type: 'timestamp' })
-    updated_at: Date;
+    updatedAt: Date;
     @OneToMany(() => Comment, (comment) => comment.post)
     comments: Comment[];
   }
