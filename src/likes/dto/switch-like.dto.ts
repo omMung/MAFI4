@@ -1,6 +1,6 @@
 import { IsInt, IsNotEmpty } from 'class-validator';
 
-export class CreateLikeDto {
+export class SwitchLikeDto {
   @IsInt()
   @IsNotEmpty()
   userId: number;

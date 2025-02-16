@@ -1,11 +1,19 @@
 import { Post } from 'src/posts/entities/post.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Like {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
+  @Column()
+  status: boolean;
   //관계 설정
   @ManyToOne(() => User, (user) => user.likes)
   @JoinColumn({ name: 'user_id' })
