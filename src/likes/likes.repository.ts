@@ -16,6 +16,14 @@ export class LikeRepository {
     });
   }
 
+  async createLike(userId: number, postId: number) {
+    const like = this.likeRepository.create({
+      user: { id: userId },
+      post: { id: postId },
+    });
+    return await this.likeRepository.save(like); // save 메서드 호출
+  }
+
   async switchOn(userId: number, postId: number) {
     await this.likeRepository.update(
       { user: { id: userId }, post: { id: postId } },
