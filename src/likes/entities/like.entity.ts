@@ -12,7 +12,7 @@ import {
 export class Like {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
-  @Column()
+  @Column({ default: true })
   status: boolean;
   //관계 설정
   @ManyToOne(() => User, (user) => user.likes)

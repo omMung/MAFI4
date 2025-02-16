@@ -5,7 +5,7 @@ export class SwitchLikeDto {
   @IsNotEmpty()
   userId: number;
 
-  @IsInt()
-  @IsNotEmpty()
-  postId: number;
+  // @IsInt()
+  // @IsNotEmpty()
+  // postId: number;
 }

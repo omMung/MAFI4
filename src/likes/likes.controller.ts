@@ -15,9 +15,14 @@ import { SwitchLikeDto } from './dto/switch-like.dto';
 export class LikesController {
   constructor(private readonly likesService: LikesService) {}
 
-  @Post()
-  create(@Body() createLikeDto: CreateLikeDto) {
-    return this.likesService.create(createLikeDto);
+  // 좋아요 상태 전환
+  @Post(':postId')
+  async toggleLike(
+    @Param('postId') postId: number,
+    //이거 유저아이디만 받을 거면 dto 필요 없는데?
+    @Body() switchLikeDto: SwitchLikeDto,
+  ) {
+    return await this.likesService.toggleLike(postId, switchLikeDto);
   }
 
   // @Get()

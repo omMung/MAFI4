@@ -10,12 +10,14 @@ export class LikeRepository {
     private likeRepository: Repository<Like>,
   ) {}
 
+  //검증용 함수
   checkLike(userId: number, postId: number) {
     return this.likeRepository.find({
       where: { user: { id: userId }, post: { id: postId } },
     });
   }
 
+  //없을 경우 생성
   async createLike(userId: number, postId: number) {
     const like = this.likeRepository.create({
       user: { id: userId },
@@ -24,6 +26,7 @@ export class LikeRepository {
     return await this.likeRepository.save(like); // save 메서드 호출
   }
 
+  //있을 경우 on/off
   async switchOn(userId: number, postId: number) {
     await this.likeRepository.update(
       { user: { id: userId }, post: { id: postId } },
