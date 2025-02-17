@@ -12,19 +12,20 @@ export class PostsRepository {
   ){}
 
 
-  async save(userId: number , title: string , content: string){
+  async save(userId: number , title: string , content: string) {
     const result = this.postsRepository.create({
-        userId,
+        // userId,
         title,
         content
     })
   await this.postsRepository.save(result)
+  return result
   }
 
 
   async findAllPosts() {
     const posts = await this.postsRepository.find({
-        select: ['id' , 'userId' , 'title' , 'content' ]
+        select: ['id' ,  'title' , 'content' ]
     })
     return posts
   }
@@ -32,7 +33,7 @@ export class PostsRepository {
   async findOnePostById(id: number) {
     const post = await this.postsRepository.findOne({
         where: {id},
-        select: ['id' , 'userId' , 'title' , 'content' ]
+        select: ['id' ,  'title' , 'content' ]
     })
     return post
   }
