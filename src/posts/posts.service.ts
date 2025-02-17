@@ -1,9 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException , InternalServerErrorException} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable} from '@nestjs/common';
 import { PostsRepository } from './posts.repository'
-import { Repository } from 'typeorm';
 import {
   PostNotFoundException,
+  CommentNotFoundException
 } from 'src/common/exceptions/posts.exception';
 
 @Injectable()
@@ -47,6 +46,10 @@ export class PostsService {
       }
 
       const comments = await this.postsRepository.findAllCommentsById(id)
+
+      if(!comments){
+        throw new CommentNotFoundException()
+      }
 
       return {
         message: "해당 게시글을 조회하였습니다",
