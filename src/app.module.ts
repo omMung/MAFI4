@@ -76,5 +76,6 @@ const typeOrmModuleOptions = {
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [JwtModule, AuthModule],
 })
 export class AppModule {}
