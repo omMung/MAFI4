@@ -15,6 +15,9 @@ import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LikesModule } from './likes/likes.module';
+import { ChatNoticeModule } from './chat-notice/chat-notice.module';
+import { ChatMafiaModule } from './chat-mafia/chat-mafia.module';
+import { ChatUsersModule } from './chat-users/chat-users.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -75,6 +78,9 @@ const typeOrmModuleOptions = {
     StatisticsModule,
     UsersAchievementsModule,
     LikesModule,
+    ChatNoticeModule,
+    ChatMafiaModule,
+    ChatUsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
