@@ -13,8 +13,12 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
+<<<<<<< Updated upstream
 import { JwtModule } from '@nestjs/jwt';
 import { LikesModule } from './likes/likes.module';
+=======
+import { RoomsModule } from './rooms/rooms.module';
+>>>>>>> Stashed changes
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -66,6 +70,7 @@ const typeOrmModuleOptions = {
     //   serveRoot: '/', //  루트 URL에서 정적 파일 제공
     // }),
 
+<<<<<<< Updated upstream
     UsersModule,
     PostsModule,
     CommentsModule,
@@ -75,6 +80,17 @@ const typeOrmModuleOptions = {
     StatisticsModule,
     UsersAchievementsModule,
     LikesModule,
+=======
+   UsersModule,
+   PostsModule,
+   CommentsModule,
+   AuthModule,
+   AchievementsModule,
+   GamesModule,
+   StatisticsModule,
+   UsersAchievementsModule,
+   RoomsModule,
+>>>>>>> Stashed changes
   ],
   controllers: [AppController],
   providers: [AppService],
