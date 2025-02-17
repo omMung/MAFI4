@@ -11,12 +11,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 // import { AuthService } from '../auth/services/auth.service';
 import { UsersRepository } from './users.repository';
 import bcrypt from 'bcrypt';
-import Joi from 'joi';
 import {
   EmailConflictException,
   UserNotFoundException,
 } from 'src/common/exceptions/users.exception';
-import { title } from 'process';
 
 @Injectable()
 export class UsersService {

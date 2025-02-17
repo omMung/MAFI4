@@ -33,7 +33,7 @@ export class UsersRepository {
     });
     return existingUser;
   }
-
+  //id검색
   async findOneUserId(userId: number) {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
@@ -42,6 +42,7 @@ export class UsersRepository {
     return user;
   }
 
+  //업데이트 로직
   async updateUserInfo(userId: number, updatedData: Partial<User>) {
     await this.usersRepository.update(userId, updatedData);
     return this.usersRepository.findOne({ where: { id: userId } });
