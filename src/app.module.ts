@@ -13,6 +13,7 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -49,31 +50,32 @@ const typeOrmModuleOptions = {
     }),
     // EventEmitterModule.forRoot(), // 이벤트 시스템 활성화
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
-    // JwtModule.registerAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     secret: configService.get<string>('ACCESS_SECRET_KEY'),
-    //     signOptions: {
-    //       expiresIn: configService.get<string>('ACCESS_EXPIRES_IN'),
-    //     },
-    //   }),
-    // }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('ACCESS_SECRET_KEY'),
+        signOptions: {
+          expiresIn: configService.get<string>('ACCESS_EXPIRES_IN'),
+        },
+      }),
+    }),
     // ServeStaticModule.forRoot({
     //   rootPath: join(__dirname, '..', 'dist', 'public'),
     //   serveRoot: '/', //  루트 URL에서 정적 파일 제공
     // }),
 
-   UsersModule,
-   PostsModule,
-   CommentsModule,
-   AuthModule,
-   AchievementsModule,
-   GamesModule,
-   StatisticsModule,
-   UsersAchievementsModule,
+    UsersModule,
+    PostsModule,
+    CommentsModule,
+    AuthModule,
+    AchievementsModule,
+    GamesModule,
+    StatisticsModule,
+    UsersAchievementsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [JwtModule, AuthModule],
 })
 export class AppModule {}
