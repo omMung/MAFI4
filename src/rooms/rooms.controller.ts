@@ -1,7 +1,16 @@
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { RoomsService2 } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { Redis } from '@upstash/redis';
+import passport from 'passport';
 
 // upstash 에서 값 가져오기위한 임포트
 
@@ -44,5 +53,16 @@ export class RoomsController2 {
   async findRoomList2() {
     const searchRoom = this.redisClient.get('keyWord');
     return { message: '검색 결과 입니다.', date: searchRoom };
+    // @Post()
+    // async createRoom(@Body() roomData: any) {
+    //   console.log('@@@@@@@');
+    //   const userId = 1;
+    //   const roomName = '고수만';
+    //   const mode = 8;
+    //   const locked = true;
+    //   const password = '1@1@';
+
+    //   return await this.roomsService.createRoom();
+    // }
   }
 }
