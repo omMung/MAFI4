@@ -14,8 +14,12 @@ import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { JwtModule } from '@nestjs/jwt';
 import { LikesModule } from './likes/likes.module';
+=======
+import { RoomsModule } from './rooms/rooms.module';
+>>>>>>> Stashed changes
 =======
 import { RoomsModule } from './rooms/rooms.module';
 >>>>>>> Stashed changes
@@ -90,6 +94,9 @@ const typeOrmModuleOptions = {
    StatisticsModule,
    UsersAchievementsModule,
    RoomsModule,
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   ],
   controllers: [AppController],

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RoomsService } from './rooms.service';
+import { RoomsService2 } from './rooms.service';
 import { RoomsController2 } from './rooms.controller';
 import { RoomsRepository } from './rooms.repository';
 import { RedisModule } from '@nestjs-modules/ioredis';
@@ -14,6 +14,6 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     }),
   ],
   controllers: [RoomsController2],
-  providers: [RoomsService, RoomsRepository],
+  providers: [RoomsService2, RoomsRepository],
 })
 export class RoomsModule {}
