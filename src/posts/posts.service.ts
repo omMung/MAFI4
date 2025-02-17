@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException , InternalServerErrorException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity'
 import { Comment } from '../comments/entities/comment.entity'
 import { Repository } from 'typeorm';
@@ -15,12 +13,11 @@ export class PostsService {
   ){}
 
   // 게시글 생성
-  async create(createPostDto: CreatePostDto) { // 컨트롤러단에 수정
+  async create(userId: number , title: string , content: string) { // 컨트롤러단에 수정
     try{
-    const { userId , title , content } = createPostDto 
     
     const newPost = this.postRepository.create({
-      userId,
+      // userId,
       title,
       content,
     })
@@ -96,10 +93,9 @@ export class PostsService {
   }
 
   // 게시글 수정
-  async update(id: number, updatePostDto: UpdatePostDto) {
+  async update(id: number, title: string , content: string) {
     try{
-      const {title , content} = updatePostDto
-
+      
       const post = await this.postRepository.findOne({where: {id}})
 
       if (!post) {
