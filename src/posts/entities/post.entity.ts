@@ -15,7 +15,7 @@ import { Like } from 'src/likes/entities/like.entity';
 export class Post {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
   @Column({ type: 'varchar', length: 255 })
