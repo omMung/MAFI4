@@ -11,6 +11,8 @@ import { Comment } from '../../comments/entities/comment.entity';
 import { Game } from '../../games/entities/game.entity';
 //   import { Ranking } from '../../ranking/ranking.entity';
 import { UserAchievements } from '../../user-achievements/entities/users-achievement.entity';
+import { Like } from 'src/likes/entities/like.entity';
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn({ unsigned: true })
@@ -45,4 +47,6 @@ export class User {
     (userAchievements) => userAchievements.user,
   )
   userAchievements: UserAchievements[];
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Like[];
 }
