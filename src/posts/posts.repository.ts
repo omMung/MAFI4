@@ -14,7 +14,7 @@ export class PostsRepository {
 
   async save(userId: number , title: string , content: string) {
     const result = this.postsRepository.create({
-        // userId,
+        user: {id:userId},
         title,
         content
     })
@@ -25,7 +25,7 @@ export class PostsRepository {
 
   async findAllPosts() {
     const posts = await this.postsRepository.find({
-        select: ['id' ,  'title' , 'content' ]
+        select: [ 'title' , 'content' ]
     })
     return posts
   }
@@ -33,7 +33,7 @@ export class PostsRepository {
   async findOnePostById(id: number) {
     const post = await this.postsRepository.findOne({
         where: {id},
-        select: ['id' ,  'title' , 'content' ]
+        select: [ 'title' , 'content' ]
     })
     return post
   }
@@ -51,7 +51,6 @@ export class PostsRepository {
         title,
         content
     })
-    return editpost
   }
 
   async removePost(id: number){
