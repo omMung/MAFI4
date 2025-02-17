@@ -14,16 +14,16 @@ import { UsersService } from 'src/users/users.service';
     TypeOrmModule.forFeature([User]),
     RedisModule,
     ConfigModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN', '1h'),
-        },
-      }),
-    }),
+    // JwtModule.registerAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     secret: configService.get<string>('JWT_SECRET'),
+    //     signOptions: {
+    //       expiresIn: configService.get<string>('JWT_EXPIRES_IN', '1h'),
+    //     },
+    //   }),
+    // }),
   ],
   controllers: [AuthController],
   providers: [AuthService, UsersService, AuthRepository],
