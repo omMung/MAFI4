@@ -40,7 +40,7 @@ export class PostsRepository {
 
   async findAllCommentsById(id: number) {
     const comments = await this.commentsRepository.find({
-        where: {postId: id},
+        where: {post : {id}} ,
         select: ['content' ]
     })
     return comments
