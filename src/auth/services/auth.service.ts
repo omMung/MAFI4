@@ -11,7 +11,14 @@ import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { RedisService } from 'src/redis/redis.service';
 import { AuthRepository } from '../repositories/auth.repository';
-import nodemailer from 'nodemailer';
+import {
+  AuthEmailNotVerifiedException,
+  AuthInvalidCredentialsException,
+  AuthInvalidRefreshTokenException,
+  AuthInvalidVerificationCodeException,
+  AuthRefreshTokenMissingException,
+  AuthUserNotFoundException,
+} from 'src/common/exceptions/auth.exception';
 
 @Injectable()
 export class AuthService {
@@ -22,48 +29,14 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
   ) {}
 
-  async sendVerificationEmail(email: string, verifyCode: string) {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // .env에서 설정
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: '이메일 인증 코드',
-      text: `인증 코드: ${verifyCode}`,
-    };
-
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log('이메일 발송 성공:', info.response); // 발송 성공 로그
-    } catch (error) {
-      console.error('이메일 발송 실패:', error); // 발송 실패 로그
-    }
-  }
-
   async validateUser(email: string, password: string) {
     const user = await this.authRepository.findUserByEmail(email);
-    if (!user) {
-      throw new UnauthorizedException(
-        '이메일 또는 비밀번호가 올바르지 않습니다.',
-      );
-    }
+    if (!user) throw new AuthInvalidCredentialsException();
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException(
-        '이메일 또는 비밀번호가 올바르지 않습니다.',
-      );
-    }
+    if (!isPasswordValid) throw new AuthInvalidCredentialsException();
 
-    if (!user.isVerified) {
-      throw new UnauthorizedException('이메일 인증이 완료되지 않았습니다.');
-    }
+    if (!user.isVerified) throw new AuthEmailNotVerifiedException();
 
     return user;
   }
@@ -104,15 +77,10 @@ export class AuthService {
 
     const user = await this.authRepository.findUserByEmail(email);
 
-    if (!user) {
-      throw new BadRequestException(
-        '해당 이메일의 사용자가 존재하지 않습니다.',
-      );
-    }
+    if (!user) throw new AuthUserNotFoundException();
 
-    if (user.verifyCode !== verifyCode) {
-      throw new BadRequestException('인증 코드가 올바르지 않습니다.');
-    }
+    if (user.verifyCode !== verifyCode)
+      throw new AuthInvalidVerificationCodeException();
 
     user.isVerified = true;
     user.verifyCode = null;
@@ -150,9 +118,7 @@ export class AuthService {
   async refreshToken(req: Request) {
     const refreshToken = req.cookies.refreshToken;
 
-    if (!refreshToken) {
-      throw new UnauthorizedException('리프레시 토큰이 제공되지 않았습니다.');
-    }
+    if (!refreshToken) throw new AuthRefreshTokenMissingException();
 
     const payload = this.jwtService.verify(refreshToken, {
       secret: this.configService.get<string>('REFRESH_SECRET_KEY'),
@@ -161,9 +127,7 @@ export class AuthService {
     const userId = payload.sub;
 
     const isValid = await this.validateRefreshToken(userId, refreshToken);
-    if (!isValid) {
-      throw new UnauthorizedException('유효하지 않은 리프레시 토큰입니다.');
-    }
+    if (!isValid) throw new AuthInvalidRefreshTokenException();
 
     const newAccessToken = this.jwtService.sign(
       { sub: userId },
