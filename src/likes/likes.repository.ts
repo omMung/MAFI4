@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like } from './entities/like.entity';
 import { Repository } from 'typeorm';
+import { PostRepository } from 'src/posts/posts.repository';
 
 @Injectable()
 export class LikeRepository {
@@ -16,6 +17,10 @@ export class LikeRepository {
       where: { user: { id: userId }, post: { id: postId } },
     });
   }
+
+  // checkPost(postId: number) {
+  //   return PostRepository
+  // }
 
   //없을 경우 생성
   async createLike(userId: number, postId: number) {

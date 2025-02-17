@@ -3,6 +3,7 @@ import { CreateLikeDto } from './dto/create-like.dto';
 import { SwitchLikeDto } from './dto/switch-like.dto';
 import { LikeRepository } from './likes.repository';
 import { Like } from './entities/like.entity';
+import { PostNotFoundException } from 'src/common/exceptions/comments.exception';
 
 @Injectable()
 export class LikesService {
@@ -15,9 +16,12 @@ export class LikesService {
   }
 
   // 좋아요 생성 또는 업데이트
-  async toggleLike(pId: number, switchLikeDto: SwitchLikeDto) {
-    const postId = pId;
+  async toggleLike(postId: number, switchLikeDto: SwitchLikeDto) {
     const { userId } = switchLikeDto;
+    //const userId=req.uset.id;
+    // if (!postId) {
+    //   throw new PostNotFoundException();
+    // }
     const existingLikes = await this.checkLike(userId, postId);
 
     if (existingLikes.length > 0) {

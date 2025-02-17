@@ -25,6 +25,8 @@ export class LikesController {
     return await this.likesService.toggleLike(postId, switchLikeDto);
   }
 
+  //글 당 좋아요 갯수가 필요하다면 게시글 혹은 클라에서 받아주기
+
   // @Get()
   // findAll() {
   //   return this.likesService.findAll();
