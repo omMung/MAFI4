@@ -17,11 +17,8 @@ import {
     @PrimaryGeneratedColumn({ unsigned: true })
     id: number;
 
-    @Column('int', { nullable: false })// 추가
-    userId: number;
-    
-    @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })// 추가
-    @JoinColumn({ name: 'user_id' })
+    @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'user_id' }) // userId 
     user: User;
     
     @Column({ type: 'varchar', length: 255 })

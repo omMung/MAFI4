@@ -15,7 +15,7 @@ export class PostsService {
   ){}
 
   // 게시글 생성
-  async create(createPostDto: CreatePostDto) {
+  async create(createPostDto: CreatePostDto) { // 컨트롤러단에 수정
     try{
     const { userId , title , content } = createPostDto 
     
@@ -49,7 +49,7 @@ export class PostsService {
       })
       
       if(!posts || posts.length == 0){
-        throw new NotFoundException(" 해당 게시글을 찾을수 없습니다 ")
+        throw new NotFoundException(" 해당 게시글을 찾을수 없습니다 ") // 전역 설정 수정
       }
 
       return {message: "전체 게시글을 조회하였습니다", data:{posts}}
