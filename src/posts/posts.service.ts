@@ -1,39 +1,22 @@
 import { Injectable, NotFoundException, BadRequestException , InternalServerErrorException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Post } from './entities/post.entity'
-import { Comment } from '../comments/entities/comment.entity'
+import { PostsRepository } from './posts.repository'
 import { Repository } from 'typeorm';
 
 
 @Injectable()
 export class PostsService {
-  constructor(
-    @InjectRepository(Post) private postRepository: Repository<Post>,
-    @InjectRepository(Comment) private commentRepository: Repository<Comment>,
-  ){}
-
+  constructor(private readonly postsRepository: PostsRepository){}
+    
   // 게시글 생성
   async create(userId: number , title: string , content: string) { // 컨트롤러단에 수정
     try{
     
-    const newPost = this.postRepository.create({
-      // userId,
-      title,
-      content,
-    })
-
-    if(!newPost){
-      throw new BadRequestException("Post가 정상적으로 생성되지 않았습니다")
-    }
-
-    const result = await this.postRepository.save(newPost)
+    const result = await this.postsRepository.save(userId , title , content)
 
     return {message: "게시글이 생성되었습니다", data:{ result } }
     }
     catch(error){
-      if(error instanceof BadRequestException){
-        throw error
-      }
       throw new InternalServerErrorException(" 보드 생성중에 에러가 발생했습니다 ")
     }
   }
@@ -41,11 +24,10 @@ export class PostsService {
   // 게시글 전체 조회
   async findAll() {
     try{
-      const posts = await this.postRepository.find({
-        select: ['id' , 'userId' , 'title' , 'content' ]
-      })
+
+      const posts = await this.postsRepository.findAllPosts()
       
-      if(!posts || posts.length == 0){
+      if(!posts){
         throw new NotFoundException(" 해당 게시글을 찾을수 없습니다 ") // 전역 설정 수정
       }
 
@@ -62,19 +44,13 @@ export class PostsService {
   // 게시글 상세 조회
   async findOne(id: number) {
     try{
-      const post = await this.postRepository.findOne({
-        where: {id},
-        select:['id' , 'userId' , 'title' , 'content']
-      })
+      const post = await this.postsRepository.findOnePostById(id)
 
       if(!post){
         throw new NotFoundException(" 해당 게시글을 찾을수 없습니다 ")
       }
 
-      const comments = await this.commentRepository.find({
-        where: {postId:id},
-        select: ['content']
-      })
+      const comments = await this.postsRepository.findAllCommentsById(id)
 
       return {
         message: "해당 게시글을 조회하였습니다",
@@ -96,18 +72,16 @@ export class PostsService {
   async update(id: number, title: string , content: string) {
     try{
       
-      const post = await this.postRepository.findOne({where: {id}})
+      const post = await this.postsRepository.findOnePostById(id)
 
       if (!post) {
         throw new NotFoundException('해당 게시글를 찾을 수 없습니다.');
       }
 
-      await this.postRepository.update({id}, {
-        title,
-        content
-      })
+      await this.postsRepository.updatePost(id,title,content)
+      
 
-      const editpost = await this.postRepository.findOne({where:{id}})
+      const editpost = await this.postsRepository.findOnePostById(id)
 
       return {
         message: "게시글이 수정되었습니다",
