@@ -52,4 +52,12 @@ export class PostsRepository {
     })
     return editpost
   }
+
+  async removePost(id: number){
+    const post = await this.postsRepository.findOne({
+        where: {id}
+    })
+
+    await this.postsRepository.remove(post)
+  }
 }

@@ -100,20 +100,11 @@ export class PostsService {
   // 게시글 삭제
   async remove(id: number) {
     try{
-      const post = await this.postRepository.findOne({where: {id}})
-
-      if(!post){
-        throw new NotFoundException(" 게시글을 찾을수 없습니다 ")
-      }
-
-      await this.postRepository.remove(post)
+      await this.postsRepository.removePost(id)
 
       return {message: "게시글이 삭제되었습니다" }
     }
     catch(error){
-      if(error instanceof NotFoundException){
-        throw error
-      }
       throw new InternalServerErrorException(" 보드 삭제중 에러가 발생했습니다 ")
     }
   }
