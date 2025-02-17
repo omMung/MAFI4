@@ -13,15 +13,19 @@ export class RedisService {
     });
   }
 
-  async set(key: string, value: string, expireSeconds?: number): Promise<void> {
+  async setToken(
+    key: string,
+    value: string,
+    expireSeconds?: number,
+  ): Promise<void> {
     await this.client.set(key, value, { ex: expireSeconds });
   }
 
-  async get(key: string): Promise<string | null> {
+  async getToken(key: string): Promise<string | null> {
     return await this.client.get(key);
   }
 
-  async del(key: string): Promise<void> {
+  async delToken(key: string): Promise<void> {
     await this.client.del(key);
   }
 }
