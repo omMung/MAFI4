@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from 'src/redis/redis.module';
 import { AuthRepository } from './repositories/auth.repository';
 import { UsersService } from 'src/users/users.service';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { UsersService } from 'src/users/users.service';
     // }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, AuthRepository],
+  providers: [AuthService, UsersService, AuthRepository, UsersRepository],
   exports: [AuthService],
 })
 export class AuthModule {}
