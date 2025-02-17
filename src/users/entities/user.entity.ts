@@ -8,9 +8,11 @@ import {
 } from 'typeorm';
 import { Post } from '../../posts/entities/post.entity';
 import { Comment } from '../../comments/entities/comment.entity';
+import { Game } from '../../games/entities/game.entity';
 //   import { Ranking } from '../../ranking/ranking.entity';
 import { UserAchievements } from '../../user-achievements/entities/users-achievement.entity';
 import { Like } from 'src/likes/entities/like.entity';
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn({ unsigned: true })
@@ -36,6 +38,8 @@ export class User {
   posts: Post[];
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+  @OneToMany(() => Game, (game) => game.user)
+  games: Game[];
   // @OneToMany(() => Ranking, (ranking) => ranking.user)
   // rankings: Ranking[];
   @OneToMany(
