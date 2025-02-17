@@ -14,6 +14,7 @@ import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { LikesModule } from './likes/likes.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -44,8 +45,8 @@ const typeOrmModuleOptions = {
         DB_PORT: Joi.number().required(),
         DB_NAME: Joi.string().required(),
         DB_SYNC: Joi.boolean().required(),
-        ACCESS_SECRET_KEY: Joi.string().required(), // 액세스 시크릿 키 검증 추가
-        ACCESS_EXPIRES_IN: Joi.string().default('1m'), // 액세스 만료시간 검증 추가
+        // ACCESS_SECRET_KEY: Joi.string().required(), // 액세스 시크릿 키 검증 추가
+        // ACCESS_EXPIRES_IN: Joi.string().default('1m'), // 액세스 만료시간 검증 추가
       }),
     }),
     // EventEmitterModule.forRoot(), // 이벤트 시스템 활성화
@@ -73,6 +74,7 @@ const typeOrmModuleOptions = {
     GamesModule,
     StatisticsModule,
     UsersAchievementsModule,
+    LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
