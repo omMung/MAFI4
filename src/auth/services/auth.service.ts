@@ -61,7 +61,11 @@ export class AuthService {
     );
 
     // Redis에 리프레시 토큰 저장 (덮어쓰기)
-    await this.redisService.set(`refresh:${user.id}`, refreshToken, 2 * 60);
+    await this.redisService.setToken(
+      `refresh:${user.id}`,
+      refreshToken,
+      2 * 60,
+    );
 
     return {
       accessToken,
@@ -97,12 +101,12 @@ export class AuthService {
   }
 
   async logout(userId: number, accessToken: string) {
-    await this.redisService.del(`refresh:${userId}`);
+    await this.redisService.delToken(`refresh:${userId}`);
 
     const decoded = this.jwtService.decode(accessToken) as { exp: number };
     const expiresIn = decoded.exp - Math.floor(Date.now() / 1000);
 
-    await this.redisService.set(
+    await this.redisService.setToken(
       `blacklist:${accessToken}`,
       'blacklisted',
       expiresIn,
@@ -110,7 +114,7 @@ export class AuthService {
   }
 
   async isTokenBlacklisted(token: string): Promise<boolean> {
-    const result = await this.redisService.get(`blacklist:${token}`);
+    const result = await this.redisService.getToken(`blacklist:${token}`);
     return !!result;
   }
 
@@ -118,7 +122,7 @@ export class AuthService {
     userId: number,
     refreshToken: string,
   ): Promise<boolean> {
-    const storedToken = await this.redisService.get(`refresh:${userId}`);
+    const storedToken = await this.redisService.getToken(`refresh:${userId}`);
     return storedToken === refreshToken;
   }
 
@@ -156,7 +160,11 @@ export class AuthService {
       },
     );
 
-    await this.redisService.set(`refresh:${userId}`, newRefreshToken, 2 * 60);
+    await this.redisService.setToken(
+      `refresh:${userId}`,
+      newRefreshToken,
+      2 * 60,
+    );
 
     return {
       accessToken: newAccessToken,
