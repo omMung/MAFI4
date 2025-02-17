@@ -1,27 +1,44 @@
-import { Body, Controller, Get, Inject, Query } from '@nestjs/common';
-import { RoomsService } from './rooms.service';
+import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
+import { RoomsService2 } from './rooms.service';
+import { CreateRoomDto } from './dto/create-room.dto';
 import { Redis } from '@upstash/redis';
 
 // upstash 에서 값 가져오기위한 임포트
 
-@Controller('rooms')
-export class RoomsController {
-  constructor(private readonly roomsService: RoomsService) {}
+// @Controller('rooms')
+// export class RoomsController {
+//   constructor(private readonly roomsService: RoomsService) {}
 
-  // 방 생성 API 필요
-  @Post()
-  createRoom(@Body() )
-  // 방 리스트 검색 API
-  @Get()
-  findRoomList(@Query() query: Record<string, string | number>) {
-    const keyWord = query;
-    return this.roomsService.findRoomList(keyWord);
-  }
-}
+//   // 방 리스트 검색 API
+//   @Get()
+//   findRoomList(@Query() query: Record<string, string | number>) {
+//     const keyWord = query;
+//     return this.roomsService.findRoomList(keyWord);
+//   }
+// }
 
 @Controller('rooms')
 export class RoomsController2 {
-  constructor(@Inject('REDIS_CLIENT') private readonly redisClient: Redis) {}
+  roomService2: RoomsService2;
+  constructor(
+    @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
+    roomService2: RoomsService2,
+  ) {}
+  @Post()
+  async createRoom(@Body() createRoomDto: CreateRoomDto) {
+    const { hostId, roomName, mode, locked, password, playerCount } =
+      createRoomDto;
+    const createRoom = this.roomService2.createRoom(
+      hostId,
+      roomName,
+      mode,
+      locked,
+      password,
+      playerCount,
+    );
+    return createRoom;
+  }
+
   // 방 리스트 검색 API 레디스
   @Get()
   async findRoomList2() {
