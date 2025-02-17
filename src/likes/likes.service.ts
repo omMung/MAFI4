@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { SwitchLikeDto } from './dto/switch-like.dto';
-import { LikeRepository } from './likes.repository';
+import { LikesRepository } from './likes.repository';
 import { Like } from './entities/like.entity';
 import { PostNotFoundException } from 'src/common/exceptions/comments.exception';
 
 @Injectable()
 export class LikesService {
-  constructor(private readonly likeRepository: LikeRepository) {}
+  constructor(private readonly likeRepository: LikesRepository) {}
 
   // 좋아요 체크
   async checkLike(userId: number, postId: number) {
