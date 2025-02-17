@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Request } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
-import { CreateStatisticDto } from './dto/create-statistic.dto';
-import { UpdateStatisticDto } from './dto/update-statistic.dto';
+// import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  @Post()
-  create(@Body() createStatisticDto: CreateStatisticDto) {
-    return this.statisticsService.create(createStatisticDto);
+  // @UseGuards(JwtAuthGuard)
+  @Get('user')
+  async getUserRecordByUserId(@Request() req: any) {
+    // const userId = req.user;
+    const userId = 1;
+    try {
+      const userRecord =
+        await this.statisticsService.getUserRecordByUserId(+userId);
+      return { data: userRecord };
+    } catch (error) {
+      // 에러 처리
+      console.error('조회 에러:', error);
+      // throw error; // 에러를 다시 던져 글로벌 에러 처리 필터나 미들웨어가 처리하도록 할 수 있음
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.statisticsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.statisticsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStatisticDto: UpdateStatisticDto) {
-    return this.statisticsService.update(+id, updateStatisticDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.statisticsService.remove(+id);
+  // @UseGuards(JwtAuthGuard)
+  @Get('job')
+  async getUserRecordByJob(@Request() req: any) {
+    // const userId = req.user;
+    const userId = 1;
+    try {
+      const userJobRecord =
+        await this.statisticsService.getUserRecordByJob(+userId);
+      return { data: userJobRecord };
+    } catch (error) {
+      console.error('조회 에러:', error);
+    }
   }
 }
