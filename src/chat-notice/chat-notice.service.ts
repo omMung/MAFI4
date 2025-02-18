@@ -1,26 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChatNoticeDto } from './dto/create-chat-notice.dto';
-import { UpdateChatNoticeDto } from './dto/update-chat-notice.dto';
+import { ChatNoticeGateway } from './chat-notice.gateway';
 
 @Injectable()
 export class ChatNoticeService {
-  create(createChatNoticeDto: CreateChatNoticeDto) {
-    return 'This action adds a new chatNotice';
+  constructor(private readonly chatNoticeGateway: ChatNoticeGateway) {}
+
+  policeAction(userId: string) {
+    this.chatNoticeGateway.sendNotice(
+      'police',
+      `${userId}가 한 명을 조사했습니다.`,
+    );
   }
 
-  findAll() {
-    return `This action returns all chatNotice`;
+  doctorAction(userId: string) {
+    this.chatNoticeGateway.sendNotice(
+      'doctor',
+      `${userId}가 누군가를 치료했습니다.`,
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chatNotice`;
-  }
-
-  update(id: number, updateChatNoticeDto: UpdateChatNoticeDto) {
-    return `This action updates a #${id} chatNotice`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} chatNotice`;
+  mafiaAction(userId: string) {
+    this.chatNoticeGateway.sendNotice(
+      'mafia',
+      `${userId}가 한 명을 공격했습니다.`,
+    );
   }
 }

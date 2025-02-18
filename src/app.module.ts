@@ -18,6 +18,7 @@ import { LikesModule } from './likes/likes.module';
 import { ChatNoticeModule } from './chat-notice/chat-notice.module';
 import { ChatMafiaModule } from './chat-mafia/chat-mafia.module';
 import { ChatUsersModule } from './chat-users/chat-users.module';
+import { NightResultModule } from './night-result/night-result.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -81,6 +82,7 @@ const typeOrmModuleOptions = {
     ChatNoticeModule,
     ChatMafiaModule,
     ChatUsersModule,
+    NightResultModule,
   ],
   controllers: [AppController],
   providers: [AppService],

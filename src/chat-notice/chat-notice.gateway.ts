@@ -1,34 +1,13 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody } from '@nestjs/websockets';
-import { ChatNoticeService } from './chat-notice.service';
-import { CreateChatNoticeDto } from './dto/create-chat-notice.dto';
-import { UpdateChatNoticeDto } from './dto/update-chat-notice.dto';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway({ namespace: 'chat-notice' })
 export class ChatNoticeGateway {
-  constructor(private readonly chatNoticeService: ChatNoticeService) {}
+  @WebSocketServer()
+  server: Server;
 
-  @SubscribeMessage('createChatNotice')
-  create(@MessageBody() createChatNoticeDto: CreateChatNoticeDto) {
-    return this.chatNoticeService.create(createChatNoticeDto);
-  }
-
-  @SubscribeMessage('findAllChatNotice')
-  findAll() {
-    return this.chatNoticeService.findAll();
-  }
-
-  @SubscribeMessage('findOneChatNotice')
-  findOne(@MessageBody() id: number) {
-    return this.chatNoticeService.findOne(id);
-  }
-
-  @SubscribeMessage('updateChatNotice')
-  update(@MessageBody() updateChatNoticeDto: UpdateChatNoticeDto) {
-    return this.chatNoticeService.update(updateChatNoticeDto.id, updateChatNoticeDto);
-  }
-
-  @SubscribeMessage('removeChatNotice')
-  remove(@MessageBody() id: number) {
-    return this.chatNoticeService.remove(id);
+  // 특정 역할(경찰, 의사, 마피아 등)의 행동을 공지하는 메서드
+  sendNotice(type: string, message: string) {
+    this.server.emit('chat-notice', { type, message });
   }
 }
