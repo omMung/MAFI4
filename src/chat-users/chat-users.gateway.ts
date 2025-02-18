@@ -1,10 +1,4 @@
-import {
-  WebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-} from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -18,17 +12,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
   handleConnection(client: Socket): void {
-    // 이미 연결된 클라이언트인지 확인합니다.
-    if (this.connectedClients[client.id]) {
-      client.disconnect(true); // 이미 연결된 클라이언트는 연결을 종료합니다.
-      return;
-    }
     this.connectedClients[client.id] = true;
   }
 
   handleDisconnect(client: Socket): void {
     delete this.connectedClients[client.id];
-    // 클라이언트 연결이 종료되면 해당 클라이언트가 속한 모든 방에서 유저를 제거합니다.
+    
     Object.keys(this.roomUsers).forEach((room) => {
       const index = this.roomUsers[room]?.indexOf(
         this.clientNickname[client.id],
@@ -44,19 +33,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
     });
 
-
-    // 모든 방의 유저 목록을 업데이트하여 전송 한다.
-    Object.keys(this.roomUsers).forEach((room) => {
-      this.server
-        .to(room)
-        .emit('userList', { room, userList: this.roomUsers[room] });
-    });
-
-    // 연결된 클라이언트 목록을 업데이트하여 emit합니다.
-    this.server.emit('userList', {
-      room: null,
-      userList: Object.keys(this.connectedClients),
-    });
   }
 
 
@@ -73,11 +49,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
 
-    client.join(room);
-
     if (!this.roomUsers[room]) {
       this.roomUsers[room] = [];
     }
+
+    if (this.roomUsers[room].length >= 8) {
+      client.emit('error','이미 방이 포화 상태 입니다')
+      return
+    }
+    client.join(room);
+
+    
 
     this.roomUsers[room].push(this.clientNickname[client.id]);
     this.server
