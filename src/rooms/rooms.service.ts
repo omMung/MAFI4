@@ -7,7 +7,9 @@ export class RoomsService {
   constructor(private readonly redisService: RedisService) {}
 
   async createRoom() {
-    const roomId = `room:${uuidv4()}`; //UUID로 roomId 자동 생성
+    const roomIdNumber = await this.redisService.incr('room:id'); // 증가하는 ID 생성
+    const roomId = `room:${roomIdNumber}`; // room:1, room:2 형식
+
     const userId = 1;
     const roomName = '고수만';
     const mode = 8;
@@ -18,12 +20,12 @@ export class RoomsService {
       id: roomId,
       hostId: userId,
       roomName: roomName,
-      status: '대기 중', // 기본값: 대기 중
+      status: '대기 중',
       mode: mode,
-      playerCount: 1, // 기본값: 1명
+      playerCount: 1,
       locked: locked,
       password: password,
-      createdAt: new Date().toISOString(), // 현재 시간 저장
+      createdAt: new Date().toISOString(),
     };
 
     await this.redisService.setHash(roomId, roomInfo);
