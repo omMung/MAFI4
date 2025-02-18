@@ -1,6 +1,8 @@
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
+// 해당 웹소켓 코드는 방에 참가 및 닉네임 지정 코드 입니다
+
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() // 의존성 주입하고 비슷함
@@ -13,11 +15,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleConnection(client: Socket): void {
     this.connectedClients[client.id] = true;
-  }
-
-  @SubscribeMessage('setUserNick') // 유저가 원하는 닉네임 지정하기
-  handleSetUserNick(client: Socket, nick: string): void {
-    this.clientNickname[client.id] = nick;
   }
 
   handleDisconnect(client: Socket): void {
@@ -46,12 +43,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     
   }
 
-
-  
-
+  @SubscribeMessage('setUserNick') // 유저가 원하는 닉네임 지정하기
+  handleSetUserNick(client: Socket, nick: string): void {
+    this.clientNickname[client.id] = nick;
+  }
 
   @SubscribeMessage('join') // 유저가 원하는 방에 진입하기
   handleJoin(client: Socket, room: string): void {
+
+    if (!this.clientNickname[client.id]) {
+      client.emit('error', '먼저 닉네임을 설정해주세요.');
+      return;
+    }
     
     if (client.rooms.has(room)) { // 이미 접속한 방인지 확인합니다.
       return;
@@ -111,7 +114,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
 
-  @SubscribeMessage('chatMessage') // 채팅 메시지를 각각의 방으로 전달
+  @SubscribeMessage('morningMessage') // 마피아 게임 아침 대화
   handleChatMessage(client: Socket , message: string ) : void
    {
     // 클라이언트가 보낸 채팅 메시지를 해당 방으로 전달합니다.
@@ -125,4 +128,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(existingRoom).emit('chatMessage', message )
 
   }
+
+  @SubscribeMessage('deadMessage') // 마피아 게임 아침 대화
+  handleChatdeadMessage(client: Socket , message: string ) : void
+   {
+    // 클라이언트가 보낸 채팅 메시지를 해당 방으로 전달합니다.
+    const existingRoom = Object.keys(this.roomUsers).find((roomName) =>
+      this.roomUsers[roomName].includes(this.clientNickname[client.id]))
+
+    if (!existingRoom){
+      client.emit('error','방에 우선 참여를 해주세요')
+    }
+
+    this.server.to(existingRoom).emit('chatMessage', message )
+
+  }
+
 }

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Chat</title>
+  <style>
+    #chat-room {
+      border: 1px solid #ccc;
+      padding: 10px;
+      height: 300px;
+      overflow-y: scroll;
+    }
+    #message-input {
+      width: 80%;
+      padding: 8px;
+    }
+    #send-button {
+      padding: 8px 12px;
+    }
+    .alive {
+      color: black;
+    }
+    .dead {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>Chat Room</h2>
+  <div id="chat-room">
+    <!-- 채팅 내용이 여기에 표시됩니다. -->
+  </div>
+  <input type="text" id="message-input" placeholder="메시지를 입력하세요..." />
+  <button id="send-button">보내기</button>
+
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <script>
+    const socket = io('http://localhost:3000'); // 서버 주소에 맞게 수정하세요.
+
+    // 메시지 보내기 버튼 클릭 시 이벤트 처리
+    document.getElementById('send-button').addEventListener('click', () => {
+      const message = document.getElementById('message-input').value;
+      if (message.trim() !== '') {
+        const payload = {
+          roomId: 1, // 고정된 방 ID
+          userId: 1, // 사용자 ID (예시)
+          message: message,
+          role: 'player', // 역할 (예시)
+          Isalive: false, // 생존 여부 (예시)
+        };
+
+        // 내 메시지를 먼저 화면에 추가
+        const chatRoom = document.getElementById('chat-room');
+        const newMessage = document.createElement('div');
+        newMessage.textContent = `You: ${message}`;
+        newMessage.classList.add(payload.Isalive ? 'alive' : 'dead'); // 생존 여부에 따라 클래스 추가
+        chatRoom.appendChild(newMessage);
+        chatRoom.scrollTop = chatRoom.scrollHeight; // 스크롤을 최신 메시지로 이동
+
+        // 메시지 보내기
+        socket.emit('morningMessage', payload);
+
+        document.getElementById('message-input').value = ''; // 메시지 입력란 비우기
+      }
+    });
+
+    // 서버로부터 채팅 메시지를 받으면 채팅방에 표시
+    socket.on('chatMessage', (data) => {
+      // 메시지를 받은 후, 이 메시지가 현재 사용자에게 보일 수 있는지 체크
+      if (data.Isalive || Isalive === false) { // Isalive가 true일 때는 모든 사람에게 보이도록
+        const chatRoom = document.getElementById('chat-room');
+        const newMessage = document.createElement('div');
+        newMessage.textContent = `${data.userId}: ${data.message}`;
+        newMessage.classList.add(data.Isalive ? 'alive' : 'dead'); // 생존 여부에 따라 클래스 추가
+        chatRoom.appendChild(newMessage);
+        chatRoom.scrollTop = chatRoom.scrollHeight; // 스크롤을 최신 메시지로 이동
+      }
+    });
+  </script>
+</body>
+</html>
