@@ -22,12 +22,12 @@ export class RoomsService2 {
   constructor(private readonly roomsRepository: RoomsRepository) {}
 
   async createRoom(
-    hostId,
-    roomName: 'xxx님의 방',
-    mode: 8,
-    locked: false,
-    password: '',
-    playerCount: 0,
+    hostId: number,
+    roomName: string = 'xxx님의 방',
+    mode: number = 8,
+    locked: boolean = false,
+    password: string = '',
+    playerCount: number = 0,
   ) {}
 
   findRoomList2() {
