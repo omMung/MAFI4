@@ -8,7 +8,7 @@ import { Post } from 'src/posts/entities/post.entity';
 export class CommentsRepository {
   constructor(
     @InjectRepository(Comment)
-    private readonly repository: Repository<Comment>,
+    private readonly commentRepository: Repository<Comment>,
   ) {}
 
   async createComment(
@@ -16,33 +16,33 @@ export class CommentsRepository {
     userId: number,
     content: string,
   ): Promise<Comment> {
-    const newComment = this.repository.create({
+    const newComment = this.commentRepository.create({
       post,
       user: { id: userId }, // user 엔티티 참조
       content,
     });
-    return await this.repository.save(newComment);
+    return await this.commentRepository.save(newComment);
   }
 
   async findByPostId(postId: number): Promise<Comment[]> {
-    return await this.repository.find({
+    return await this.commentRepository.find({
       where: { post: { id: postId } },
       relations: ['user', 'post'],
     });
   }
 
   async findById(id: number): Promise<Comment | null> {
-    return await this.repository.findOne({
+    return await this.commentRepository.findOne({
       where: { id },
       relations: ['user', 'post'],
     });
   }
 
   async updateComment(comment: Comment): Promise<Comment> {
-    return await this.repository.save(comment);
+    return await this.commentRepository.save(comment);
   }
 
   async deleteComment(comment: Comment): Promise<void> {
-    await this.repository.remove(comment);
+    await this.commentRepository.remove(comment);
   }
 }
