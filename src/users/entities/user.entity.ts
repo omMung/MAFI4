@@ -30,7 +30,7 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   title: string;
   @Column({ type: 'varchar', length: 255 })
-  file: string;
+  file?: string;
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })

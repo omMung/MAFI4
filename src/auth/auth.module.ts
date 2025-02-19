@@ -9,12 +9,14 @@ import { RedisModule } from 'src/redis/redis.module';
 import { AuthRepository } from './repositories/auth.repository';
 import { UsersService } from 'src/users/users.service';
 import { UsersRepository } from 'src/users/users.repository';
+import { S3UploaderModule } from 'src/s3uploader/s3uploader.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     RedisModule,
     ConfigModule,
+    S3UploaderModule,
     // JwtModule.registerAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],

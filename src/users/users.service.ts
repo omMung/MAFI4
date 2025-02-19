@@ -101,7 +101,7 @@ export class UsersService {
         password,
       }),
       ...(title && { title }),
-      ...(file && { s3Url }),
+      ...(file && { file: s3Url }),
     };
 
     await this.usersRepository.updateUserInfo(userId, updatedData);
