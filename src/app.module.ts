@@ -21,6 +21,7 @@ import { ChatUsersModule } from './chat-users/chat-users.module';
 import { NightResultModule } from './night-result/night-result.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { RoomsModule } from './rooms/rooms.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -79,6 +80,7 @@ const typeOrmModuleOptions = {
     GamesModule,
     StatisticsModule,
     UsersAchievementsModule,
+    RoomsModule,
     LikesModule,
     ChatNoticeModule,
     ChatMafiaModule,

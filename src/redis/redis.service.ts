@@ -13,19 +13,39 @@ export class RedisService {
     });
   }
 
-  async setToken(
-    key: string,
-    value: string,
-    expireSeconds?: number,
-  ): Promise<void> {
+  async set(key: string, value: string, expireSeconds?: number): Promise<void> {
     await this.client.set(key, value, { ex: expireSeconds });
   }
 
-  async getToken(key: string): Promise<string | null> {
+  async get(key: string): Promise<string | null> {
     return await this.client.get(key);
   }
 
-  async delToken(key: string): Promise<void> {
+  async del(key: string): Promise<void> {
     await this.client.del(key);
+  }
+
+  async setHash(key: string, data: Record<string, any>) {
+    await this.client.hmset(key, data);
+  }
+
+  async getHash(key: string) {
+    return await this.client.hgetall(key);
+  }
+
+  async updateHash(key: string, field: string, value: any) {
+    await this.client.hset(key, { [field]: value });
+  }
+
+  async deleteHash(key: string) {
+    await this.client.del(key);
+  }
+
+  async incr(key: string): Promise<number> {
+    return await this.client.incr(key);
+  }
+
+  async scan(cursor: number, pattern: string, count: number) {
+    return await this.client.scan(cursor, { match: pattern, count });
   }
 }
