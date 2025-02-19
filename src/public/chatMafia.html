@@ -29,8 +29,8 @@
 
     <script>
       //const socket = new WebSocket('http://localhost:3000'); // WebSocket 서버 URL
-      const socket = io('http://localhost:3000', {
-        query: { roomId, userId }, // 플레이어 이름을 설정하세요.
+      const socket = io('*', {
+        //query: { roomId, userId }, // 플레이어 이름을 설정하세요.
       });
 
       socket.on('connect', () => {

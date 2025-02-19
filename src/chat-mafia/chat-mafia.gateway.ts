@@ -13,7 +13,7 @@ import { Server, Socket } from 'socket.io';
 import { ChatPermissionAtNightException } from 'src/common/exceptions/chats.exception';
 import { RedisService } from 'src/redis/redis.service';
 @WebSocketGateway({
-  cors: { origin: 'http://localhost:3000' },
+  cors: { origin: '*' },
 })
 export class ChatMafiaGateway /*implements OnGatewayInit*/ {
   @WebSocketServer() server: Server;
