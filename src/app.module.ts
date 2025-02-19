@@ -18,6 +18,7 @@ import { LikesModule } from './likes/likes.module';
 import { ChatNoticeModule } from './chat-notice/chat-notice.module';
 import { ChatMafiaModule } from './chat-mafia/chat-mafia.module';
 import { ChatUsersModule } from './chat-users/chat-users.module';
+import { RoomsModule } from './rooms/rooms.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -77,6 +78,7 @@ const typeOrmModuleOptions = {
     GamesModule,
     StatisticsModule,
     UsersAchievementsModule,
+    RoomsModule,
     LikesModule,
     ChatNoticeModule,
     ChatMafiaModule,
