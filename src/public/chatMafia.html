@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Mafia</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      #messages {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        height: 300px;
+        overflow-y: scroll;
+      }
+      #messageInput {
+        width: 80%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chat Mafia</h1>
+    <div id="messages"></div>
+    <input id="messageInput" type="text" placeholder="메시지를 입력하세요..." />
+    <button id="sendButton">전송</button>
+
+    <script>
+      //const socket = new WebSocket('http://localhost:3000'); // WebSocket 서버 URL
+      const socket = io('http://localhost:3000', {
+        query: { roomId, userId }, // 플레이어 이름을 설정하세요.
+      });
+
+      socket.on('connect', () => {
+        console.log(' WebSocket 연결됨');
+      });
+
+      // 서버로부터 메시지를 받았을 때
+      socket.onmessage = function (event) {
+        const chat = document.getElementById('chat');
+        const message = JSON.parse(event.data);
+        chat.innerHTML += `<div>${message.name}: ${message.message}</div>`;
+        chat.scrollTop = chat.scrollHeight; // 스크롤을 아래로
+      };
+
+      // 전송 버튼 클릭 시
+      document.getElementById('sendButton').onclick = function () {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value;
+        messageInput.value = ''; // 입력 필드 초기화
+
+        const role = 'mafia'; // 테스트를 위한 역할 설정
+        const roomId = 1; // 테스트를 위한 방 ID 설정
+        const userId = 1; // 테스트를 위한 사용자 ID 설정
+
+        // 서버에 메시지 전송
+        socket.send(JSON.stringify({ roomId, userId, role, message }));
+      };
+      // const socket = io('http://localhost:3000', {
+      //     query: { name: 'playerName' } // 플레이어 이름을 설정하세요.
+      // });
+
+      // // 메시지 수신 처리
+      // socket.on('receiveMessage', (data) => {
+      //     const messagesDiv = document.getElementById('messages');
+      //     messagesDiv.innerHTML += `<div><strong>${data.name}:</strong> ${data.message}</div>`;
+      //     messagesDiv.scrollTop = messagesDiv.scrollHeight; // 스크롤을 가장 아래로 이동
+      // });
+
+      // // 전송 버튼 클릭 시 메시지 전송
+      // document.getElementById('sendButton').onclick = () => {
+      //     const messageInput = document.getElementById('messageInput');
+      //     const message = messageInput.value;
+      //     if (message) {
+      //         socket.emit('sendMessage', { name: 'playerName', message }); // 플레이어 이름을 설정하세요.
+      //         messageInput.value = ''; // 입력 필드 초기화
+      //     }
+      // };
+    </script>
+  </body>
+</html>

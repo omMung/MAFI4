@@ -10,102 +10,106 @@ import { ChatMafiaService } from './chat-mafia.service';
 import { CreateChatMafiaDto } from './dto/create-chat-mafia.dto';
 import { UpdateChatMafiaDto } from './dto/update-chat-mafia.dto';
 import { Server, Socket } from 'socket.io';
-import { RedisService } from 'src/redis/redis.service';
 import { ChatPermissionAtNightException } from 'src/common/exceptions/chats.exception';
-
+import { RedisService } from 'src/redis/redis.service';
 @WebSocketGateway({
   cors: { origin: 'http://localhost:3000' },
 })
-export class ChatMafiaGateway implements OnGatewayInit {
-  //constructor(private readonly chatMafiaService: ChatMafiaService) {}
-
+export class ChatMafiaGateway /*implements OnGatewayInit*/ {
   @WebSocketServer() server: Server;
+  //직업 구분 위해 클라이언트 선언
+  private clients: Map<string, { userId: number; role: string | string[] }> =
+    new Map();
 
-  //private mafiaPlayers: Set<string> = new Set(); // 마피아 플레이어 저장
-
-  constructor(private readonly redisService: RedisService) {} // RedisService 주입
-
-  afterInit(server: Server) {
-    console.log('채팅 서버 초기화');
-  }
-
+  //게임 시작 시 직업 받아두기
   handleConnection(client: Socket) {
+    const { userId, role } = client.handshake.query; // 클라이언트에서 전달받은 정보
+    this.clients.set(client.id, { userId: Number(userId), role });
     console.log(`유저 ${client.id} 접속`);
   }
 
   handleDisconnect(client: Socket) {
     console.log(`유저 ${client.id} 접속 해제`);
-    //this.mafiaPlayers.delete(client.id);
   }
 
-  @SubscribeMessage('sendMessage')
-  async handleMessage(client: any, payload: { name: string; message: string }) {
-    const { name, message } = payload;
+  //마피아에게 전송
+  broadcastToMafia(roomId: number, userId: number, message: string) {
+    const payload = { roomId, userId, message };
+    //마피아에 해당하는 클라이언트만 배열
+    const mafiaClients = Array.from(this.clients.entries())
+      .filter(([_, clientInfo]) => clientInfo.role === 'mafia')
+      .map(([socketId]) => socketId);
 
-    // 메시지 처리 로직
-    const isNight = true; //밤인지 낮인지 확인하는 로직 필요
-    const isAlived = true; //마피아가 생존했는지 확인 필요, 후에 분리 가능
-    const playerRole = await this.redisService.getToken(name); // Redis에서 플레이어 역할 가져오기
-
-    if (isAlived && isNight && playerRole === 'mafia') {
-      // 밤에 마피아 클라이언트에게만 메시지를 전송
-      const mafiaClients = this.getMafiaClients(); // 마피아 클라이언트 목록 가져오기
-      mafiaClients.forEach((mafiaClient) => {
-        mafiaClient.emit('receiveMessage', { name, message });
-      });
-    } else if (isAlived && !isNight) {
-      // 낮에 메시지를 보낼 수 있음
-      this.server.emit('receiveMessage', { name, message });
-    } else {
-      throw new ChatPermissionAtNightException(); //
-    }
+    //마피아들에게 채팅
+    mafiaClients.forEach((socketId) => {
+      this.server.to(socketId).emit('CHAT:MAFIA', payload);
+    });
   }
 
-  // 마피아 클라이언트 목록을 가져오는 메서드
-  private async getMafiaClients() {
-    const mafiaClients = [];
-
-    // 모든 클라이언트 소켓을 순회
-    for (const [_, socket] of this.server.sockets.sockets) {
-      const playerRole = await this.redisService.getToken(
-        socket.handshake.query.name,
-      );
-      if (playerRole === 'mafia') {
-        mafiaClients.push(socket);
-      }
-    }
-
-    return mafiaClients;
-  }
+  // broadcastToMafia(
+  //   roomId: number,
+  //   userId: number,
+  //   role: string,
+  //   message: string,
+  // ) {
+  //   const payload = { roomId, userId, message };
+  //   this.server.emit('CHAT:MAFIA', payload);
+  // }
 }
 
-//클라이언트 측 코드는 어디에? socket.io?
-// const socket = io('http://localhost:3000');
+//private mafiaPlayers: Set<string> = new Set(); // 마피아 플레이어 저장
+//constructor(private readonly chatMafiaService: ChatMafiaService) {}
 
-// // 마피아로 참여
-// socket.emit('joinMafia');
-
-// // 마피아 채팅
-// function sendMafiaMessage(message) {
-//     socket.emit('mafiaChat', message);
+// afterInit(server: Server) {
+//   console.log('채팅 서버 초기화');
 // }
 
-// // 마피아 메시지 수신
-// socket.on('mafiaMessage', (data) => {
-//     console.log(`마피아 메시지: ${data.sender}: ${data.message}`);
-// });
+// handleConnection(client: Socket) {
+//   console.log(`유저 ${client.id} 접속`);
+// }
 
-// // 마피아 참여 성공
-// socket.on('joinedMafia', (data) => {
-//     console.log(data.message);
-// });
+// handleDisconnect(client: Socket) {
+//   console.log(`유저 ${client.id} 접속 해제`);
+//   //this.mafiaPlayers.delete(client.id);
+// }
 
-// // 마피아 자리가 가득 찼을 때
-// socket.on('mafiaFull', (data) => {
-//     console.log(data.message);
-// });
+// @SubscribeMessage('sendMessage')
+// async handleMessage(client: Socket, payload: { name: string; message: string }) {
+//   const { name, message } = payload;
 
-// // 마피아가 아닐 때
-// socket.on('notMafia', (data) => {
-//     console.log(data.message);
-// });
+//   const isNight = true; // 밤인지 낮인지 확인하는 로직 필요
+//   const isAlived = true; // 마피아가 생존했는지 확인 필요
+
+//   try {
+//     const result = await this.chatMafiaService.handleMessage(name, message, isNight, isAlived);
+
+//     if (result.isMafia) {
+//       const mafiaClients = this.getMafiaClients();
+//       mafiaClients.forEach((mafiaClient) => {
+//         mafiaClient.emit('receiveMessage', result.message);
+//       });
+//     } else {
+//       this.server.emit('receiveMessage', result.message);
+//     }
+//   } catch (error) {
+//     // 예외 처리 로직 (예: 클라이언트에 오류 메시지 전송)
+//     console.error(error);
+//   }
+// }
+
+// // 마피아 클라이언트 목록을 가져오는 메서드
+// private async getMafiaClients() {
+//   const mafiaClients = [];
+
+//   // 모든 클라이언트 소켓을 순회
+//   for (const [_, socket] of this.server.sockets.sockets) {
+//     const playerRole = await this.redisService.getToken(
+//       socket.handshake.query.name,
+//     );
+//     if (playerRole === 'mafia') {
+//       mafiaClients.push(socket);
+//     }
+//   }
+
+//   return mafiaClients;
+// }
