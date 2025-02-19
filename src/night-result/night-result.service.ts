@@ -44,7 +44,7 @@ export class NightResultService {
     // Redis에 결과 저장
     // 저장 키는 'night_result:방아이디:밤번호' 형식이며, 여기서는 3600초(1시간) 동안 보관합니다.
     const key = `night_result:${roomId}:${nightNumber}`;
-    await this.redisService.setToken(key, JSON.stringify(payload), 3600);
+    await this.redisService.set(key, JSON.stringify(payload), 3600);
 
     // Redis에 저장한 후, 해당 방에 속한 모든 클라이언트에게 밤 결과 공지를 전파합니다.
     this.nightResultGateway.broadcastNotice(
