@@ -77,6 +77,7 @@ const typeOrmModuleOptions = {
     GamesModule,
     StatisticsModule,
     UsersAchievementsModule,
+    RoomsModule,
     LikesModule,
     ChatNoticeModule,
     ChatMafiaModule,
