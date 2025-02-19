@@ -8,4 +8,4 @@ import { RedisModule } from '../redis/redis.module';
   providers: [NightResultGateway, NightResultService],
   exports: [NightResultService],
 })
-export class GameModule {}
+export class NightResultModule {}

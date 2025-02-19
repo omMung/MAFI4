@@ -19,6 +19,8 @@ import { ChatNoticeModule } from './chat-notice/chat-notice.module';
 import { ChatMafiaModule } from './chat-mafia/chat-mafia.module';
 import { ChatUsersModule } from './chat-users/chat-users.module';
 import { NightResultModule } from './night-result/night-result.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -37,6 +39,7 @@ const typeOrmModuleOptions = {
   }),
   inject: [ConfigService],
 };
+
 @Global()
 @Module({
   imports: [
@@ -53,7 +56,6 @@ const typeOrmModuleOptions = {
         // ACCESS_EXPIRES_IN: Joi.string().default('1m'), // 액세스 만료시간 검증 추가
       }),
     }),
-    // EventEmitterModule.forRoot(), // 이벤트 시스템 활성화
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -65,11 +67,10 @@ const typeOrmModuleOptions = {
         },
       }),
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'dist', 'public'),
-    //   serveRoot: '/', //  루트 URL에서 정적 파일 제공
-    // }),
-
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/', // http://localhost:3000/ 로 접근 시 public 폴더의 파일 제공
+    }),
     UsersModule,
     PostsModule,
     CommentsModule,
