@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
+import { boolean } from 'joi';
 
 @Injectable()
 export class RoomsService {
@@ -73,25 +74,28 @@ export class RoomsService {
       for (const roomId of roomKeys) {
         if (roomId === 'room:id') continue;
         const roomInfo = await this.redis.hgetall(roomId);
+
         if (roomInfo) {
           rooms.push({
-            id: roomId,
+            roomId: parseInt(roomId.replace('room:', '')),
             roomName: roomInfo.roomName,
             status: roomInfo.status,
             playerCount: parseInt(roomInfo.playerCount, 10),
-            mode: 8,
+            mode: parseInt(roomInfo.mode),
             locked: roomInfo.locked === 'true',
           });
         }
       }
     } while (cursor !== '0'); // SCAN이 끝날 때까지 반복
 
+    // 방 id 기준 내림차 순
+    rooms.sort((a, b) => b.roomId - a.roomId);
+
     return { rooms };
   }
 
-  // 방 검색 조회
+  // 방 검색 조회(방 생성할 때 방이름 인덱스를 같이 생성-> 방검색을 방이름 인덱스로 검색하여 최적화 예정)
   async searchRooms(query: string) {
-    console.log('@@@@@@@', query);
     const rooms = [];
     let cursor = '0';
 
@@ -117,16 +121,19 @@ export class RoomsService {
           roomInfo.roomName.toLowerCase().includes(query.toLowerCase())
         ) {
           rooms.push({
-            id: roomId,
+            roomId: parseInt(roomId.replace('room:', '')),
             roomName: roomInfo.roomName,
             status: roomInfo.status,
             playerCount: parseInt(roomInfo.playerCount, 10),
-            mode: roomInfo.mode,
+            mode: parseInt(roomInfo.mode),
             locked: roomInfo.locked === 'true',
           });
         }
       }
     } while (cursor !== '0'); // SCAN이 끝날 때까지 반복
+
+    // 방 id 기준 내림차 순
+    rooms.sort((a, b) => b.roomId - a.roomId);
 
     return { rooms };
   }
