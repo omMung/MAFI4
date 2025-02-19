@@ -1,23 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
 import {
-  PostNotFoundException,
   CommentNotFoundException,
+  PostNotFoundException,
 } from 'src/common/exceptions/posts.exception';
+import { S3UploaderService } from 'src/s3uploader/s3uploader.service'; // Import S3UploaderService
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly postsRepository: PostsRepository) {}
+  constructor(
+    private readonly postsRepository: PostsRepository,
+    private readonly s3UploaderService: S3UploaderService, // Inject S3UploaderService
+  ) {}
 
-  // 게시글 생성
-  async create(userId: number, title: string, content: string, file?: string) {
-    // 컨트롤러단에 수정
+  async create(
+    userId: number,
+    title: string,
+    content: string,
+    file?: Express.Multer.File,
+  ) {
+    let s3Url: string | undefined = undefined; // Initialize s3Url
+
+    if (file) {
+      try {
+        s3Url = await this.s3UploaderService.uploadFile(file, 'posts');
+      } catch (uploadError) {
+        console.error('S3 Upload Error in Service:', uploadError);
+        throw new Error('File upload failed.'); // Or a more specific exception
+      }
+    }
 
     const result = await this.postsRepository.save(
       userId,
       title,
       content,
-      file,
+      s3Url,
     );
 
     if (!result) {
@@ -49,7 +66,7 @@ export class PostsService {
     const comments = await this.postsRepository.findAllCommentsById(id);
 
     if (!comments) {
-      throw new CommentNotFoundException();
+      throw new PostNotFoundException();
     }
 
     return {

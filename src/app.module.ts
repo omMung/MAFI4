@@ -67,12 +67,12 @@ const typeOrmModuleOptions = {
     //   rootPath: join(__dirname, '..', 'dist', 'public'),
     //   serveRoot: '/', //  루트 URL에서 정적 파일 제공
     // }),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60, // 제한 시간 (초 단위) - 60초 동안
-        limit: 10, // 요청 가능 횟수 - 10번까지만 허용
-      },
-    ]),
+    // ThrottlerModule.forRoot([
+    //   {
+    //     ttl: 60, // 제한 시간 (초 단위) - 60초 동안
+    //     limit: 10, // 요청 가능 횟수 - 10번까지만 허용
+    //   },
+    // ]),
     UsersModule,
     PostsModule,
     CommentsModule,

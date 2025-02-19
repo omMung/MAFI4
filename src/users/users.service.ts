@@ -13,19 +13,22 @@ import { UsersRepository } from './users.repository';
 import bcrypt from 'bcrypt';
 import {
   EmailConflictException,
+  InfoBadRequestException,
   UserNotFoundException,
 } from 'src/common/exceptions/users.exception';
+import { ConfigService } from '@nestjs/config';
+import { S3UploaderService } from 'src/s3uploader/s3uploader.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+    private readonly s3UploaderService: S3UploaderService,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const { email, password, nickName } = createUserDto;
-
+  async create(email: string, password: string, nickName: string) {
     // 이메일 중복 검사
     const existingUser = await this.usersRepository.findOneEmail(email);
     if (existingUser) {
@@ -33,7 +36,10 @@ export class UsersService {
     }
 
     // 비밀번호 암호화
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(
+      password,
+      +this.configService.get<string>('hashNumber'),
+    );
 
     // 이메일 인증 코드 생성
     const verifyCode = Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -63,6 +69,7 @@ export class UsersService {
     userId: number,
     password?: string,
     nickName?: string,
+    file?: Express.Multer.File,
     title?: string,
   ) {
     const user = await this.usersRepository.findOneUserId(userId);
@@ -72,7 +79,20 @@ export class UsersService {
     }
 
     if (password) {
-      password = await bcrypt.hash(password, 10);
+      password = await bcrypt.hash(
+        password,
+        +this.configService.get<string>('hashNumber'),
+      );
+    }
+    let s3Url: string | undefined = undefined; // Initialize s3Url
+
+    if (file) {
+      try {
+        s3Url = await this.s3UploaderService.uploadFile(file, 'profiles');
+      } catch (uploadError) {
+        console.error('S3 Upload Error in Service:', uploadError);
+        throw new Error('File upload failed.'); // Or a more specific exception
+      }
     }
 
     const updatedData = {
@@ -81,6 +101,7 @@ export class UsersService {
         password,
       }),
       ...(title && { title }),
+      ...(file && { s3Url }),
     };
 
     await this.usersRepository.updateUserInfo(userId, updatedData);

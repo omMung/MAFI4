@@ -26,13 +26,13 @@ export class AuthService {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER, // .env에서 설정
-        pass: process.env.EMAIL_PASS,
+        user: this.configService.get<string>('EMAIL_USER'), // .env에서 설정
+        pass: this.configService.get<string>('EMAIL_PASS'),
       },
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: this.configService.get<string>('EMAIL_USER'),
       to: email,
       subject: '이메일 인증 코드',
       text: `인증 코드: ${verifyCode}`,

@@ -9,35 +9,52 @@ import {
   UseInterceptors,
   UseGuards,
   Request,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { S3UploaderService } from 'src/s3uploader/s3uploader.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('posts')
 export class PostsController {
-  constructor(
-    private readonly postsService: PostsService,
-    private readonly s3UploaderService: S3UploaderService,
-  ) {}
+  constructor(private readonly postsService: PostsService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post() // 게시글 작성
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: function () {
-        this.s3UploaderService.getUploader('posts');
-      },
-    }),
-  )
-  create(@Request() req, @Body() createPostDto: CreatePostDto) {
+  @Post()
+  @UseInterceptors(FileInterceptor('file')) //파일 가로채기
+  async create(
+    @Request() req,
+    @Body() createPostDto: CreatePostDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|gif)$/ }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }), // 5MB 제한
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
     const { title, content } = createPostDto;
-    const file = req.file;
-    const user = req.user; // 인증과정에서 가져오도록 변경
-    return this.postsService.create(user.id, title, content, file);
+    const user = req.user;
+
+    try {
+      const result = await this.postsService.create(
+        user.id,
+        title,
+        content,
+        file,
+      );
+      return result;
+    } catch (err) {
+      console.error('Error creating post:', err);
+      throw err;
+    }
   }
 
   // @UseGuards(JwtAuthGuard)
