@@ -37,7 +37,12 @@ export class UsersService {
 
     // 이메일 인증 코드 생성
     const verifyCode = Math.random().toString(36).substr(2, 6).toUpperCase();
-
+    await this.usersRepository.create(
+      email,
+      hashedPassword,
+      nickName,
+      verifyCode,
+    );
     // 이메일 인증 코드 전송
     await this.authService.sendVerificationEmail(email, verifyCode);
 
