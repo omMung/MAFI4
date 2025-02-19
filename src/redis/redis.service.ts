@@ -40,4 +40,12 @@ export class RedisService {
   async deleteHash(key: string) {
     await this.client.del(key);
   }
+
+  async incr(key: string): Promise<number> {
+    return await this.client.incr(key);
+  }
+
+  async scan(cursor: number, pattern: string, count: number) {
+    return await this.client.scan(cursor, { match: pattern, count });
+  }
 }
