@@ -6,11 +6,14 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
-import { RoomsService2 } from './rooms.service';
-import { CreateRoomDto } from './dto/create-room.dto';
+import { RoomsService } from './rooms.service';
 import { Redis } from '@upstash/redis';
 import passport from 'passport';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CreateRoomDto } from './dto/create-room.dto';
 
 // upstash 에서 값 가져오기위한 임포트
 
@@ -27,42 +30,29 @@ import passport from 'passport';
 // }
 
 @Controller('rooms')
-export class RoomsController2 {
-  roomService2: RoomsService2;
+export class RoomsController {
+  roomService2: RoomsService;
+  roomsService: any;
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
-    roomService2: RoomsService2,
+    roomService2: RoomsService,
   ) {}
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async createRoom(@Body() createRoomDto: CreateRoomDto) {
-    const { hostId, roomName, mode, locked, password, playerCount } =
-      createRoomDto;
-    const createRoom = this.roomService2.createRoom(
-      hostId,
+  async createRoom(@Request() req, @Body() createRoomDto: CreateRoomDto) {
+    const userId = req.user.id;
+    const { roomName, mode, locked, password } = createRoomDto;
+
+    return await this.roomsService.createRoom(
+      userId,
       roomName,
       mode,
       locked,
       password,
-      playerCount,
     );
-    return createRoom;
   }
-
-  // 방 리스트 검색 API 레디스
   @Get()
-  async findRoomList2() {
-    const searchRoom = this.redisClient.get('keyWord');
-    return { message: '검색 결과 입니다.', date: searchRoom };
-    // @Post()
-    // async createRoom(@Body() roomData: any) {
-    //   console.log('@@@@@@@');
-    //   const userId = 1;
-    //   const roomName = '고수만';
-    //   const mode = 8;
-    //   const locked = true;
-    //   const password = '1@1@';
-
-    //   return await this.roomsService.createRoom();
-    // }
+  async getRooms() {
+    return await this.roomsService.getRoomList();
   }
 }
