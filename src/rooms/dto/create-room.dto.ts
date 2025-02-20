@@ -14,12 +14,12 @@ export class CreateRoomDto {
 
   @IsBoolean()
   @IsNotEmpty({ message: '비밀방 선택을 확인해주세요.' })
-  locked: Boolean;
+  locked: boolean;
 
   @IsString()
   @IsNotEmpty({ message: '비밀번호를 입력해주세요.' })
   password: string;
 
   @IsNumber()
-  playerCount: Number;
+  playerCount: number;
 }

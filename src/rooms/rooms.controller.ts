@@ -11,7 +11,6 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
-import { Redis } from '@upstash/redis';
 import passport from 'passport';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -32,12 +31,8 @@ import { CreateRoomDto } from './dto/create-room.dto';
 
 @Controller('rooms')
 export class RoomsController {
-  roomService2: RoomsService;
-  roomsService: any;
-  constructor(
-    @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
-    roomService2: RoomsService,
-  ) {}
+  roomsService: RoomsService;
+  constructor(roomsService: RoomsService) {}
   @UseGuards(JwtAuthGuard)
   @Post()
   async createRoom(@Request() req, @Body() createRoomDto: CreateRoomDto) {
