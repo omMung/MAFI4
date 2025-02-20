@@ -10,7 +10,6 @@ import {
   Request,
 } from '@nestjs/common';
 import { LikesService } from './likes.service';
-import { SwitchLikeDto } from './dto/switch-like.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('likes')
