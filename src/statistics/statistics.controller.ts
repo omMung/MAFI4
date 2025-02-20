@@ -1,19 +1,19 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
-// import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('user')
   async getUserRecordByUserId(@Request() req: any) {
-    // const userId = req.user;
-    const userId = 1;
+    const user = req.user;
     try {
-      const userRecord =
-        await this.statisticsService.getUserRecordByUserId(+userId);
+      const userRecord = await this.statisticsService.getUserRecordByUserId(
+        +user.id,
+      );
       return { data: userRecord };
     } catch (error) {
       // 에러 처리
@@ -22,14 +22,14 @@ export class StatisticsController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('job')
   async getUserRecordByJob(@Request() req: any) {
-    // const userId = req.user;
-    const userId = 1;
+    const user = req.user;
     try {
-      const userJobRecord =
-        await this.statisticsService.getUserRecordByJob(+userId);
+      const userJobRecord = await this.statisticsService.getUserRecordByJob(
+        +user.id,
+      );
       return { data: userJobRecord };
     } catch (error) {
       console.error('조회 에러:', error);

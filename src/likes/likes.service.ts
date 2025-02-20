@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateLikeDto } from './dto/create-like.dto';
-import { SwitchLikeDto } from './dto/switch-like.dto';
 import { LikeRepository } from './likes.repository';
-import { Like } from './entities/like.entity';
 
 @Injectable()
 export class LikesService {
@@ -15,9 +12,7 @@ export class LikesService {
   }
 
   // 좋아요 생성 또는 업데이트
-  async toggleLike(pId: number, switchLikeDto: SwitchLikeDto) {
-    const postId = pId;
-    const { userId } = switchLikeDto;
+  async toggleLike(postId: number, userId: number) {
     const existingLikes = await this.checkLike(userId, postId);
 
     if (existingLikes.length > 0) {
