@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
 import {
   CommentNotFoundException,
+  EditorNotMatched,
   PostNotFoundException,
 } from 'src/common/exceptions/posts.exception';
 import { S3UploaderService } from 'src/s3uploader/s3uploader.service'; // Import S3UploaderService
@@ -79,13 +80,16 @@ export class PostsService {
   }
 
   // 게시글 수정
-  async update(id: number, title: string, content: string) {
+  async update(id: number, title: string, content: string, userId: number) {
     const post = await this.postsRepository.findOnePostById(id);
 
     if (!post) {
       throw new PostNotFoundException();
     }
-
+    const editor = await this.matchPostUser(id, userId);
+    if (!editor) {
+      throw new EditorNotMatched();
+    }
     await this.postsRepository.updatePost(id, title, content);
 
     const editpost = await this.postsRepository.findOnePostById(id);
@@ -104,5 +108,17 @@ export class PostsService {
   async remove(id: number) {
     await this.postsRepository.removePost(id);
     return { message: '게시글이 삭제되었습니다' };
+  }
+
+  // 유저매칭 확인
+  async matchPostUser(postId: number, userId: number) {
+    const editor = await this.postsRepository.findOnePostById(postId);
+    if (!editor) {
+      throw new PostNotFoundException();
+    }
+    if (userId !== Number(editor)) {
+      throw new EditorNotMatched();
+    }
+    return true;
   }
 }

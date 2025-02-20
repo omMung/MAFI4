@@ -37,6 +37,15 @@ export class PostsRepository {
     return post;
   }
 
+  async findOnePostEditorById(id: number) {
+    const post = await this.postsRepository.findOne({
+      where: { id },
+      relations: ['user'],
+      select: ['user'],
+    });
+    return post?.user?.id; //확인 후 존재하면 넘겨주는 코드
+  }
+
   async findAllCommentsById(id: number) {
     const comments = await this.commentsRepository.find({
       where: { post: { id } },

@@ -57,23 +57,28 @@ export class PostsController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get() // 게시글 조회
   findAll() {
     return this.postsService.findAll();
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id') // 게시글 상세 조회
   findOne(@Param('id') id: string) {
     return this.postsService.findOne(+id);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch(':id') // 게시글 수정
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  update(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
     const { title, content } = updatePostDto;
-    return this.postsService.update(+id, title, content);
+    const user = req.user;
+    return this.postsService.update(+id, title, content, user.id);
   }
 
   // @UseGuards(JwtAuthGuard)
