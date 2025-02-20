@@ -105,7 +105,11 @@ export class PostsService {
   }
 
   // 게시글 삭제
-  async remove(id: number) {
+  async remove(id: number, userId: number) {
+    const editor = await this.matchPostUser(id, userId);
+    if (!editor) {
+      throw new EditorNotMatched();
+    }
     await this.postsRepository.removePost(id);
     return { message: '게시글이 삭제되었습니다' };
   }

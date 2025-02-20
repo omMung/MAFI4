@@ -81,9 +81,10 @@ export class PostsController {
     return this.postsService.update(+id, title, content, user.id);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Delete(':id') // 게시글 삭제
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+  remove(@Request() req, @Param('id') id: string) {
+    const user = req.user;
+    return this.postsService.remove(+id, user.id);
   }
 }
