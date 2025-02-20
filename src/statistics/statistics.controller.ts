@@ -1,16 +1,15 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
-// import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('user')
   async getUserRecordByUserId(@Request() req: any) {
-    // const userId = req.user;
-    const userId = 1;
+    const userId = req.user;
     try {
       const userRecord =
         await this.statisticsService.getUserRecordByUserId(+userId);
@@ -22,11 +21,10 @@ export class StatisticsController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('job')
   async getUserRecordByJob(@Request() req: any) {
-    // const userId = req.user;
-    const userId = 1;
+    const userId = req.user;
     try {
       const userJobRecord =
         await this.statisticsService.getUserRecordByJob(+userId);
