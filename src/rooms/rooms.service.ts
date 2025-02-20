@@ -1,67 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../redis/redis.service';
-import { v4 as uuidv4 } from 'uuid';
-import { RoomsRepository } from './rooms.repository';
-
-// @Injectable()
-// export class RoomsService {
-//   constructor(private readonly roomsRepository: RoomsRepository) {}
-
-//   async findRoomList(keyWord: Record<string, string | number>) {
-//     const roomList = await this.roomsRepository.findRoomList(keyWord);
-//     return roomList;
-//   }
-
-//   // findRoomList2() {
-//   //   return;
-//   // }
-// }
+import Redis from 'ioredis';
+import { boolean } from 'joi';
 
 @Injectable()
-export class RoomsService2 {
-  constructor(private readonly roomsRepository: RoomsRepository) {}
+export class RoomsService {
+  private redis: Redis;
 
+  constructor() {
+    this.redis = new Redis({
+      host: '43.200.181.46', // 🔹 Redis가 실행된 EC2의 프라이빗 IP
+      port: 6379, // 🔹 Redis 기본 포트
+      password: undefined, // 🔹 자체 Redis는 기본적으로 비밀번호 없음 (설정한 경우만 추가)
+      tls: undefined, // 🔹 자체 Redis는 TLS 사용 안 함 (제거)
+    });
+  }
+
+  // 방 생성(테스트용 형근님 코드로 바꿔야 함)
   async createRoom(
     hostId: number,
     roomName: string = 'xxx님의 방',
     mode: number = 8,
     locked: boolean = false,
-    password: string = '',
-    playerCount: number = 0,
-  ) {}
+    password: string = null,
+  ) {
+    const roomIdNumber = await this.redis.incr('room:id');
+    const roomId = `room:${roomIdNumber}`;
 
-  findRoomList2() {
-    return;
-  }
-
-  // async setHash(key: string, data: Record<string, any>) {
-  //   await this.client.hmset(key, data);
-  // }
-
-  // async getHash(key: string) {
-  //   return await this.client.hgetall(key);
-  // }
-
-  // async updateHash(key: string, field: string, value: any) {
-  //   await this.client.hset(key, { [field]: value });
-  // }
-
-  // async deleteHash(key: string) {
-  //   await this.client.del(key);
-  // }
-}
-// 양선님 코드
-// export class RoomsService {
-//   constructor(private readonly redisService: RedisService) {}
-
-  async createRoom() {
-    const roomId = `room:${uuidv4()}`; //UUID로 roomId 자동 생성
-    const userId = 1;
-    const roomName = '고수만';
-    const mode = 8;
-    const locked = true;
-    const password = '1@1@';
-
+    // 방 정보를 객체로 생성
     const roomInfo = {
       id: roomId,
       hostId: userId,
@@ -71,10 +36,105 @@ export class RoomsService2 {
       playerCount: 1, // 기본값: 1명
       locked: locked,
       password: password,
-      createdAt: new Date().toISOString(), // 현재 시간 저장
+      createdAt: new Date().toISOString(),
+      players: JSON.stringify([
+        { player1: { id: userId } },
+        { player2: { id: null } },
+        { player3: { id: null } },
+        { player4: { id: null } },
+        { player5: { id: null } },
+        { player6: { id: null } },
+        { player7: { id: null } },
+        { player8: { id: null } },
+      ]),
     };
 
-    await this.redisService.setHash(roomId, roomInfo);
+    // Redis에 방 정보 저장
+    await this.redis.hmset(roomId, roomInfo);
+
     return { message: '방 생성 완료', roomId, roomInfo };
+  }
+
+  //  모든 방 목록 조회
+  async getRoomList() {
+    const rooms = [];
+    let cursor = '0';
+
+    do {
+      // `SCAN`을 사용하여 `room:*` 패턴의 키를 부분적으로 가져옴
+      const [newCursor, roomKeys] = await this.redis.scan(
+        cursor,
+        'MATCH',
+        'room:*',
+        'COUNT',
+        10,
+      );
+      cursor = newCursor;
+
+      for (const roomId of roomKeys) {
+        if (roomId === 'room:id') continue;
+        const roomInfo = await this.redis.hgetall(roomId);
+
+        if (roomInfo) {
+          rooms.push({
+            roomId: parseInt(roomId.replace('room:', '')),
+            roomName: roomInfo.roomName,
+            status: roomInfo.status,
+            playerCount: parseInt(roomInfo.playerCount, 10),
+            mode: parseInt(roomInfo.mode),
+            locked: roomInfo.locked === 'true',
+          });
+        }
+      }
+    } while (cursor !== '0'); // SCAN이 끝날 때까지 반복
+
+    // 방 id 기준 내림차 순
+    rooms.sort((a, b) => b.roomId - a.roomId);
+
+    return { rooms };
+  }
+
+  // 방 검색 조회(방 생성할 때 방이름 인덱스를 같이 생성-> 방검색을 방이름 인덱스로 검색하여 최적화 예정)
+  async searchRooms(query: string) {
+    const rooms = [];
+    let cursor = '0';
+
+    do {
+      // room:* 검색 (COUNT 10은 한 번에 가져올 개수)
+      const [newCursor, roomKeys] = await this.redis.scan(
+        cursor,
+        'MATCH',
+        'room:*',
+        'COUNT',
+        10,
+      );
+      cursor = newCursor; // 커서 값 갱신
+
+      for (const roomId of roomKeys) {
+        if (roomId === 'room:id') continue;
+        const roomInfo = await this.redis.hgetall(roomId);
+
+        // 검색어(`query`)가 방 이름에 포함된 경우만 추가 (대소문자 무시)
+        if (
+          roomInfo &&
+          roomInfo.roomName &&
+          roomInfo.roomName.toLowerCase().includes(query.toLowerCase())
+        ) {
+          rooms.push({
+            roomId: parseInt(roomId.replace('room:', '')),
+            roomName: roomInfo.roomName,
+            status: roomInfo.status,
+            playerCount: parseInt(roomInfo.playerCount, 10),
+            mode: parseInt(roomInfo.mode),
+            locked: roomInfo.locked === 'true',
+          });
+        }
+      }
+    } while (cursor !== '0'); // SCAN이 끝날 때까지 반복
+
+    // 방 id 기준 내림차 순
+    rooms.sort((a, b) => b.roomId - a.roomId);
+
+    return { rooms };
   }
 }

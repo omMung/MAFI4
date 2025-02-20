@@ -8,6 +8,7 @@ import {
   Query,
   UseGuards,
   Request,
+  BadRequestException,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { Redis } from '@upstash/redis';
@@ -51,8 +52,20 @@ export class RoomsController {
       password,
     );
   }
+
+  // 모든 방 조회
   @Get()
   async getRooms() {
     return await this.roomsService.getRoomList();
+  }
+
+  // 방 검색 조회
+  @Get('search')
+  async searchRooms(@Query('roomName') query: string) {
+    if (!query || query.trim() === '') {
+      throw new BadRequestException('검색어를 확인해주세요');
+    }
+
+    return this.roomsService.searchRooms(query);
   }
 }
