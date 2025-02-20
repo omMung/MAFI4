@@ -25,6 +25,7 @@ export class RoomsService {
   ) {
     const roomIdNumber = await this.redis.incr('room:id');
     const roomId = `room:${roomIdNumber}`;
+    const userId = hostId;
 
     // 방 정보를 객체로 생성
     const roomInfo = {
