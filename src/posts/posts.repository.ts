@@ -41,7 +41,6 @@ export class PostsRepository {
     const post = await this.postsRepository.findOne({
       where: { id },
       relations: ['user'],
-      select: ['user'],
     });
     return post?.user?.id; //확인 후 존재하면 넘겨주는 코드
   }

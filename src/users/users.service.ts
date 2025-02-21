@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  ConflictException,
-  BadRequestException,
-  NotFoundException,
-  Inject,
-  forwardRef,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/services/auth.service';
@@ -84,14 +77,13 @@ export class UsersService {
         +this.configService.get<string>('hashNumber'),
       );
     }
-    let s3Url: string | undefined = undefined; // Initialize s3Url
-
+    let s3Url: string | undefined = undefined; //초기화
     if (file) {
       try {
         s3Url = await this.s3UploaderService.uploadFile(file, 'profiles');
       } catch (uploadError) {
         console.error('S3 Upload Error in Service:', uploadError);
-        throw new Error('File upload failed.'); // Or a more specific exception
+        throw new Error('File upload failed.'); //
       }
     }
 

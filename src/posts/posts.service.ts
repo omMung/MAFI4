@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
 import {
   CommentNotFoundException,
@@ -6,12 +6,14 @@ import {
   PostNotFoundException,
 } from 'src/common/exceptions/posts.exception';
 import { S3UploaderService } from 'src/s3uploader/s3uploader.service'; // Import S3UploaderService
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class PostsService {
   constructor(
     private readonly postsRepository: PostsRepository,
     private readonly s3UploaderService: S3UploaderService, // Inject S3UploaderService
+    private readonly dataSource: DataSource, //트랜잭션용 주입
   ) {}
 
   async create(
@@ -20,29 +22,43 @@ export class PostsService {
     content: string,
     file?: Express.Multer.File,
   ) {
-    let s3Url: string | undefined = undefined; // Initialize s3Url
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    if (file) {
-      try {
-        s3Url = await this.s3UploaderService.uploadFile(file, 'posts');
-      } catch (uploadError) {
-        console.error('S3 Upload Error in Service:', uploadError);
-        throw new Error('File upload failed.'); // Or a more specific exception
+    try {
+      let s3Url: string | undefined = undefined; // Initialize s3Url
+
+      if (file) {
+        try {
+          s3Url = await this.s3UploaderService.uploadFile(file, 'posts');
+        } catch (uploadError) {
+          throw new InternalServerErrorException('파일 업로드에 실패했습니다.');
+        }
       }
+
+      const result = await this.postsRepository.save(
+        userId,
+        title,
+        content,
+        s3Url,
+      );
+
+      if (!result) {
+        throw new PostNotFoundException();
+      }
+
+      await queryRunner.commitTransaction();
+      return { message: '게시글이 생성되었습니다', data: { result } };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      if (error instanceof PostNotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('게시글 생성에 실패했습니다.');
+    } finally {
+      await queryRunner.release();
     }
-
-    const result = await this.postsRepository.save(
-      userId,
-      title,
-      content,
-      s3Url,
-    );
-
-    if (!result) {
-      throw new PostNotFoundException();
-    }
-
-    return { message: '게시글이 생성되었습니다', data: { result } };
   }
 
   // 게시글 전체 조회
@@ -81,42 +97,70 @@ export class PostsService {
 
   // 게시글 수정
   async update(id: number, title: string, content: string, userId: number) {
-    const post = await this.postsRepository.findOnePostById(id);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    if (!post) {
-      throw new PostNotFoundException();
+    try {
+      const post = await this.postsRepository.findOnePostById(id);
+      if (!post) {
+        throw new PostNotFoundException();
+      }
+      const editor = await this.matchPostUser(id, userId);
+      if (!editor) {
+        throw new EditorNotMatched();
+      }
+      await this.postsRepository.updatePost(id, title, content);
+
+      const editpost = await this.postsRepository.findOnePostById(id);
+
+      await queryRunner.commitTransaction();
+      return {
+        message: '게시글이 수정되었습니다',
+        data: { editpost },
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      if (
+        error instanceof PostNotFoundException ||
+        error instanceof EditorNotMatched
+      ) {
+        throw error;
+      }
+      throw new InternalServerErrorException('게시글 수정에 실패했습니다.');
+    } finally {
+      await queryRunner.release();
     }
-    const editor = await this.matchPostUser(id, userId);
-    if (!editor) {
-      throw new EditorNotMatched();
-    }
-    await this.postsRepository.updatePost(id, title, content);
-
-    const editpost = await this.postsRepository.findOnePostById(id);
-
-    if (!editpost) {
-      throw new PostNotFoundException();
-    }
-
-    return {
-      message: '게시글이 수정되었습니다',
-      data: { editpost },
-    };
   }
 
   // 게시글 삭제
   async remove(id: number, userId: number) {
-    const editor = await this.matchPostUser(id, userId);
-    if (!editor) {
-      throw new EditorNotMatched();
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const editor = await this.matchPostUser(id, userId);
+      if (!editor) {
+        throw new EditorNotMatched();
+      }
+      await this.postsRepository.removePost(id);
+      await queryRunner.commitTransaction();
+      return { message: '게시글이 삭제되었습니다' };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      if (error instanceof EditorNotMatched) {
+        throw error;
+      }
+      throw new InternalServerErrorException('게시글 삭제에 실패했습니다.');
+    } finally {
+      await queryRunner.release();
     }
-    await this.postsRepository.removePost(id);
-    return { message: '게시글이 삭제되었습니다' };
   }
 
   // 유저매칭 확인
   async matchPostUser(postId: number, userId: number) {
-    const editor = await this.postsRepository.findOnePostById(postId);
+    const editor = await this.postsRepository.findOnePostEditorById(postId);
     if (!editor) {
       throw new PostNotFoundException();
     }
