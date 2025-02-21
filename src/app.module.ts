@@ -17,6 +17,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { LikesModule } from './likes/likes.module';
 import { S3UploaderModule } from './s3uploader/s3uploader.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { RoomsModule } from './rooms/rooms.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -81,6 +82,7 @@ const typeOrmModuleOptions = {
     GamesModule,
     StatisticsModule,
     UsersAchievementsModule,
+    RoomsModule,
     LikesModule,
     S3UploaderModule,
   ],

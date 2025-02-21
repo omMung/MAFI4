@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game, Role } from 'src/games/entities/game.entity';
+import { userRecordNotFoundException } from '../common/exceptions/statistics.exception';
 
 @Injectable()
 export class StatisticsService {
@@ -15,6 +16,10 @@ export class StatisticsService {
     const totalGames = await this.gameRepository.count({
       where: { user: { id: userId } },
     });
+
+    if (!totalGames) {
+      throw new userRecordNotFoundException();
+    }
 
     // 승리 횟수
     const wins = await this.gameRepository.count({
@@ -41,10 +46,10 @@ export class StatisticsService {
   }
 
   async getUserRecordByJob(userId: number) {
-    // Role enum의 값들을 배열로 추출합니다.
+    // Role enum의 값들을 배열로 추출합
     const roles = Object.values(Role);
 
-    // 각 직업별 결과를 저장할 객체를 초기화합니다.
+    // 각 직업별 결과를 저장할 객체를 초기화
     const result = {};
 
     for (const role of roles) {
@@ -52,6 +57,10 @@ export class StatisticsService {
       const totalGames = await this.gameRepository.count({
         where: { user: { id: userId }, role },
       });
+
+      if (!totalGames) {
+        throw new userRecordNotFoundException();
+      }
 
       // 해당 직업(role)에서 승리한 게임 수
       const wins = await this.gameRepository.count({
@@ -65,7 +74,7 @@ export class StatisticsService {
       const rawWinRate = totalGames ? (wins / totalGames) * 100 : 0;
       const winRate = Math.round(rawWinRate * 10) / 10;
 
-      // 결과 객체에 해당 직업별 데이터를 추가합니다.
+      // 결과 객체에 해당 직업별 데이터를 추가
       result[role] = { totalGames, wins, losses, winRate };
     }
     console.log(result);
