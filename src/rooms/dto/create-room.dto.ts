@@ -2,13 +2,13 @@ import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class CreateRoomDto {
   @IsString()
-  roomName: string;
+  roomName: string = '';
 
-  @IsNumber()
-  mode: number = 8;
+  @IsString()
+  mode: string = '8인용 모드';
 
   @IsBoolean()
-  locked: boolean;
+  locked: boolean = false;
 
   @IsString()
   password: string = '';

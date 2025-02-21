@@ -36,10 +36,12 @@ export class RoomsController {
   @Post()
   async createRoom(@Request() req, @Body() createRoomDto: CreateRoomDto) {
     const userId = req.user.id;
+    const userNickName = req.user.nickName;
     const { roomName, mode, locked, password } = createRoomDto;
 
     return await this.roomsService.createRoom(
       userId,
+      userNickName,
       roomName,
       mode,
       locked,

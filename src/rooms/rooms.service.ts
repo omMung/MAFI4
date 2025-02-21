@@ -13,13 +13,13 @@ import { RoomsRepository } from './rooms.repository';
 export class RoomsService {
   constructor(private readonly roomsRepository: RoomsRepository) {}
 
-  // 방 생성(테스트용 형근님 코드로 바꿔야 함)
   async createRoom(
     userId: number,
-    roomName: string = 'xxx님의 방',
-    mode: number = 8,
-    locked: boolean = false,
-    password: string = null,
+    roomName: string,
+    userNickName: string,
+    mode: string,
+    locked: boolean,
+    password: string,
   ) {
     const roomIdNumber = await this.roomsRepository.getRedis().incr('room:id');
     const roomId = `room:${roomIdNumber}`;
@@ -46,7 +46,9 @@ export class RoomsService {
     };
     const roomData = await this.roomsRepository.createRoom(roomId, roomInfo);
 
-    console.log('roomData', roomData);
+    if (roomName === '') {
+      roomName = `${userNickName}님의 방`;
+    }
     if (isNil(roomData.roomInfo.hostId)) throw new UserNotFoundException();
     if (roomData.roomInfo.mode !== 8) throw new roomModeException();
 
