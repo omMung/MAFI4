@@ -31,8 +31,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 
 @Controller('rooms')
 export class RoomsController {
-  roomsService: RoomsService;
-  constructor(roomsService: RoomsService) {}
+  constructor(private readonly roomsService: RoomsService) {}
   @UseGuards(JwtAuthGuard)
   @Post()
   async createRoom(@Request() req, @Body() createRoomDto: CreateRoomDto) {
@@ -49,18 +48,18 @@ export class RoomsController {
   }
 
   // 모든 방 조회
-  @Get()
-  async getRooms() {
-    return await this.roomsService.getRoomList();
-  }
+  // @Get()
+  // async getRooms() {
+  //   return await this.roomsService.getRoomList();
+  // }
 
-  // 방 검색 조회
-  @Get('search')
-  async searchRooms(@Query('roomName') query: string) {
-    if (!query || query.trim() === '') {
-      throw new BadRequestException('검색어를 확인해주세요');
-    }
+  // // 방 검색 조회
+  // @Get('search')
+  // async searchRooms(@Query('roomName') query: string) {
+  //   if (!query || query.trim() === '') {
+  //     throw new BadRequestException('검색어를 확인해주세요');
+  //   }
 
-    return this.roomsService.searchRooms(query);
-  }
+  //   return this.roomsService.searchRooms(query);
+  // }
 }

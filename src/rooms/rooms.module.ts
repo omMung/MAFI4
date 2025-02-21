@@ -8,6 +8,6 @@ import { RedisModule } from 'src/redis/redis.module';
 @Module({
   imports: [RedisModule],
   controllers: [RoomsController],
-  providers: [RoomsService, RoomsRepository],
+  providers: [RoomsService, RedisService, RoomsRepository],
 })
 export class RoomsModule {}

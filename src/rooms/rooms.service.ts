@@ -1,33 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import Redis from 'ioredis';
-import { boolean } from 'joi';
+import {
+  passwordException,
+  roomModeException,
+  roomPrivateRoomException,
+  roomPublicRoomException,
+} from 'src/common/exceptions/rooms.exception';
+import { UserNotFoundException } from 'src/common/exceptions/users.exception';
+import { isNil } from 'lodash';
+import { RoomsRepository } from './rooms.repository';
 
 @Injectable()
 export class RoomsService {
-  private redis: Redis;
-
-  constructor() {
-    this.redis = new Redis({
-      host: '43.200.181.46', // 🔹 Redis가 실행된 EC2의 프라이빗 IP
-      port: 6379, // 🔹 Redis 기본 포트
-      password: undefined, // 🔹 자체 Redis는 기본적으로 비밀번호 없음 (설정한 경우만 추가)
-      tls: undefined, // 🔹 자체 Redis는 TLS 사용 안 함 (제거)
-    });
-  }
+  constructor(private readonly roomsRepository: RoomsRepository) {}
 
   // 방 생성(테스트용 형근님 코드로 바꿔야 함)
   async createRoom(
-    hostId: number,
+    userId: number,
     roomName: string = 'xxx님의 방',
     mode: number = 8,
     locked: boolean = false,
     password: string = null,
   ) {
-    const roomIdNumber = await this.redis.incr('room:id');
+    const roomIdNumber = await this.roomsRepository.getRedis().incr('room:id');
     const roomId = `room:${roomIdNumber}`;
-    const userId = hostId;
-
-    // 방 정보를 객체로 생성
     const roomInfo = {
       id: roomId,
       hostId: userId,
@@ -49,11 +44,19 @@ export class RoomsService {
         { player8: { id: null } },
       ]),
     };
+    const roomData = await this.roomsRepository.createRoom(roomId, roomInfo);
 
-    // Redis에 방 정보 저장
-    await this.redis.hmset(roomId, roomInfo);
+    console.log('roomData', roomData);
+    if (isNil(roomData.roomInfo.hostId)) throw new UserNotFoundException();
+    if (roomData.roomInfo.mode !== 8) throw new roomModeException();
 
-    return { message: '방 생성 완료', roomId, roomInfo };
+    if (isNil(roomData.roomInfo.password)) throw new passwordException();
+    if (roomData.roomInfo.locked === true && password === '')
+      throw new roomPublicRoomException();
+    if (roomData.roomInfo.locked === false && password !== '')
+      throw new roomPrivateRoomException();
+
+    return roomData;
   }
 
   //  모든 방 목록 조회
@@ -63,18 +66,14 @@ export class RoomsService {
 
     do {
       // `SCAN`을 사용하여 `room:*` 패턴의 키를 부분적으로 가져옴
-      const [newCursor, roomKeys] = await this.redis.scan(
-        cursor,
-        'MATCH',
-        'room:*',
-        'COUNT',
-        10,
-      );
+      const [newCursor, roomKeys] = await this.roomsRepository
+        .getRedis()
+        .scan(cursor, 'MATCH', 'room:*', 'COUNT', 10);
       cursor = newCursor;
 
       for (const roomId of roomKeys) {
         if (roomId === 'room:id') continue;
-        const roomInfo = await this.redis.hgetall(roomId);
+        const roomInfo = await this.roomsRepository.getRedis().hgetall(roomId);
 
         if (roomInfo) {
           rooms.push({
@@ -102,18 +101,14 @@ export class RoomsService {
 
     do {
       // room:* 검색 (COUNT 10은 한 번에 가져올 개수)
-      const [newCursor, roomKeys] = await this.redis.scan(
-        cursor,
-        'MATCH',
-        'room:*',
-        'COUNT',
-        10,
-      );
+      const [newCursor, roomKeys] = await this.roomsRepository
+        .getRedis()
+        .scan(cursor, 'MATCH', 'room:*', 'COUNT', 10);
       cursor = newCursor; // 커서 값 갱신
 
       for (const roomId of roomKeys) {
         if (roomId === 'room:id') continue;
-        const roomInfo = await this.redis.hgetall(roomId);
+        const roomInfo = await this.roomsRepository.getRedis().hgetall(roomId);
 
         // 검색어(`query`)가 방 이름에 포함된 경우만 추가 (대소문자 무시)
         if (
