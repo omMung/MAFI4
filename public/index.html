@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>메인 페이지 - 로그인 & 게임 시작</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        text-align: center;
+      }
+      .container {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      input,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .hidden {
+        display: none;
+      }
+      .logout-btn {
+        background: red;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 로그인 화면 -->
+    <div class="container" id="loginScreen">
+      <h2>로그인</h2>
+      <input type="email" id="email" placeholder="이메일 입력" />
+      <input type="password" id="password" placeholder="비밀번호 입력" />
+      <button onclick="login()">로그인</button>
+      <p id="message"></p>
+    </div>
+
+    <!-- 게임 시작 화면 -->
+    <div class="container hidden" id="mainScreen">
+      <h2>환영합니다!</h2>
+      <button onclick="startGame()">게임 시작</button>
+      <button onclick="logout()" class="logout-btn">로그아웃</button>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', checkAuth);
+
+      function checkAuth() {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+          document.getElementById('loginScreen').classList.add('hidden');
+          document.getElementById('mainScreen').classList.remove('hidden');
+        }
+      }
+
+      function login() {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!email || !password) {
+          document.getElementById('message').textContent =
+            '이메일과 비밀번호를 입력하세요.';
+          return;
+        }
+
+        fetch('http://localhost:3000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+          credentials: 'include',
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error('로그인 실패');
+            return response
+              .json()
+              .then((data) => ({ data, headers: response.headers }));
+          })
+          .then(({ data, headers }) => {
+            const accessToken = headers.get('Authorization');
+            console.log('로그인 토큰', accessToken);
+            if (accessToken) {
+              localStorage.setItem('accessToken', accessToken);
+              document.getElementById('loginScreen').classList.add('hidden');
+              document.getElementById('mainScreen').classList.remove('hidden');
+            } else {
+              throw new Error('토큰이 없습니다.');
+            }
+          })
+          .catch((error) => {
+            document.getElementById('message').textContent =
+              '로그인 실패: ' + error.message;
+          });
+      }
+
+      function startGame() {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+          alert('로그인 후 게임을 시작할 수 있습니다.');
+          return;
+        }
+        window.location.href = 'game.html';
+      }
+
+      function logout() {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+          console.error('토큰이 없습니다.');
+          return;
+        }
+
+        fetch('http://localhost:3000/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            Authorization: token,
+          },
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error('로그아웃 실패');
+            return response.json();
+          })
+          .then(() => {
+            localStorage.removeItem('accessToken');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+          })
+          .catch((error) => {
+            console.error('로그아웃 오류:', error);
+          });
+      }
+    </script>
+  </body>
+</html>

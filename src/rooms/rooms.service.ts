@@ -13,14 +13,8 @@ import { RoomsRepository } from './rooms.repository';
 export class RoomsService {
   constructor(private readonly roomsRepository: RoomsRepository) {}
 
-  async createRoom(
-    userId: number,
-    roomName: string,
-    userNickName: string,
-    mode: string,
-    locked: boolean,
-    password: string,
-  ) {
+  async createRoom({ userId, userNickName, roomName, mode, locked, password }) {
+    console.log('roomName', roomName);
     const roomIdNumber = await this.roomsRepository.getRedis().incr('room:id');
     const roomId = `room:${roomIdNumber}`;
     const roomInfo = {
@@ -44,13 +38,14 @@ export class RoomsService {
         { player8: { id: null } },
       ]),
     };
+
     const roomData = await this.roomsRepository.createRoom(roomId, roomInfo);
 
     if (roomName === '') {
       roomName = `${userNickName}님의 방`;
     }
     if (isNil(roomData.roomInfo.hostId)) throw new UserNotFoundException();
-    if (roomData.roomInfo.mode !== 8) throw new roomModeException();
+    if (roomData.roomInfo.mode !== '8인용 모드') throw new roomModeException();
 
     if (isNil(roomData.roomInfo.password)) throw new passwordException();
     if (roomData.roomInfo.locked === true && password === '')
@@ -67,6 +62,7 @@ export class RoomsService {
     let cursor = '0';
 
     do {
+      console.log('scan');
       // `SCAN`을 사용하여 `room:*` 패턴의 키를 부분적으로 가져옴
       const [newCursor, roomKeys] = await this.roomsRepository
         .getRedis()
@@ -75,6 +71,8 @@ export class RoomsService {
 
       for (const roomId of roomKeys) {
         if (roomId === 'room:id') continue;
+        if (roomId.includes(':game')) continue;
+
         const roomInfo = await this.roomsRepository.getRedis().hgetall(roomId);
 
         if (roomInfo) {
@@ -83,7 +81,7 @@ export class RoomsService {
             roomName: roomInfo.roomName,
             status: roomInfo.status,
             playerCount: parseInt(roomInfo.playerCount, 10),
-            mode: parseInt(roomInfo.mode),
+            mode: roomInfo.mode,
             locked: roomInfo.locked === 'true',
           });
         }
@@ -105,11 +103,14 @@ export class RoomsService {
       // room:* 검색 (COUNT 10은 한 번에 가져올 개수)
       const [newCursor, roomKeys] = await this.roomsRepository
         .getRedis()
-        .scan(cursor, 'MATCH', 'room:*', 'COUNT', 10);
+        .scan(cursor, 'MATCH', 'room:[0-9]*', 'COUNT', 10);
       cursor = newCursor; // 커서 값 갱신
 
       for (const roomId of roomKeys) {
         if (roomId === 'room:id') continue;
+        if (roomId.includes(':game')) continue;
+
+        //특정 필드 값 조회 redis메서드 확인, 새로드 redis데이터구조 추가 필요
         const roomInfo = await this.roomsRepository.getRedis().hgetall(roomId);
 
         // 검색어(`query`)가 방 이름에 포함된 경우만 추가 (대소문자 무시)
@@ -123,7 +124,7 @@ export class RoomsService {
             roomName: roomInfo.roomName,
             status: roomInfo.status,
             playerCount: parseInt(roomInfo.playerCount, 10),
-            mode: parseInt(roomInfo.mode),
+            mode: roomInfo.mode,
             locked: roomInfo.locked === 'true',
           });
         }

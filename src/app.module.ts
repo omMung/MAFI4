@@ -16,6 +16,8 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LikesModule } from './likes/likes.module';
 import { RoomsModule } from './rooms/rooms.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -37,6 +39,10 @@ const typeOrmModuleOptions = {
 @Global()
 @Module({
   imports: [
+    // html 서빙
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
