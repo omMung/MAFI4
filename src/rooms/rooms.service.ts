@@ -55,6 +55,24 @@ export class RoomsService {
 
     return roomData;
   }
+  async findRoomById(roomId: string) {
+    const roomKey = `room:${roomId}`;
+
+    const roomData = await this.roomsRepository.getRedis().hgetall(roomKey);
+
+    if (!roomData || Object.keys(roomData).length === 0) {
+      return null;
+    }
+
+    return {
+      id: roomId,
+      roomName: roomData.roomName,
+      status: roomData.status,
+      playerCount: parseInt(roomData.playerCount, 10),
+      mode: roomData.mode,
+      locked: roomData.locked === 'true',
+    };
+  }
 
   //  모든 방 목록 조회
   async getRoomList() {
@@ -72,6 +90,7 @@ export class RoomsService {
       for (const roomId of roomKeys) {
         if (roomId === 'room:id') continue;
         if (roomId.includes(':game')) continue;
+        if (roomId.includes(':currentGameId')) continue;
 
         const roomInfo = await this.roomsRepository.getRedis().hgetall(roomId);
 
@@ -109,6 +128,7 @@ export class RoomsService {
       for (const roomId of roomKeys) {
         if (roomId === 'room:id') continue;
         if (roomId.includes(':game')) continue;
+        if (roomId.includes(':currentGameId')) continue;
 
         //특정 필드 값 조회 redis메서드 확인, 새로드 redis데이터구조 추가 필요
         const roomInfo = await this.roomsRepository.getRedis().hgetall(roomId);

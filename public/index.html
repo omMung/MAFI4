@@ -112,37 +112,42 @@
           alert('로그인 후 게임을 시작할 수 있습니다.');
           return;
         }
-        window.location.href = 'game.html';
+        window.location.href = 'http://localhost:3000/game.html';
       }
 
       function logout() {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-          console.error('토큰이 없습니다.');
-          return;
-        }
+        localStorage.removeItem('accessToken');
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('mainScreen').classList.add('hidden');
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+        // const token = localStorage.getItem('accessToken');
+        // if (!token) {
+        //   console.error('토큰이 없습니다.');
+        //   return;
+        // }
 
-        fetch('http://localhost:3000/api/auth/logout', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            Authorization: token,
-          },
-        })
-          .then((response) => {
-            if (!response.ok) throw new Error('로그아웃 실패');
-            return response.json();
-          })
-          .then(() => {
-            localStorage.removeItem('accessToken');
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('mainScreen').classList.add('hidden');
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-          })
-          .catch((error) => {
-            console.error('로그아웃 오류:', error);
-          });
+        // fetch('http://localhost:3000/api/auth/logout', {
+        //   method: 'POST',
+        //   credentials: 'include',
+        //   headers: {
+        //     Authorization: token,
+        //   },
+        // })
+        //   .then((response) => {
+        //     if (!response.ok) throw new Error('로그아웃 실패');
+        //     return response.json();
+        //   })
+        //   .then(() => {
+        //     localStorage.removeItem('accessToken');
+        //     document.getElementById('loginScreen').classList.remove('hidden');
+        //     document.getElementById('mainScreen').classList.add('hidden');
+        //     document.getElementById('email').value = '';
+        //     document.getElementById('password').value = '';
+        //   })
+        //   .catch((error) => {
+        //     console.error('로그아웃 오류:', error);
+        //   });
       }
     </script>
   </body>

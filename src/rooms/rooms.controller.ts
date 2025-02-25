@@ -58,16 +58,27 @@ export class RoomsController {
     return await this.roomsService.getRoomList();
   }
 
-  // GET /room/:roomId
+  // 특정 방 조회
+  @UseGuards(JwtAuthGuard)
   @Get(':roomId')
-  async getRoom(@Param('roomId') roomId: string, @Res() res: Response) {
-    try {
-      const filePath = join(__dirname, '../../public/game.html');
-      return res.sendFile(filePath);
-    } catch (error) {
-      // 방 정보가 없으면 에러 응답 처리 (예: 404 Not Found)
-      return res.status(404).send(`Room ${roomId} not found`);
+  async getRoom(@Param('roomId') roomId: string, @Request() req) {
+    const userId = req.user.id;
+
+    // 방 정보 조회
+    const room = await this.roomsService.findRoomById(roomId);
+    if (!room) {
+      return { message: `Room ${roomId} not found` };
     }
+
+    return {
+      userId: userId,
+      roomId: room.id,
+      roomName: room.roomName,
+      status: room.status,
+      playerCount: room.playerCount,
+      mode: room.mode,
+      locked: room.locked,
+    };
   }
 
   // 방 검색 조회
