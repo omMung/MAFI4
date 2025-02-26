@@ -23,3 +23,9 @@ export class passwordException extends NotFoundException {
     super('패스워드가 공백으로 전달되었습니다.');
   }
 }
+
+export class waitingRoomException extends NotFoundException {
+  constructor() {
+    super('여러 개의 대기방이 존재합니다.');
+  }
+}

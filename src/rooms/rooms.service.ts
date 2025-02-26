@@ -4,6 +4,7 @@ import {
   roomModeException,
   roomPrivateRoomException,
   roomPublicRoomException,
+  waitingRoomException,
 } from 'src/common/exceptions/rooms.exception';
 import { UserNotFoundException } from 'src/common/exceptions/users.exception';
 import { isNil } from 'lodash';
@@ -33,16 +34,7 @@ export class RoomsService {
       locked: locked,
       password: password,
       createdAt: new Date().toISOString(),
-      players: JSON.stringify([
-        { player1: { id: userId } },
-        { player2: { id: null } },
-        { player3: { id: null } },
-        { player4: { id: null } },
-        { player5: { id: null } },
-        { player6: { id: null } },
-        { player7: { id: null } },
-        { player8: { id: null } },
-      ]),
+      players: JSON.stringify([{ player1: { id: userId } }]),
     };
     const roomData = await this.roomsRepository.createRoom(roomId, roomInfo);
 
@@ -50,7 +42,7 @@ export class RoomsService {
       roomName = `${userNickName}님의 방`;
     }
     if (isNil(roomData.roomInfo.hostId)) throw new UserNotFoundException();
-    if (roomData.roomInfo.mode !== 8) throw new roomModeException();
+    if (roomData.roomInfo.mode !== '8인용') throw new roomModeException();
 
     if (isNil(roomData.roomInfo.password)) throw new passwordException();
     if (roomData.roomInfo.locked === true && password === '')
@@ -59,6 +51,26 @@ export class RoomsService {
       throw new roomPrivateRoomException();
 
     return roomData;
+  }
+
+  async getWaitingRoom() {
+    let cursor: string = '0';
+
+    // 대기방 조회
+    const waitingRoom = await this.roomsRepository.getWaitingRoom(cursor);
+
+    // 대기방이 없는 경우 룸생성 api 호출
+    if (isNil(waitingRoom)) {
+      return null; // 룸생성 api 호출 필요
+    }
+    // 대기방이 여러개 존재하는 경우 예외처리 > 대기방 랜덤입장
+    if (waitingRoom.length > 1) {
+      const randomRoom =
+        waitingRoom[Math.floor(Math.random() * (waitingRoom.length - 0.001))];
+      return randomRoom;
+    }
+
+    return waitingRoom;
   }
 
   //  모든 방 목록 조회

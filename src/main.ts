@@ -23,7 +23,7 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT ?? 3000);
-  console.log('🚀 서버 실행 중: http://localhost:3000');
+  await app.listen(process.env.PORT ?? 3001);
+  console.log('🚀 서버 실행 중: http://localhost:3001');
 }
 bootstrap();

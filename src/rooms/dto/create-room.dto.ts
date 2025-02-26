@@ -5,7 +5,7 @@ export class CreateRoomDto {
   roomName: string = '';
 
   @IsString()
-  mode: string = '8인용 모드';
+  mode: string = '8인용';
 
   @IsBoolean()
   locked: boolean = false;
