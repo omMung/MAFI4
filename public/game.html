@@ -37,13 +37,84 @@
       .room-item button:hover {
         background-color: #218838;
       }
+      /* ✅ 모달 스타일 */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 10;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-content {
+        background: white;
+        padding: 20px;
+        width: 300px;
+        border-radius: 8px;
+        text-align: left;
+      }
+      .modal-content h2 {
+        margin-bottom: 10px;
+      }
+      .modal-content input,
+      .modal-content select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .modal-content button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+      }
+      .close-btn {
+        background: red;
+        color: white;
+      }
+      .create-btn {
+        background: #007bff;
+        color: white;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <h2>게임 로비</h2>
       <button onclick="fetchRooms()">새로고침</button>
+      <button onclick="openModal()">방 생성</button>
+      <!-- ✅ 방 생성 버튼 -->
+
       <div class="room-list" id="roomList"></div>
+    </div>
+
+    <!-- ✅ 모달창 -->
+    <div id="roomModal" class="modal">
+      <div class="modal-content">
+        <h2>방 생성</h2>
+        <label>방 이름</label>
+        <input type="text" id="roomName" placeholder="방 이름 입력" />
+        <label>모드 선택</label>
+        <select id="roomMode">
+          <option value="6인용 모드">6인용 모드</option>
+          <option value="8인용 모드">8인용 모드</option>
+        </select>
+        <label><input type="checkbox" id="isPrivate" /> 비밀방</label>
+        <input
+          type="password"
+          id="roomPassword"
+          placeholder="비밀번호 입력 (선택)"
+          disabled
+        />
+        <button class="create-btn" onclick="createRoom()">방 생성</button>
+        <button class="close-btn" onclick="closeModal()">닫기</button>
+      </div>
     </div>
 
     <script>
@@ -127,6 +198,60 @@
           .catch((error) => {
             alert(error.message);
             console.error('방 입장 오류:', error);
+          });
+      }
+
+      // 모달 열기
+      function openModal() {
+        document.getElementById('roomModal').style.display = 'flex';
+      }
+
+      // 모달 닫기
+      function closeModal() {
+        document.getElementById('roomModal').style.display = 'none';
+      }
+
+      // 비밀방 체크 시 비밀번호 입력 활성화
+      document
+        .getElementById('isPrivate')
+        .addEventListener('change', function () {
+          document.getElementById('roomPassword').disabled = !this.checked;
+        });
+
+      // 방 생성
+      function createRoom() {
+        const token = localStorage.getItem('accessToken');
+        const roomName = document.getElementById('roomName').value.trim();
+        const mode = document.getElementById('roomMode').value;
+        const locked = document.getElementById('isPrivate').checked;
+        const password = locked
+          ? document.getElementById('roomPassword').value.trim()
+          : null;
+
+        if (!roomName) {
+          alert('방 이름을 입력해주세요.');
+          return;
+        }
+
+        fetch('http://localhost:3000/api/rooms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+          credentials: 'include',
+          body: JSON.stringify({ roomName, mode, locked, password }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert(`'${roomName}' 방이 생성되었습니다.`);
+            console.log('roominfo', data);
+            closeModal();
+            window.location.href = `http://localhost:3000/room.html?roomId=${data.roomId}`;
+          })
+          .catch((error) => {
+            alert(error.message);
+            console.error('방 생성 오류:', error);
           });
       }
     </script>

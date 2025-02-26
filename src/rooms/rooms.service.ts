@@ -18,7 +18,6 @@ export class RoomsService {
     const roomIdNumber = await this.roomsRepository.getRedis().incr('room:id');
     const roomId = `room:${roomIdNumber}`;
     const roomInfo = {
-      id: roomId,
       hostId: userId,
       roomName: roomName,
       status: '대기 중', // 기본값: 대기 중
@@ -27,19 +26,11 @@ export class RoomsService {
       locked: locked,
       password: password,
       createdAt: new Date().toISOString(),
-      players: JSON.stringify([
-        { player1: { id: userId } },
-        { player2: { id: null } },
-        { player3: { id: null } },
-        { player4: { id: null } },
-        { player5: { id: null } },
-        { player6: { id: null } },
-        { player7: { id: null } },
-        { player8: { id: null } },
-      ]),
+      // players: JSON.stringify([{ id: userId }]),
     };
 
     const roomData = await this.roomsRepository.createRoom(roomId, roomInfo);
+    console.log('roomData', roomData);
 
     if (roomName === '') {
       roomName = `${userNickName}님의 방`;
@@ -47,13 +38,13 @@ export class RoomsService {
     if (isNil(roomData.roomInfo.hostId)) throw new UserNotFoundException();
     if (roomData.roomInfo.mode !== '8인용 모드') throw new roomModeException();
 
-    if (isNil(roomData.roomInfo.password)) throw new passwordException();
+    // if (isNil(roomData.roomInfo.password)) throw new passwordException();
     if (roomData.roomInfo.locked === true && password === '')
       throw new roomPublicRoomException();
     if (roomData.roomInfo.locked === false && password !== '')
       throw new roomPrivateRoomException();
 
-    return roomData;
+    return roomIdNumber;
   }
   async findRoomById(roomId: string) {
     const roomKey = `room:${roomId}`;

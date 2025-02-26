@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateRoomDto {
   @IsString()
@@ -10,6 +10,7 @@ export class CreateRoomDto {
   @IsBoolean()
   locked: boolean = false;
 
+  @IsOptional() // password가 null이어도 허용
   @IsString()
-  password: string = '';
+  password?: string = ''; // 기본값 수정
 }

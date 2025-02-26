@@ -41,8 +41,7 @@ export class RoomsController {
     const userId = req.user.id;
     const userNickName = req.user.nickName;
     const { roomName, mode, locked, password } = createRoomDto;
-    console.log('컨트롤러:roomName', roomName);
-    return await this.roomsService.createRoom({
+    const roomId = await this.roomsService.createRoom({
       userId,
       userNickName,
       roomName,
@@ -50,6 +49,8 @@ export class RoomsController {
       locked,
       password,
     });
+    console.log('server->roomif', roomId);
+    return { userId, roomId };
   }
 
   // 모든 방 조회
