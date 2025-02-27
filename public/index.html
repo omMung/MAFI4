@@ -57,13 +57,21 @@
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', checkAuth);
+      document.addEventListener('DOMContentLoaded', () => {
+        localStorage.removeItem('accessToken'); // 🚀 강제 토큰 삭제
+        checkAuth(); // 🚀 UI 업데이트
+      });
 
       function checkAuth() {
         const token = localStorage.getItem('accessToken');
+        console.log('현재 토큰 상태:', token); // 🚀 디버깅용
+
         if (token) {
           document.getElementById('loginScreen').classList.add('hidden');
           document.getElementById('mainScreen').classList.remove('hidden');
+        } else {
+          document.getElementById('loginScreen').classList.remove('hidden');
+          document.getElementById('mainScreen').classList.add('hidden');
         }
       }
 
@@ -116,38 +124,15 @@
       }
 
       function logout() {
-        localStorage.removeItem('accessToken');
+        localStorage.removeItem('accessToken'); // 🚀 반드시 토큰 제거
+
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('mainScreen').classList.add('hidden');
+
         document.getElementById('email').value = '';
         document.getElementById('password').value = '';
-        // const token = localStorage.getItem('accessToken');
-        // if (!token) {
-        //   console.error('토큰이 없습니다.');
-        //   return;
-        // }
 
-        // fetch('http://localhost:3000/api/auth/logout', {
-        //   method: 'POST',
-        //   credentials: 'include',
-        //   headers: {
-        //     Authorization: token,
-        //   },
-        // })
-        //   .then((response) => {
-        //     if (!response.ok) throw new Error('로그아웃 실패');
-        //     return response.json();
-        //   })
-        //   .then(() => {
-        //     localStorage.removeItem('accessToken');
-        //     document.getElementById('loginScreen').classList.remove('hidden');
-        //     document.getElementById('mainScreen').classList.add('hidden');
-        //     document.getElementById('email').value = '';
-        //     document.getElementById('password').value = '';
-        //   })
-        //   .catch((error) => {
-        //     console.error('로그아웃 오류:', error);
-        //   });
+        location.reload(); // 🚀 강제 새로고침하여 UI 업데이트
       }
     </script>
   </body>

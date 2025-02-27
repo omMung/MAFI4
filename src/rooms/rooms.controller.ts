@@ -59,7 +59,16 @@ export class RoomsController {
     return await this.roomsService.getRoomList();
   }
 
-  // 특정 방 조회
+  // 방 검색 조회
+  @Get('search')
+  async searchRooms(@Query('roomName') query: string) {
+    if (!query || query.trim() === '') {
+      throw new BadRequestException('검색어를 확인해주세요');
+    }
+
+    return this.roomsService.searchRooms(query);
+  }
+  // 방 입장할 때, userId, room정보 응답
   @UseGuards(JwtAuthGuard)
   @Get(':roomId')
   async getRoom(@Param('roomId') roomId: string, @Request() req) {
@@ -76,19 +85,8 @@ export class RoomsController {
       roomId: room.id,
       roomName: room.roomName,
       status: room.status,
-      playerCount: room.playerCount,
       mode: room.mode,
       locked: room.locked,
     };
-  }
-
-  // 방 검색 조회
-  @Get('search')
-  async searchRooms(@Query('roomName') query: string) {
-    if (!query || query.trim() === '') {
-      throw new BadRequestException('검색어를 확인해주세요');
-    }
-
-    return this.roomsService.searchRooms(query);
   }
 }

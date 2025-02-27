@@ -323,7 +323,12 @@
         });
 
         socket.on('error', function (data) {
-          alert('게임 에러: ' + data.message);
+          if (data.message === '방 최대 인원에 도달했습니다.') {
+            alert('방 최대 인원에 도달했습니다. 로비로 이동합니다.');
+            window.location.href = 'http://localhost:3000/game.html';
+          } else {
+            alert('게임 에러: ' + data.message);
+          }
         });
 
         // 추가된 부분: gameEnd 이벤트 핸들러 등록

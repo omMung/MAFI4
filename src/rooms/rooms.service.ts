@@ -26,7 +26,7 @@ export class RoomsService {
       locked: locked,
       password: password,
       createdAt: new Date().toISOString(),
-      // players: JSON.stringify([{ id: userId }]),
+      players: JSON.stringify([]),
     };
 
     const roomData = await this.roomsRepository.createRoom(roomId, roomInfo);
@@ -58,7 +58,7 @@ export class RoomsService {
       id: roomId,
       roomName: roomData.roomName,
       status: roomData.status,
-      playerCount: parseInt(roomData.playerCount, 10),
+      // playerCount: parseInt(roomData.playerCount, 10),
       mode: roomData.mode,
       locked: roomData.locked === 'true',
     };
@@ -89,7 +89,7 @@ export class RoomsService {
             roomId: parseInt(roomId.replace('room:', '')),
             roomName: roomInfo.roomName,
             status: roomInfo.status,
-            playerCount: parseInt(roomInfo.playerCount, 10),
+            playerCount: JSON.parse(roomInfo.players).length,
             mode: roomInfo.mode,
             locked: roomInfo.locked === 'true',
           });
@@ -133,7 +133,7 @@ export class RoomsService {
             roomId: parseInt(roomId.replace('room:', '')),
             roomName: roomInfo.roomName,
             status: roomInfo.status,
-            playerCount: parseInt(roomInfo.playerCount, 10),
+            playerCount: JSON.parse(roomInfo.players).length,
             mode: roomInfo.mode,
             locked: roomInfo.locked === 'true',
           });

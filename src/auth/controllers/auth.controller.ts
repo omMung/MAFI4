@@ -55,6 +55,7 @@ export class AuthController {
   // 리프레시 토큰 API
   @Post('refresh')
   async refreshToken(@Req() req: Request, @Res() res: Response) {
+    console.log('리플레쉬');
     const data = await this.authService.refreshToken(req);
     const { accessToken, refreshToken } = data;
     res.setHeader('Authorization', `Bearer ${accessToken}`);
@@ -68,6 +69,7 @@ export class AuthController {
     });
     return res.json({
       message: '리프레시 토큰 -> 액세스 토큰 재발급 되었습니다.',
+      accessToken,
     });
   }
 }
