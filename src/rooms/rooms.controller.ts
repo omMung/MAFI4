@@ -49,7 +49,7 @@ export class RoomsController {
       locked,
       password,
     });
-    console.log('server->roomif', roomId);
+
     return { userId, roomId };
   }
 

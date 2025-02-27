@@ -30,19 +30,18 @@ export class RoomsService {
     };
 
     const roomData = await this.roomsRepository.createRoom(roomId, roomInfo);
-    console.log('roomData', roomData);
 
-    if (roomName === '') {
-      roomName = `${userNickName}님의 방`;
-    }
-    if (isNil(roomData.roomInfo.hostId)) throw new UserNotFoundException();
-    if (roomData.roomInfo.mode !== '8인용 모드') throw new roomModeException();
+    // if (roomName === '') {
+    //   roomName = `${userNickName}님의 방`;
+    // }
+    // if (isNil(roomData.roomInfo.hostId)) throw new UserNotFoundException();
+    // if (roomData.roomInfo.mode !== '8인용 모드') throw new roomModeException();
 
-    // if (isNil(roomData.roomInfo.password)) throw new passwordException();
-    if (roomData.roomInfo.locked === true && password === '')
-      throw new roomPublicRoomException();
-    if (roomData.roomInfo.locked === false && password !== '')
-      throw new roomPrivateRoomException();
+    // // if (isNil(roomData.roomInfo.password)) throw new passwordException();
+    // if (roomData.roomInfo.locked === true && password === '')
+    //   throw new roomPublicRoomException();
+    // if (roomData.roomInfo.locked === false && password !== '')
+    //   throw new roomPrivateRoomException();
 
     return roomIdNumber;
   }

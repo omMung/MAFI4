@@ -188,7 +188,8 @@
           credentials: 'include',
         })
           .then((response) => {
-            if (!response.ok) throw new Error('방 입장 실패');
+            if (!response.ok)
+              throw new Error('방 입장 실패! 로그인 상태를 확인해주세요.');
             return response.json();
           })
           .then((data) => {
@@ -245,7 +246,6 @@
           .then((response) => response.json())
           .then((data) => {
             alert(`'${roomName}' 방이 생성되었습니다.`);
-            console.log('roominfo', data);
             closeModal();
             window.location.href = `http://localhost:3000/room.html?roomId=${data.roomId}`;
           })
