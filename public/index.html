@@ -55,7 +55,7 @@
       <button onclick="startGame()">게임 시작</button>
       <button onclick="logout()" class="logout-btn">로그아웃</button>
     </div>
-
+    <script src="./js/config.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('accessToken'); // 🚀 강제 토큰 삭제
@@ -85,7 +85,7 @@
           return;
         }
 
-        fetch('http://localhost:3000/api/auth/login', {
+        fetch(`${CONFIG.API_BASE_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -120,7 +120,7 @@
           alert('로그인 후 게임을 시작할 수 있습니다.');
           return;
         }
-        window.location.href = 'http://localhost:3000/game.html';
+        window.location.href = `${CONFIG.API_BASE_URL}/game.html`;
       }
 
       function logout() {

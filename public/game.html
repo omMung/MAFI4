@@ -198,12 +198,13 @@
       function fetchRooms() {
         let token = localStorage.getItem('accessToken');
 
-        fetch('http://localhost:3000/api/rooms', {
+        fetch(`${CONFIG.API_BASE_URL}/api/rooms`, {
           method: 'GET',
           headers: { Authorization: token },
           credentials: 'include',
         })
           .then((response) => {
+            g;
             if (response.status === 401) {
               console.log(
                 '🔄 방 목록 조회 중 액세스 토큰 만료됨. 리프레시 시도',
@@ -211,7 +212,7 @@
 
               // ✅ refresh 후 최신 토큰으로 다시 요청
               return refreshAccessToken().then((newToken) => {
-                return fetch('http://localhost:3000/api/rooms', {
+                return fetch(`${CONFIG.API_BASE_URL}/api/rooms`, {
                   method: 'GET',
                   headers: { Authorization: newToken },
                   credentials: 'include',
@@ -245,7 +246,7 @@
       }
 
       function refreshAccessToken() {
-        return fetch('http://localhost:3000/api/auth/refresh', {
+        return fetch(`${CONFIG.API_BASE_URL}/api/auth/refresh`, {
           method: 'POST',
           credentials: 'include', // ✅ 쿠키 포함하여 요청
         })
@@ -283,7 +284,7 @@
         }
 
         fetch(
-          `http://localhost:3000/api/rooms/search?roomName=${encodeURIComponent(query)}`,
+          `${CONFIG.API_BASE_URL}/api/rooms/search?roomName=${encodeURIComponent(query)}`,
           {
             method: 'GET',
           },
@@ -300,7 +301,7 @@
       function joinRoom(roomId) {
         let accessToken = localStorage.getItem('accessToken');
 
-        fetch(`http://localhost:3000/api/rooms/${roomId}`, {
+        fetch(`${CONFIG.API_BASE_URL}/api/rooms/${roomId}`, {
           method: 'GET',
           headers: { Authorization: accessToken },
           credentials: 'include',
@@ -312,7 +313,7 @@
               // ✅ refresh 후 최신 토큰으로 다시 요청
               return refreshAccessToken().then((newToken) => {
                 console.log('🔄 새 accessToken으로 재요청:', newToken);
-                return fetch(`http://localhost:3000/api/rooms/${roomId}`, {
+                return fetch(`${CONFIG.API_BASE_URL}/api/rooms/${roomId}`, {
                   method: 'GET',
                   headers: { Authorization: newToken }, // ✅ 최신 토큰 적용
                   credentials: 'include',
@@ -325,7 +326,7 @@
           })
           .then((data) => {
             localStorage.setItem('userId', data.userId);
-            window.location.href = `http://localhost:3000/room.html?roomId=${roomId}`;
+            window.location.href = `${CONFIG.API_BASE_URL}/room.html?roomId=${roomId}`;
           })
           .catch((error) => {
             alert(error.message);
@@ -336,7 +337,7 @@
       function logout() {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        window.location.href = 'http://localhost:3000/index.html';
+        window.location.href = `${CONFIG.API_BASE_URL}/index.html`;
       }
       function openModal() {
         document.getElementById('roomModal').style.display = 'flex';
@@ -366,7 +367,7 @@
           return;
         }
 
-        fetch('http://localhost:3000/api/rooms', {
+        fetch(`${CONFIG.API_BASE_URL}/api/rooms`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

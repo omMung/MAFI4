@@ -270,7 +270,7 @@
       var roomId = getRoomIdFromUrl(); // roomId 추출
       if (!roomId) {
         alert('올바른 방 ID가 없습니다.');
-        window.location.href = 'http://localhost:3000/game.html'; //  방 ID 없으면 로비로 이동
+        window.location.href = `${CONFIG.API_BASE_URL}/game.html`; //  방 ID 없으면 로비로 이동
       }
 
       document.getElementById('roomTitle').textContent =
@@ -293,13 +293,13 @@
 
         if (!userId) {
           alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
-          window.location.href = 'http:localhost:3000/index.html';
+          window.location.href = `${CONFIG.API_BASE_URL}/index.html`;
           return; //
         }
 
         currentUserId = userId;
 
-        socket = io('http://localhost:3001/room', {
+        socket = io(`${CONFIG.GAME_BASE_URL}/room`, {
           auth: { roomId: roomId, userId: currentUserId },
         });
 
@@ -379,7 +379,7 @@
         socket.on('error', function (data) {
           if (data.message === '방 최대 인원에 도달했습니다.') {
             alert('방 최대 인원에 도달했습니다. 로비로 이동합니다.');
-            window.location.href = 'http://localhost:3000/game.html';
+            window.location.href = `${CONFIG.API_BASE_URL}/game.html`;
           } else {
             alert('게임 에러: ' + data.message);
           }
