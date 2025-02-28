@@ -278,7 +278,7 @@
 
       var isVotingPhase = false;
       var currentUserId;
-      var sender; // 발신자 정보
+      var sender = { id: Number, role: String, isAlive: Boolean }; // 발신자 정보
       var socket; // 단일 소켓
       var roomInfo; // 최신 방 정보
       var selectedTargetId = null; // 1차 투표 시 선택된 대상의 ID
