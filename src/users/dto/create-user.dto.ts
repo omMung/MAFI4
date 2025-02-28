@@ -14,5 +14,5 @@ export class CreateUserDto {
   nickName: string;
 
   @IsString()
-  title: string;
+  title?: string;
 }
