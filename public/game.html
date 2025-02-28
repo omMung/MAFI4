@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>게임 로비</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        text-align: center;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .room-list {
+        margin-top: 20px;
+      }
+      .room-item {
+        display: flex;
+        flex-direction: column; /* ✅ 방 정보를 세로 정렬 */
+        align-items: flex-start; /* ✅ 왼쪽 정렬 */
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 5px;
+        background: #f9f9f9;
+      }
+
+      .room-item span {
+        font-weight: bold;
+        margin-bottom: 5px; /* ✅ 방 이름과 상태 정보 간격 조절 */
+      }
+
+      .room-item .room-info {
+        font-size: 14px;
+        color: #555;
+      }
+
+      .room-item button {
+        align-self: flex-end; /* ✅ 버튼을 오른쪽 정렬 */
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        margin-top: 5px; /* ✅ 버튼과 텍스트 간격 조절 */
+      }
+
+      .room-item button:hover {
+        background-color: #218838;
+      }
+
+      /* ✅ 모달 스타일 */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 10;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 20px;
+        width: 300px;
+        border-radius: 8px;
+        text-align: left;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-content h2 {
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .modal-content input,
+      .modal-content select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* 비밀방 왼쪽, 체크박스 오른쪽 */
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 5px 0; /* 간격 조절 */
+      }
+
+      .checkbox-container label {
+        font-size: 16px;
+        font-weight: bold;
+        white-space: nowrap; /* ✅ 두 줄로 안 나뉘게 설정 */
+      }
+
+      .checkbox-container input {
+        transform: scale(1.2); /* 체크박스 크기 조절 */
+        margin-left: 10px; /* 간격 조정 */
+      }
+
+      .modal-content button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+      }
+
+      .close-btn {
+        background: red;
+        color: white;
+      }
+
+      .create-btn {
+        background: #007bff;
+        color: white;
+      }
+
+      .create-btn:hover {
+        background: #0056b3;
+      }
+
+      .close-btn:hover {
+        background: darkred;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>게임 로비</h2>
+      <input
+        type="text"
+        id="searchRoom"
+        placeholder="방 이름 검색..."
+        oninput="searchRooms()"
+      />
+
+      <button onclick="openModal()">방 생성</button>
+      <button onclick="fetchRooms()">새로고침</button>
+      <button onclick="logout()">로그아웃</button>
+      <!-- ✅ 방 생성 모달 -->
+      <div id="roomModal" class="modal">
+        <div class="modal-content">
+          <h2>방 생성</h2>
+          <label>방 이름</label>
+          <input type="text" id="roomName" placeholder="방 이름 입력" />
+
+          <label>모드 선택</label>
+          <select id="roomMode">
+            <option value="6인용 모드">6인용 모드</option>
+            <option value="8인용 모드">8인용 모드</option>
+          </select>
+          <div class="checkbox-container">
+            <label for="isPrivate">비밀방</label>
+            <input type="checkbox" id="isPrivate" />
+          </div>
+          <input
+            type="password"
+            id="roomPassword"
+            placeholder="비밀번호 입력 (선택)"
+            disabled
+          />
+
+          <button class="create-btn" onclick="createRoom()">방 생성</button>
+          <button class="close-btn" onclick="closeModal()">닫기</button>
+        </div>
+      </div>
+      <div class="room-list" id="roomList"></div>
+    </div>
+    <script src="./js/config.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        checkTokenExpiration();
+        fetchRooms();
+      });
+
+      function checkTokenExpiration() {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+          alert('로그인이 필요합니다.');
+          window.location.href = 'index.html';
+          return;
+        }
+      }
+
+      function fetchRooms() {
+        let token = localStorage.getItem('accessToken');
+
+        fetch(`${CONFIG.API_BASE_URL}/api/rooms`, {
+          method: 'GET',
+          headers: { Authorization: token },
+          credentials: 'include',
+        })
+          .then((response) => {
+            if (response.status === 401) {
+              console.log(
+                '🔄 방 목록 조회 중 액세스 토큰 만료됨. 리프레시 시도',
+              );
+
+              // ✅ refresh 후 최신 토큰으로 다시 요청
+              return refreshAccessToken().then((newToken) => {
+                return fetch(`${CONFIG.API_BASE_URL}/api/rooms`, {
+                  method: 'GET',
+                  headers: { Authorization: newToken },
+                  credentials: 'include',
+                });
+              });
+            } else if (!response.ok) {
+              throw new Error('서버 오류');
+            }
+            return response.json();
+          })
+          .then((data) => updateRoomList(data.rooms))
+          .catch((error) =>
+            console.error('방 목록을 가져오는 중 오류 발생:', error),
+          );
+      }
+
+      function updateRoomList(rooms) {
+        const roomList = document.getElementById('roomList');
+        roomList.innerHTML = '';
+
+        rooms.forEach((room) => {
+          const roomElement = document.createElement('div');
+          roomElement.className = 'room-item';
+          roomElement.innerHTML = `
+      <span>${room.roomName}</span>
+      <div class="room-info">${room.status} | 인원 ${room.playerCount}/8</div>
+      <button onclick="joinRoom(${room.roomId})">입장</button>
+    `;
+          roomList.appendChild(roomElement);
+        });
+      }
+
+      function refreshAccessToken() {
+        return fetch(`${CONFIG.API_BASE_URL}/api/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include', // ✅ 쿠키 포함하여 요청
+        })
+          .then((response) => {
+            console.log('✅ response:', response); // 🔍 디버깅 로그 추가
+            if (!response.ok) throw new Error('리프레시 토큰 만료');
+            return response.json();
+          })
+          .then((data) => {
+            console.log('✅ 받은 데이터:', data); // 🔍 리턴된 데이터 확인
+
+            if (!data.accessToken) {
+              throw new Error('새로운 액세스 토큰을 받지 못했습니다.');
+            }
+
+            console.log('✅ 새로운 accessToken:', data.accessToken);
+            localStorage.setItem('accessToken', data.accessToken); // 🚀 새로운 액세스 토큰 저장
+
+            return data.accessToken; // 🚀 반환하여 즉시 사용
+          })
+          .catch((error) => {
+            console.error('❌ 리프레시 토큰 만료:', error);
+            if (confirm('세션이 만료되었습니다. 다시 로그인하시겠습니까?')) {
+              logout(); // ✅ 사용자가 확인 버튼을 누르면 로그아웃 실행
+            }
+          });
+      }
+
+      function searchRooms() {
+        const query = document.getElementById('searchRoom').value.trim();
+
+        if (query === '') {
+          fetchRooms(); // 검색어가 없으면 전체 방 목록 다시 가져오기
+          return;
+        }
+
+        fetch(
+          `${CONFIG.API_BASE_URL}/api/rooms/search?roomName=${encodeURIComponent(query)}`,
+          {
+            method: 'GET',
+          },
+        )
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            updateRoomList(data.rooms); // 검색 결과 업데이트
+          })
+          .catch((error) => console.error('방 검색 오류:', error));
+      }
+
+      function joinRoom(roomId) {
+        let accessToken = localStorage.getItem('accessToken');
+
+        fetch(`${CONFIG.API_BASE_URL}/api/rooms/${roomId}`, {
+          method: 'GET',
+          headers: { Authorization: accessToken },
+          credentials: 'include',
+        })
+          .then((response) => {
+            if (response.status === 401) {
+              console.log('🔄 방 입장 중 액세스 토큰 만료됨. 리프레시 시도');
+
+              // ✅ refresh 후 최신 토큰으로 다시 요청
+              return refreshAccessToken().then((newToken) => {
+                console.log('🔄 새 accessToken으로 재요청:', newToken);
+                return fetch(`${CONFIG.API_BASE_URL}/api/rooms/${roomId}`, {
+                  method: 'GET',
+                  headers: { Authorization: newToken }, // ✅ 최신 토큰 적용
+                  credentials: 'include',
+                });
+              });
+            } else if (!response.ok) {
+              throw new Error('로그인 상태를 확인해주세요.');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            localStorage.setItem('userId', data.userId);
+            window.location.href = `${CONFIG.API_BASE_URL}/room.html?roomId=${roomId}`;
+          })
+          .catch((error) => {
+            alert(error.message);
+            console.error('방 입장 오류:', error);
+          });
+      }
+
+      function logout() {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = `${CONFIG.API_BASE_URL}/index.html`;
+      }
+      function openModal() {
+        document.getElementById('roomModal').style.display = 'flex';
+      }
+
+      function closeModal() {
+        document.getElementById('roomModal').style.display = 'none';
+      }
+
+      document
+        .getElementById('isPrivate')
+        .addEventListener('change', function () {
+          document.getElementById('roomPassword').disabled = !this.checked;
+        });
+
+      function createRoom() {
+        const token = localStorage.getItem('accessToken');
+        const roomName = document.getElementById('roomName').value.trim();
+        const mode = document.getElementById('roomMode').value;
+        const locked = document.getElementById('isPrivate').checked;
+        const password = locked
+          ? document.getElementById('roomPassword').value.trim()
+          : null;
+
+        if (!roomName) {
+          alert('방 이름을 입력해주세요.');
+          return;
+        }
+
+        fetch(`${CONFIG.API_BASE_URL}/api/rooms`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+          credentials: 'include',
+          body: JSON.stringify({ roomName, mode, locked, password }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert(`'${roomName}' 방이 생성되었습니다.`);
+            closeModal();
+            joinRoom(data.roomId); // ✅ 생성한 방으로 자동 입장
+          })
+          .catch((error) => {
+            alert(error.message);
+            console.error('방 생성 오류:', error);
+          });
+      }
+    </script>
+  </body>
+</html>
