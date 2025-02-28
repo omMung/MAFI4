@@ -303,6 +303,9 @@
           auth: { roomId: roomId, userId: currentUserId },
         });
 
+        sender.role = 'player';
+        sender.isAlive = true;
+
         // UI 표시
         document.getElementById('mainContainer').style.display = 'flex';
         //document.getElementById('gameSection').style.display = 'block';
@@ -402,6 +405,11 @@
           policeBtn.classList.remove('disabled-btn');
           doctorBtn.classList.remove('disabled-btn');
           console.log(mafiaBtn, policeBtn, doctorBtn);
+        });
+
+        socket.on('NOT:CHAT', function () {
+          alert('밤에는 마피아만 대화할 수 있습니다.');
+          return;
         });
 
         socket.on('POLICE:RESULT', function (data) {
@@ -699,6 +707,20 @@
             // 마피아이면서 살아있는 경우
             console.log('마살');
             socket.emit('chatMafia', {
+              roomId: roomId,
+              userId: currentUserId,
+              message: message,
+            });
+            if (messageInputElem) {
+              messageInputElem.value = '';
+            }
+          } else if (
+            sender.role === 'citizen' ||
+            sender.role === 'doctor' ||
+            sender.role === 'police'
+          ) {
+            console.log('시민 채팅');
+            socket.emit('chatCitizen', {
               roomId: roomId,
               userId: currentUserId,
               message: message,
