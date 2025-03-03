@@ -208,25 +208,6 @@
   </head>
 
   <body>
-    <!-- 사용자 ID 입력 -->
-    <div
-      class="login-container"
-      style="
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      "
-    >
-      <h1>룸 채팅 및 게임 테스트</h1>
-      <div class="form-group">
-        <label for="userId">사용자 ID:</label>
-        <input type="number" id="userId" class="form-control" placeholder="1" />
-      </div>
-      <button id="loginBtn" class="btn btn-primary mt-2">
-        로그인 (룸 입장)
-      </button>
-    </div>
     <!-- 전체 컨테이너: 채팅과 접속 인원 영역 -->
     <div class="container-custom" id="mainContainer" style="display: none">
       <!-- 채팅 영역 -->
@@ -327,7 +308,7 @@
 
           // UI 표시
           document.getElementById('mainContainer').style.display = 'flex';
-          //document.getElementById('gameSection').style.display = 'block';
+          document.getElementById('gameSection').style.display = 'block';
           document.getElementById('firstVoteContainer').style.display = 'block';
 
           socket.emit('joinRoom', { roomId: roomId, userId: currentUserId });
