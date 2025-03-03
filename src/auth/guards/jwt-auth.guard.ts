@@ -35,6 +35,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = {
         id: payload.sub, // JWT 생성 시 sub에 user.id 저장
         email: payload.email, // 이메일 정보도 저장
+        nickName: payload.nickName, // 닉네임 추가
       };
 
       return true;

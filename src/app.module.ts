@@ -71,7 +71,7 @@ const typeOrmModuleOptions = {
       serveRoot: '/',
     }),
     // ThrottlerModule.forRoot([
-    //   {
+    //   {s
     //     ttl: 60, // 제한 시간 (초 단위) - 60초 동안
     //     limit: 10, // 요청 가능 횟수 - 10번까지만 허용
     //   },

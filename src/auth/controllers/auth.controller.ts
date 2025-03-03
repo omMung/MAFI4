@@ -7,6 +7,7 @@ import {
   Res,
   UsePipes,
   ValidationPipe,
+  Get,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from '../services/auth.service';
@@ -80,5 +81,11 @@ export class AuthController {
     return res.json({
       message: '리프레시 토큰 -> 액세스 토큰 재발급 되었습니다.',
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async getProfile(@Req() req) {
+    return req.user;
   }
 }

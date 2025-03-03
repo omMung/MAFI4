@@ -157,7 +157,7 @@ export class AuthService {
       { sub: userId },
       {
         secret: this.configService.get<string>('ACCESS_SECRET_KEY'),
-        expiresIn: '1m',
+        expiresIn: '1000m',
       },
     );
 
@@ -165,7 +165,7 @@ export class AuthService {
       { sub: userId },
       {
         secret: this.configService.get<string>('REFRESH_SECRET_KEY'),
-        expiresIn: '2m',
+        expiresIn: '1000m',
       },
     );
 
