@@ -69,6 +69,7 @@ export class CommentsService {
       content: comment.content,
       createdAt: comment.createdAt,
       updatedAt: comment.updatedAt,
+      nickName: comment.user ? comment.user.nickName : '익명',
     }));
   }
 

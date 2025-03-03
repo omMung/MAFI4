@@ -62,9 +62,12 @@ const api = {
   updatePost: (id, data) =>
     fetchAPI(`/posts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deletePost: (id) => fetchAPI(`/posts/${id}`, { method: 'DELETE' }),
-  getComments: (postId) => fetchAPI(`/posts/${postId}/comments`),
+  getComments: (postId) => fetchAPI(`/comments/${postId}`),
   createComment: (data) =>
-    fetchAPI('/comments', { method: 'POST', body: JSON.stringify(data) }),
+    fetchAPI(`/comments/${data.postId}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   updateComment: (id, data) =>
     fetchAPI(`/comments/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteComment: (id) => fetchAPI(`/comments/${id}`, { method: 'DELETE' }),
