@@ -34,44 +34,29 @@
     <div id="achievements-container"></div>
 
     <script>
-      const achievements = [
-        {
-          id: 1,
-          name: '첫 마피아 처형',
-          description: '게임에서 첫 번째 마피아를 처형하세요.',
-          criteria: { action: 'execute_mafia', count: 1 },
-          reward: { points: 10, badge: 'beginner_mafia_hunter' },
-          achieved: false,
-        },
-        {
-          id: 2,
-          name: '10번 생존',
-          description: '10번 게임에서 생존하세요.',
-          criteria: { action: 'survive', count: 10 },
-          reward: { points: 50, badge: 'survivor' },
-          achieved: false,
-        },
-        {
-          id: 3,
-          name: '연속 3번 마피아 역할',
-          description: '연속 3번 마피아 역할을 맡으세요.',
-          criteria: { action: 'role_mafia', count: 3 },
-          reward: { points: 30, badge: 'mafia_master' },
-          achieved: false,
-        },
-      ];
-
-      const container = document.getElementById('achievements-container');
-      achievements.forEach((achievement) => {
-        const div = document.createElement('div');
-        div.className = 'achievement';
-        div.innerHTML = `
-                <h3>${achievement.name}</h3>
-                <p>${achievement.description}</p>
-                <p>달성 여부: <span class="${achievement.achieved ? 'achieved' : 'not-achieved'}">${achievement.achieved ? '달성' : '미달성'}</span></p>
-            `;
-        container.appendChild(div);
-      });
+      fetch('../src/achievements/achievements.list.json') // achievements.json 파일 경로
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('네트워크 응답이 좋지 않습니다.');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const container = document.getElementById('achievements-container');
+          data.achievements.forEach((achievement) => {
+            const div = document.createElement('div');
+            div.className = 'achievement';
+            div.innerHTML = `
+                        <h3>${achievement.name}</h3>
+                        <p>${achievement.description}</p>
+                        <p>달성 여부: <span class="${achievement.achieved ? 'achieved' : 'not-achieved'}">${achievement.achieved ? '달성' : '미달성'}</span></p>
+                    `;
+            container.appendChild(div);
+          });
+        })
+        .catch((error) => {
+          console.error('업적 데이터를 가져오는 중 오류 발생:', error);
+        });
     </script>
   </body>
 </html>
