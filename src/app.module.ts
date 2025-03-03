@@ -16,8 +16,10 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LikesModule } from './likes/likes.module';
 import { S3UploaderModule } from './s3uploader/s3uploader.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+// import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { RoomsModule } from './rooms/rooms.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -64,10 +66,10 @@ const typeOrmModuleOptions = {
         },
       }),
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'dist', 'public'),
-    //   serveRoot: '/', //  루트 URL에서 정적 파일 제공
-    // }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'dist', 'public'),
+      serveRoot: '/', //  루트 URL에서 정적 파일 제공
+    }),
     // ThrottlerModule.forRoot([
     //   {
     //     ttl: 60, // 제한 시간 (초 단위) - 60초 동안

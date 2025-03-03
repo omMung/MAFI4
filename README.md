@@ -105,6 +105,19 @@ MAFI4
 ├─ nest-cli.json
 ├─ package-lock.json
 ├─ package.json
+├─ public
+│  ├─ board
+│  │  ├─ board.css
+│  │  ├─ board.html
+│  │  └─ board.js
+│  ├─ login
+│  │  ├─ login.css
+│  │  ├─ login.html
+│  │  └─ login.js
+│  └─ signup
+│     ├─ signup.css
+│     ├─ signup.html
+│     └─ signup.js
 ├─ README.md
 ├─ src
 │  ├─ achievements
@@ -118,6 +131,13 @@ MAFI4
 │  │  │  └─ update-achievement.dto.ts
 │  │  └─ entities
 │  │     └─ achievement.entity.ts
+│  ├─ admin
+│  │  ├─ admin.controller.ts
+│  │  ├─ admin.module.ts
+│  │  ├─ admin.service.ts
+│  │  └─ dto
+│  │     ├─ create-announcement.dto.ts
+│  │     └─ update-user.dto.ts
 │  ├─ app.controller.spec.ts
 │  ├─ app.controller.ts
 │  ├─ app.module.ts
@@ -131,6 +151,7 @@ MAFI4
 │  │  │  ├─ login.dto.ts
 │  │  │  └─ verify-email.dto.ts
 │  │  ├─ guards
+│  │  │  ├─ ban.guard.ts
 │  │  │  ├─ jwt-auth.guard.spec.ts
 │  │  │  └─ jwt-auth.guard.ts
 │  │  ├─ repositories

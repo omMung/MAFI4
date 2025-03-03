@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFI4 - 회원가입</title>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="signup.css">
+    <script src="/scripts/api.js" defer></script>
+    <script src="signup.js" defer></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">MAFI4</a>
+            <ul>
+                <li><a href="/board/board.html">게시판</a></li>
+                <li><a href="#">랭킹</a></li>
+                <li><a href="#">상점</a></li>
+                <li><a href="#">고객센터</a></li>
+            </ul>
+            <div>
+                <a href="/login/login.html" class="btn btn-ghost">로그인</a>
+                <a href="/signup/signup.html" class="btn btn-primary">회원가입</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="signup-container">
+            <h1>회원가입</h1>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email" required>
+                    <button type="button" id="verifyEmailBtn" class="btn btn-secondary">인증코드 전송</button>
+                </div>
+                <div class="form-group" id="verifyCodeGroup" style="display: none;">
+                    <label for="verifyCode">인증 코드</label>
+                    <input type="text" id="verifyCode" name="verifyCode">
+                    <button type="button" id="verifyCodeBtn" class="btn btn-secondary">인증 확인</button>
+                </div>
+                <div class="form-group">
+                    <label for="nickName">닉네임</label>
+                    <input type="text" id="nickName" name="nickName" required>
+                </div>
+                <div class="form-group">
+                    <label for="title">칭호 (선택사항)</label>
+                    <input type="text" id="title" name="title">
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">비밀번호 확인</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">이용약관 및 개인정보 처리방침에 동의합니다</label>
+                </div>
+                <button type="submit" class="btn btn-primary">회원가입</button>
+            </form>
+            <p>이미 계정이 있으신가요? <a href="/login/login.html">로그인</a></p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 MAFI4. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+

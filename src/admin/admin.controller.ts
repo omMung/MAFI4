@@ -31,15 +31,15 @@ export class AdminController {
     return this.adminService.updateUser(id, updateUserDto);
   }
 
-  // 공지사항 등록 (관리자만 작성)
-  @Post('announcements')
-  createAnnouncement(@Body() createAnnouncementDto: CreateAnnouncementDto) {
-    return this.adminService.createAnnouncement(createAnnouncementDto);
-  }
+  // // 공지사항 등록 (관리자만 작성)
+  // @Post('announcements')
+  // createAnnouncement(@Body() createAnnouncementDto: CreateAnnouncementDto) {
+  //   return this.adminService.createAnnouncement(createAnnouncementDto);
+  // }
 
-  // 공지사항 삭제
-  @Delete('announcements/:id')
-  deleteAnnouncement(@Param('id') id: string) {
-    return this.adminService.deleteAnnouncement(id);
-  }
+  // // 공지사항 삭제
+  // @Delete('announcements/:id')
+  // deleteAnnouncement(@Param('id') id: string) {
+  //   return this.adminService.deleteAnnouncement(id);
+  // }
 }
