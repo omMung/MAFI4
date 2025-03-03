@@ -1,0 +1,49 @@
+{
+  "achievements": [
+    {
+      "id": 1,
+      "name": "명추리",
+      "description": "투표로 마피아를 1회 잡아내세요.",
+      "condition": "citizen_execute_mafia",
+      "conditionCount": 1,
+      "badge": "detective",
+      "achieved": false
+    },
+    {
+      "id": 2,
+      "name": "연설가",
+      "description": "심판대에 오른 뒤 최후 변론으로 처형을 1회 면하세요.",
+      "condition": "player_vote_survive",
+      "conditionCount": 1,
+      "badge": "speaker",
+      "achieved": false
+    },
+    {
+      "id": 3,
+      "name": "모략가",
+      "description": "마피아로서 선동해서 투표로 시민을 1회 쟙으세요.",
+      "condition": "mafia_incite",
+      "conditionCount": 1,
+      "badge": "schemer",
+      "achieved": false
+    },
+    {
+      "id": 4,
+      "name": "허준",
+      "description": "의사로서 마피아로부터 공격을 1회 보호하세요.",
+      "condition": "doctor_protect",
+      "conditionCount": 3,
+      "badge": "doctor_master",
+      "achieved": false
+    },
+    {
+      "id": 5,
+      "name": "밤이 되었습니다",
+      "description": "마피아로서 시민을 1회 총살하세요.",
+      "condition": "mafia_hunt",
+      "conditionCount": 1,
+      "badge": "mafia_master",
+      "achieved": false
+    }
+  ]
+}
