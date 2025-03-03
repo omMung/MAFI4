@@ -67,8 +67,8 @@ const typeOrmModuleOptions = {
       }),
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'dist', 'public'),
-      serveRoot: '/', //  루트 URL에서 정적 파일 제공
+      rootPath: join(__dirname, '..', 'src', 'public'),
+      serveRoot: '/',
     }),
     // ThrottlerModule.forRoot([
     //   {
