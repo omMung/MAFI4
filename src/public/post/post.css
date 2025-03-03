@@ -1,0 +1,56 @@
+.post-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container h1 {
+  margin-bottom: 1rem;
+}
+
+.post-meta {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.post-content {
+  margin-bottom: 2rem;
+}
+
+#comments h2 {
+  margin-bottom: 1rem;
+}
+
+.comment {
+  border-bottom: 1px solid #ddd;
+  padding: 1rem 0;
+}
+
+.comment:last-child {
+  border-bottom: none;
+}
+
+.comment-meta {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+#commentForm {
+  margin-top: 1rem;
+}
+
+#commentForm textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 0.25rem;
+  resize: vertical;
+}
+
+#commentForm button {
+  margin-top: 0.5rem;
+}

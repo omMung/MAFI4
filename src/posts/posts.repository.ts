@@ -3,6 +3,7 @@ import { Post } from './entities/post.entity';
 import { Comment } from '../comments/entities/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class PostsRepository {
@@ -24,15 +25,16 @@ export class PostsRepository {
 
   async findAllPosts() {
     const posts = await this.postsRepository.find({
-      select: ['title', 'content'],
+      relations: ['user'],
     });
+
     return posts;
   }
 
   async findOnePostById(id: number) {
     const post = await this.postsRepository.findOne({
       where: { id },
-      select: ['title', 'content'],
+      relations: ['user'],
     });
     return post;
   }

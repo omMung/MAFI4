@@ -67,8 +67,12 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.email, loginDto.password);
-
-    const payload = { sub: user.id, email: user.email };
+    // 페이로드에 닉네임 추가
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      nickName: user.nickName,
+    };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('ACCESS_SECRET_KEY'),
       expiresIn: this.configService.get<string>('ACCESS_EXPIRES_IN', '1m'),
@@ -157,7 +161,7 @@ export class AuthService {
       { sub: userId },
       {
         secret: this.configService.get<string>('ACCESS_SECRET_KEY'),
-        expiresIn: '1000m',
+        expiresIn: '1m',
       },
     );
 
@@ -165,7 +169,7 @@ export class AuthService {
       { sub: userId },
       {
         secret: this.configService.get<string>('REFRESH_SECRET_KEY'),
-        expiresIn: '1000m',
+        expiresIn: '2m',
       },
     );
 

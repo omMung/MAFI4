@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const { headers } = await api.login({ email, password });
+      console.log(headers);
       const accessToken = headers.get('Authorization');
       console.log('로그인 토큰', accessToken);
 
