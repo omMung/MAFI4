@@ -11,5 +11,7 @@ export class AchieveRepository {
     private achieveRepository: Repository<Achieve>,
   ) {}
 
-  async createAchieve(createAchievementDto: CreateAchievementDto) {}
+  async create(achieveData: Partial<Achieve>) {}
+
+  //async create(createAchievementDto: CreateAchievementDto) {}
 }

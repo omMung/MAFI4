@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAchievementDto } from './dto/create-achievement.dto';
 import { UpdateAchievementDto } from './dto/update-achievement.dto';
+import { AchieveRepository } from './achievements.repository';
+import { Achieve } from './entities/achievement.entity';
+import { User } from 'src/users/entities/user.entity';
+import { UserAchievementsRepository } from 'src/user-achievements/users-achievements.repository';
+import { UserAchievements } from 'src/user-achievements/entities/users-achievement.entity';
 
 @Injectable()
 export class AchievementsService {
-  create(createAchievementDto: CreateAchievementDto) {
-    return 'This action adds a new achievement';
+  constructor(
+    private readonly achieveRepository: AchieveRepository,
+    private readonly userAchievementsRepository: UserAchievementsRepository,
+  ) {}
+  async createAchieve(achieveData: Partial<Achieve>): Promise<Achieve> {
+    const achieve = this.achieveRepository.create(achieveData);
+    return await this.achieveRepository.save(achieve);
   }
 
-  findAll() {
-    return `This action returns all achievements`;
+  async getAllAchievements(): Promise<Achieve[]> {
+    return await this.achieveRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} achievement`;
-  }
-
-  update(id: number, updateAchievementDto: UpdateAchievementDto) {
-    return `This action updates a #${id} achievement`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} achievement`;
+  async assignAchievement(
+    user: User,
+    achieveId: number,
+  ): Promise<UserAchievements> {
+    const achieve = await this.achieveRepository.findOne({
+      where: { id: achieveId },
+    });
+    const userAchievement = this.userAchievementsRepository.create({
+      user,
+      achieve,
+    });
+    return await this.userAchievementsRepository.save(userAchievement);
   }
 }

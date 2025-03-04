@@ -1,34 +1,61 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { UsersAchievementsService } from './users-achievements.service';
 import { CreateUsersAchievementDto } from './dto/create-users-achievement.dto';
 import { UpdateUsersAchievementDto } from './dto/update-users-achievement.dto';
 
 @Controller('users-achievements')
 export class UsersAchievementsController {
-  constructor(private readonly usersAchievementsService: UsersAchievementsService) {}
+  constructor(
+    private readonly usersAchievementsService: UsersAchievementsService,
+  ) {}
+  @Get(':userId/achievements')
+  async getUserAchievements(@Param('userId') userId: string): Promise<any> {
+    const userAchievements = await this.userAchievementsRepository.find({
+      where: { userId },
+    });
+    const achievements = await this.achieveRepository.find();
 
-  @Post()
-  create(@Body() createUsersAchievementDto: CreateUsersAchievementDto) {
-    return this.usersAchievementsService.create(createUsersAchievementDto);
-  }
+    const achievementsWithStatus = achievements.map((achievement) => {
+      const isAchieved = userAchievements.some(
+        (ua) => ua.achieve.id === achievement.id,
+      );
+      return {
+        ...achievement,
+        achieved: isAchieved,
+      };
+    });
 
-  @Get()
-  findAll() {
-    return this.usersAchievementsService.findAll();
+    return { achievements: achievementsWithStatus };
   }
+  // @Post()
+  // create(@Body() createUsersAchievementDto: CreateUsersAchievementDto) {
+  //   return this.usersAchievementsService.create(createUsersAchievementDto);
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersAchievementsService.findOne(+id);
-  }
+  // @Get()
+  // findAll() {
+  //   return this.usersAchievementsService.findAll();
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsersAchievementDto: UpdateUsersAchievementDto) {
-    return this.usersAchievementsService.update(+id, updateUsersAchievementDto);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.usersAchievementsService.findOne(+id);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersAchievementsService.remove(+id);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateUsersAchievementDto: UpdateUsersAchievementDto) {
+  //   return this.usersAchievementsService.update(+id, updateUsersAchievementDto);
+  // }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.usersAchievementsService.remove(+id);
 }
