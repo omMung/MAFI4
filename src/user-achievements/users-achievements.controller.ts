@@ -8,8 +8,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserAchievementsService } from './users-achievements.service';
-import { CreateUsersAchievementDto } from './dto/create-users-achievement.dto';
-import { UpdateUsersAchievementDto } from './dto/update-users-achievement.dto';
 import { AchieveRepository } from 'src/achievements/achievements.repository';
 
 @Controller('users-achievements')

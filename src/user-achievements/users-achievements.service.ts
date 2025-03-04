@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUsersAchievementDto } from './dto/create-users-achievement.dto';
-import { UpdateUsersAchievementDto } from './dto/update-users-achievement.dto';
 import { UserAchievements } from './entities/users-achievement.entity';
 import { UserAchievementsRepository } from './users-achievements.repository';
-import { AchieveRepository } from 'src/achievements/achievements.repository';
 
 @Injectable()
 export class UserAchievementsService {
   constructor(
-    private readonly achieveRepository: AchieveRepository,
     private readonly userAchievementsRepository: UserAchievementsRepository,
   ) {}
 
