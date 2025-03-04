@@ -276,3 +276,209 @@ MAFI4
 └─ tsconfig.json
 
 ```
+```
+MAFI4
+├─ .eslintrc.js
+├─ .prettierrc
+├─ nest-cli.json
+├─ package-lock.json
+├─ package.json
+├─ README.md
+├─ src
+│  ├─ achievements
+│  │  ├─ achievements.controller.spec.ts
+│  │  ├─ achievements.controller.ts
+│  │  ├─ achievements.module.ts
+│  │  ├─ achievements.service.spec.ts
+│  │  ├─ achievements.service.ts
+│  │  ├─ dto
+│  │  │  ├─ create-achievement.dto.ts
+│  │  │  └─ update-achievement.dto.ts
+│  │  └─ entities
+│  │     └─ achievement.entity.ts
+│  ├─ admin
+│  │  ├─ admin.controller.ts
+│  │  ├─ admin.module.ts
+│  │  ├─ admin.service.ts
+│  │  └─ dto
+│  │     ├─ create-announcement.dto.ts
+│  │     └─ update-user.dto.ts
+│  ├─ app.controller.spec.ts
+│  ├─ app.controller.ts
+│  ├─ app.module.ts
+│  ├─ app.service.ts
+│  ├─ auth
+│  │  ├─ auth.module.ts
+│  │  ├─ controllers
+│  │  │  ├─ auth.controller.spec.ts
+│  │  │  └─ auth.controller.ts
+│  │  ├─ dto
+│  │  │  ├─ login.dto.ts
+│  │  │  └─ verify-email.dto.ts
+│  │  ├─ guards
+│  │  │  ├─ ban.guard.ts
+│  │  │  ├─ jwt-auth.guard.spec.ts
+│  │  │  └─ jwt-auth.guard.ts
+│  │  ├─ repositories
+│  │  │  └─ auth.repository.ts
+│  │  └─ services
+│  │     ├─ auth.service.spec.ts
+│  │     └─ auth.service.ts
+│  ├─ comments
+│  │  ├─ comments.controller.spec.ts
+│  │  ├─ comments.controller.ts
+│  │  ├─ comments.module.ts
+│  │  ├─ comments.repository.ts
+│  │  ├─ comments.service.spec.ts
+│  │  ├─ comments.service.ts
+│  │  ├─ dto
+│  │  │  ├─ create-comment.dto.ts
+│  │  │  └─ update-comment.dto.ts
+│  │  └─ entities
+│  │     └─ comment.entity.ts
+│  ├─ common
+│  │  └─ exceptions
+│  │     ├─ achievements.exception.ts
+│  │     ├─ auth.exception.ts
+│  │     ├─ comments.exception.ts
+│  │     ├─ games.exception.ts
+│  │     ├─ http-exception.filter.ts
+│  │     ├─ posts.exception.ts
+│  │     ├─ rooms.exception.ts
+│  │     ├─ statistics.exception.ts
+│  │     └─ users.exception.ts
+│  ├─ games
+│  │  ├─ dto
+│  │  │  ├─ create-game.dto.ts
+│  │  │  └─ update-game.dto.ts
+│  │  ├─ entities
+│  │  │  └─ game.entity.ts
+│  │  ├─ games.controller.spec.ts
+│  │  ├─ games.controller.ts
+│  │  ├─ games.module.ts
+│  │  ├─ games.service.spec.ts
+│  │  └─ games.service.ts
+│  ├─ likes
+│  │  ├─ entities
+│  │  │  └─ like.entity.ts
+│  │  ├─ likes.controller.spec.ts
+│  │  ├─ likes.controller.ts
+│  │  ├─ likes.module.ts
+│  │  ├─ likes.repository.ts
+│  │  ├─ likes.service.spec.ts
+│  │  └─ likes.service.ts
+│  ├─ main.ts
+│  ├─ posts
+│  │  ├─ dto
+│  │  │  ├─ create-post.dto.ts
+│  │  │  └─ update-post.dto.ts
+│  │  ├─ entities
+│  │  │  └─ post.entity.ts
+│  │  ├─ posts.controller.spec.ts
+│  │  ├─ posts.controller.ts
+│  │  ├─ posts.module.ts
+│  │  ├─ posts.repository.ts
+│  │  ├─ posts.service.spec.ts
+│  │  └─ posts.service.ts
+│  ├─ public
+│  │  ├─ board
+│  │  │  ├─ board.css
+│  │  │  ├─ board.html
+│  │  │  └─ board.js
+│  │  ├─ components
+│  │  │  ├─ footer
+│  │  │  │  ├─ footer.html
+│  │  │  │  └─ footer.js
+│  │  │  └─ header
+│  │  │     ├─ header.html
+│  │  │     └─ header.js
+│  │  ├─ createPost
+│  │  │  ├─ createPost.css
+│  │  │  ├─ createPost.html
+│  │  │  └─ createPost.js
+│  │  ├─ home
+│  │  │  ├─ home.css
+│  │  │  ├─ home.html
+│  │  │  └─ home.js
+│  │  ├─ login
+│  │  │  ├─ login.css
+│  │  │  ├─ login.html
+│  │  │  └─ login.js
+│  │  ├─ myPage
+│  │  │  ├─ myPage.css
+│  │  │  ├─ myPage.html
+│  │  │  └─ myPage.js
+│  │  ├─ post
+│  │  │  ├─ post.css
+│  │  │  ├─ post.html
+│  │  │  └─ post.js
+│  │  ├─ scripts
+│  │  │  ├─ api.js
+│  │  │  └─ common.js
+│  │  ├─ signup
+│  │  │  ├─ signup.css
+│  │  │  ├─ signup.html
+│  │  │  └─ signup.js
+│  │  └─ styles
+│  │     └─ common.css
+│  ├─ redis
+│  │  ├─ redis.module.ts
+│  │  ├─ redis.service.spec.ts
+│  │  └─ redis.service.ts
+│  ├─ rooms
+│  │  ├─ dto
+│  │  │  ├─ create-room.dto.ts
+│  │  │  └─ update-room.dto.ts
+│  │  ├─ entities
+│  │  │  └─ room.entity.ts
+│  │  ├─ rooms.controller.spec.ts
+│  │  ├─ rooms.controller.ts
+│  │  ├─ rooms.module.ts
+│  │  ├─ rooms.repository.ts
+│  │  ├─ rooms.service.spec.ts
+│  │  └─ rooms.service.ts
+│  ├─ s3uploader
+│  │  ├─ s3uploader.module.ts
+│  │  ├─ s3uploader.service.spec.ts
+│  │  └─ s3uploader.service.ts
+│  ├─ statistics
+│  │  ├─ dto
+│  │  │  ├─ create-statistic.dto.ts
+│  │  │  └─ update-statistic.dto.ts
+│  │  ├─ entities
+│  │  │  └─ statistic.entity.ts
+│  │  ├─ statistics.controller.spec.ts
+│  │  ├─ statistics.controller.ts
+│  │  ├─ statistics.module.ts
+│  │  ├─ statistics.service.spec.ts
+│  │  └─ statistics.service.ts
+│  ├─ user-achievements
+│  │  ├─ dto
+│  │  │  ├─ create-users-achievement.dto.ts
+│  │  │  └─ update-users-achievement.dto.ts
+│  │  ├─ entities
+│  │  │  └─ users-achievement.entity.ts
+│  │  ├─ users-achievements.controller.spec.ts
+│  │  ├─ users-achievements.controller.ts
+│  │  ├─ users-achievements.module.ts
+│  │  ├─ users-achievements.service.spec.ts
+│  │  └─ users-achievements.service.ts
+│  └─ users
+│     ├─ dto
+│     │  ├─ create-user.dto.ts
+│     │  └─ update-user.dto.ts
+│     ├─ entities
+│     │  └─ user.entity.ts
+│     ├─ users.controller.spec.ts
+│     ├─ users.controller.ts
+│     ├─ users.module.ts
+│     ├─ users.repository.ts
+│     ├─ users.service.spec.ts
+│     └─ users.service.ts
+├─ test
+│  ├─ app.e2e-spec.ts
+│  └─ jest-e2e.json
+├─ tsconfig.build.json
+└─ tsconfig.json
+
+```

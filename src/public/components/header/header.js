@@ -11,8 +11,11 @@ function updateAuthDisplay() {
       .getProfile()
       .then((user) => {
         authButtons.innerHTML = `
+        <div class="auth-container">
             <span class="user-info">안녕하세요, ${user.nickName}님</span>
-            <button id="logoutBtn" class="btn btn-secondary">로그아웃</button>
+            <a href="/myPage/myPage.html" id="mypageBtn" class="btn btn-secondary">마이페이지</a>
+            <a id="logoutBtn" class="btn btn-secondary">로그아웃</a>
+            </div>
           `;
         document.getElementById('logoutBtn').addEventListener('click', () => {
           api

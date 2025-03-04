@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <span>작성자: ${author}</span>
           <span>작성일: ${createdAt}</span>
         </div>
+        ${post.file ? `<div class="post-image"><img src="${post.file}" alt="게시글 이미지"></div>` : ''}
         <div class="post-content">${post.content}</div>
       `;
     } catch (error) {

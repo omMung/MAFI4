@@ -72,6 +72,17 @@ export class PostsService {
     return { message: '전체 게시글을 조회하였습니다', data: { posts } };
   }
 
+  // 유저별 게시글 전체 조회
+  async findAllByUser(userId: number) {
+    const posts = await this.postsRepository.findAllPostsByUserId(userId);
+
+    if (!posts) {
+      throw new PostNotFoundException();
+    }
+
+    return { message: '전체 게시글을 조회하였습니다', data: { posts } };
+  }
+
   // 게시글 상세 조회
   async findOne(id: number) {
     const post = await this.postsRepository.findOnePostById(id);

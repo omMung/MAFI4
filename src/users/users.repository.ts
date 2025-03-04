@@ -39,6 +39,7 @@ export class UsersRepository {
       where: { id: userId },
       select: ['id', 'email', 'nickName', 'isVerified', 'createdAt'], // 비밀번호 제외
     });
+    console.log('리포지토리 :', user);
     return user;
   }
 

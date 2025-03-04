@@ -35,6 +35,13 @@ export class CommentsController {
     return { data: comment };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me') // 게시글 조회
+  findAllByUser(@Request() req) {
+    const user = req.user;
+    return this.commentsService.getCommentsByUserId(user.id);
+  }
+
   @Get(':postId')
   async findAllComment(@Param('postId') postId: number) {
     const comments = await this.commentsService.getCommentsByPostId(postId);

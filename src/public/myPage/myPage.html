@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="myPage.css">
+    <script src="/scripts/api.js" defer></script>
+    <script src="/components/header/header.js" defer></script>
+    <script src="/scripts/common.js" defer></script>
+    <script src="myPage.js" defer></script>
+</head>
+
+<body>
+    <div id="header-container"></div>
+
+    <main>
+        <div class="mypage-container">
+            <h1 class="page-title">마이페이지</h1>
+
+            <section class="profile-section card">
+                <h2>내 프로필</h2>
+                <div class="profile-content">
+                    <div class="profile-image-container">
+                        <div class="profile-image">
+                            <img id="profileImage" src="/placeholder.svg?height=150&width=150" alt="프로필 이미지">
+                            <div class="profile-image-overlay">
+                                <label for="profileImageUpload" class="image-upload-label">
+                                    <span class="upload-icon">📷</span>
+                                </label>
+                                <input type="file" id="profileImageUpload" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info">
+                        <div class="nickname-container">
+                            <h3>닉네임</h3>
+                            <div class="nickname-display" id="nicknameDisplay">
+                                <span id="currentNickname">사용자</span>
+                                <button id="editNicknameBtn" class="btn-icon">✏️</button>
+                            </div>
+                            <div class="nickname-edit" id="nicknameEdit" style="display: none;">
+                                <input type="text" id="newNickname" placeholder="새 닉네임">
+                                <div class="edit-actions">
+                                    <button id="saveNicknameBtn" class="btn btn-primary btn-sm">저장</button>
+                                    <button id="cancelNicknameBtn" class="btn btn-secondary btn-sm">취소</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="user-info-container">
+                            <div class="info-item">
+                                <span class="info-label">가입일</span>
+                                <span class="info-value" id="joinDate">2023-01-01</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">이메일</span>
+                                <span class="info-value" id="userEmail">user@example.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="my-stats-section card">
+                <h2>내 활동 통계</h2>
+                <div class="stats-container">
+                    <!-- 통계 정보가 여기에 동적으로 추가됩니다 (주석처리) -->
+                    <div class="stats-placeholder">
+                        <div class="stats-item">
+                            <h3>게시글</h3>
+                            <div class="stats-value">0</div>
+                        </div>
+                        <div class="stats-item">
+                            <h3>댓글</h3>
+                            <div class="stats-value">0</div>
+                        </div>
+                        <div class="stats-item">
+                            <h3>좋아요</h3>
+                            <div class="stats-value">0</div>
+                        </div>
+                        <div class="stats-item">
+                            <h3>조회수</h3>
+                            <div class="stats-value">0</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="my-posts-section card">
+                <h2>내가 쓴 글</h2>
+                <div class="posts-list" id="myPostsList">
+                    <!-- 게시글 목록이 여기에 동적으로 추가됩니다 -->
+                    <div class="empty-list-message" id="emptyPostsMessage" style="display: none;">
+                        작성한 게시글이 없습니다.
+                    </div>
+                </div>
+                <div class="pagination" id="postsPagenation">
+                    <!-- 페이지네이션 버튼이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </section>
+
+            <section class="my-comments-section card">
+                <h2>내가 쓴 댓글</h2>
+                <div class="comments-list" id="myCommentsList">
+                    <!-- 댓글 목록이 여기에 동적으로 추가됩니다 -->
+                    <div class="empty-list-message" id="emptyCommentsMessage" style="display: none;">
+                        작성한 댓글이 없습니다.
+                    </div>
+                </div>
+                <div class="pagination" id="commentsPagenation">
+                    <!-- 페이지네이션 버튼이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+</body>
+
+</html>

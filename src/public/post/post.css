@@ -1,56 +1,91 @@
+/* 전체 게시글 컨테이너 스타일 */
+/* 게시글 상세 페이지의 전체 영역 */
 .post-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px; /* 최대 폭 설정 */
+  margin: 2rem auto; /* 위아래 여백 2rem, 좌우 중앙 정렬 */
+  padding: 2rem; /* 내부 여백 2rem */
+  background-color: white; /* 배경색 흰색 */
+  border-radius: 0.5rem; /* 모서리 둥글게 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 }
 
+/* 게시글 제목 스타일 */
+/* 게시글 제목에 해당하는 h1 태그 */
 .post-container h1 {
-  margin-bottom: 1rem;
+  margin-bottom: 1rem; /* 제목 아래 여백 */
 }
 
+/* 게시글 메타 정보 스타일 */
+/* 작성자와 작성일을 표시하는 영역 */
 .post-meta {
-  color: #666;
-  margin-bottom: 1rem;
+  color: #666; /* 글자색 회색 */
+  margin-bottom: 1rem; /* 아래 여백 */
 }
 
+/* 게시글 내용 영역 스타일 */
+/* 본문 내용이 들어가는 영역 */
 .post-content {
-  margin-bottom: 2rem;
+  margin-bottom: 2rem; /* 아래 여백 */
 }
 
+/* 게시글 이미지 컨테이너 */
+/* 이미지가 있을 경우 감싸는 영역, 중앙 정렬 */
+.post-image {
+  margin-bottom: 1rem; /* 이미지 아래 여백 */
+  text-align: center; /* 이미지 중앙 정렬 */
+}
+
+/* 게시글 이미지 스타일 */
+/* 이미지가 화면에 맞게 크기가 조정되도록 처리 */
+.post-image img {
+  max-width: 100%; /* 부모 컨테이너 너비에 맞게 최대 100% */
+  height: auto; /* 비율에 맞게 자동 조정 */
+}
+
+/* 댓글 섹션 제목 스타일 */
+/* 댓글 영역의 제목(예: '댓글') */
 #comments h2 {
-  margin-bottom: 1rem;
+  margin-bottom: 1rem; /* 제목 아래 여백 */
 }
 
+/* 개별 댓글 스타일 */
+/* 각 댓글 컨테이너 */
 .comment {
-  border-bottom: 1px solid #ddd;
-  padding: 1rem 0;
+  border-bottom: 1px solid #ddd; /* 아래 선 추가 */
+  padding: 1rem 0; /* 위아래 패딩 1rem */
 }
 
+/* 마지막 댓글의 하단 선 제거 */
 .comment:last-child {
   border-bottom: none;
 }
 
+/* 댓글 메타 정보 스타일 */
+/* 댓글 작성자와 작성일 표시 */
 .comment-meta {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  color: #666; /* 글자색 회색 */
+  font-size: 0.9rem; /* 글자 크기 약간 작게 */
+  margin-bottom: 0.5rem; /* 아래 여백 */
 }
 
+/* 댓글 작성 폼 스타일 */
+/* 댓글 작성 영역 전체 */
 #commentForm {
-  margin-top: 1rem;
+  margin-top: 1rem; /* 상단 여백 */
 }
 
+/* 댓글 입력 텍스트 영역 스타일 */
+/* 댓글 입력을 위한 textarea */
 #commentForm textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 0.25rem;
-  resize: vertical;
+  width: 100%; /* 전체 너비 사용 */
+  padding: 0.5rem; /* 내부 여백 0.5rem */
+  border: 1px solid #ddd; /* 얇은 테두리 */
+  border-radius: 0.25rem; /* 모서리 둥글게 */
+  resize: vertical; /* 세로 방향으로만 크기 조절 */
 }
 
+/* 댓글 작성 버튼 스타일 */
+/* 댓글 작성 폼 내 버튼 */
 #commentForm button {
-  margin-top: 0.5rem;
+  margin-top: 0.5rem; /* 버튼 위 여백 */
 }

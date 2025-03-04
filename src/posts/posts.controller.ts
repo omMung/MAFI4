@@ -36,6 +36,7 @@ export class PostsController {
           new FileTypeValidator({ fileType: /(jpg|jpeg|png|gif)$/ }),
           new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }), // 5MB 제한
         ],
+        fileIsRequired: false,
       }),
     )
     file: Express.Multer.File,
@@ -61,6 +62,13 @@ export class PostsController {
   @Get() // 게시글 조회
   findAll() {
     return this.postsService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me') // 게시글 조회
+  findAllByUser(@Request() req) {
+    const user = req.user;
+    return this.postsService.findAllByUser(user.id);
   }
 
   @UseGuards(JwtAuthGuard)

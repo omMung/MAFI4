@@ -31,6 +31,13 @@ export class PostsRepository {
     return posts;
   }
 
+  async findAllPostsByUserId(userId: number) {
+    const posts = await this.postsRepository.find({
+      where: { user: { id: userId } },
+    });
+    return posts;
+  }
+
   async findOnePostById(id: number) {
     const post = await this.postsRepository.findOne({
       where: { id },

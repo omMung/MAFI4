@@ -61,6 +61,17 @@ export class CommentsService {
     }
   }
 
+  async getCommentsByUserId(userId: number) {
+    const comments = await this.commentsRepository.findAllByUserId(userId);
+
+    if (!comments) {
+      // throw new CommnetNotFoundException(); - 익셉션 추가 필요
+      console.log(`조회 실패`);
+    }
+
+    return { message: '내 댓글을 조회하였습니다', data: { comments } };
+  }
+
   async getCommentsByPostId(postId: number) {
     const comments = await this.commentsRepository.findByPostId(postId);
 
