@@ -354,8 +354,9 @@ function saveProfileImage() {
   }
 
   // FormData 생성 및 파일 추가
+
   const formData = new FormData();
-  formData.append('profileImage', file);
+  formData.append('file', file);
 
   // updateProfile API 호출 (FormData일 경우 Content-Type은 자동 처리)
   api

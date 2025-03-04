@@ -55,11 +55,33 @@ const api = {
   logout: () => fetchAPI('/auth/logout', { method: 'POST' }),
   getProfile: () =>
     fetchAPI('/users/me', { method: 'GET' }, console.log(`getProfile 호출`)),
-  updateProfile: (updateData) =>
-    fetchAPI('/users/me', {
-      method: 'PATCH',
-      body: JSON.stringify(updateData),
-    }),
+  updateProfile: (updateData) => {
+    // updateData가 FormData 인스턴스인지 확인
+    if (updateData instanceof FormData) {
+      // FormData인 경우: Content-Type 헤더를 설정하지 않음 (브라우저가 자동 설정)
+      return fetch(`${API_URL}/users/me`, {
+        method: 'PATCH',
+        body: updateData,
+        credentials: 'include',
+        headers: {
+          ...(localStorage.getItem('accessToken') && {
+            Authorization: localStorage.getItem('accessToken'),
+          }),
+        },
+      }).then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+        return response.json();
+      });
+    } else {
+      // 일반 객체인 경우: JSON.stringify 처리하여 전송
+      return fetchAPI('/users/me', {
+        method: 'PATCH',
+        body: JSON.stringify(updateData),
+      });
+    }
+  },
   refreshToken: () => fetchAPI('/auth/refresh', { method: 'POST' }),
   getPosts: () => fetchAPI('/posts'),
   getPostsByUser: () => fetchAPI('/posts/me'),
