@@ -125,33 +125,54 @@ function renderPostsList(posts) {
       const postElement = document.createElement('div');
       postElement.className = 'post-item';
       postElement.innerHTML = `
-              <div class="post-content">
-                <div class="post-title">
-                  <a href="../board/post.html?id=${post.id}">${post.title}</a>
-                </div>
-                <div class="post-meta">
-                  작성일: ${new Date(post.createdAt).toLocaleDateString()}
-                </div>
+            <div class="post-content">
+              <div class="post-title">
+                <a href="../post/post.html?id=${post.id}">${post.title}</a>
               </div>
-              <div class="post-actions">
-                <button class="action-btn edit-btn" data-id="${post.id}">수정</button>
-                <button class="action-btn delete-btn" data-id="${post.id}">삭제</button>
+              <div class="post-meta">
+                작성일: ${new Date(post.createdAt).toLocaleDateString()}
               </div>
-            `;
+            </div>
+            <div class="post-actions">
+              <button class="action-btn edit-btn" data-id="${post.id}">수정</button>
+              <button class="action-btn delete-btn" data-id="${post.id}">삭제</button>
+            </div>
+          `;
+
+      // 게시글 항목 전체 클릭 이벤트 리스너 추가
+      // 단, 클릭 대상이 편집/삭제 버튼이나 내부 링크인 경우에는 실행하지 않음
+      postElement.addEventListener('click', (event) => {
+        // 만약 클릭한 요소가 .post-actions 내부의 요소이면 무시
+        if (
+          event.target.closest('.post-actions') ||
+          event.target.tagName.toLowerCase() === 'a'
+        ) {
+          return;
+        }
+        window.location.href = `../post/post.html?postId=${post.id}`;
+      });
+
       postsListElement.appendChild(postElement);
     });
   }
-  // 수정, 삭제 버튼 이벤트 리스너 등록
+
+  // 수정 버튼 이벤트 리스너 등록
   const editButtons = postsListElement.querySelectorAll('.edit-btn');
   editButtons.forEach((button) => {
-    button.addEventListener('click', function () {
+    button.addEventListener('click', function (event) {
+      // 클릭 이벤트가 부모(postElement)의 이벤트로 전파되는 것을 막음
+      event.stopPropagation();
       const postId = this.getAttribute('data-id');
       window.location.href = `../board/edit.html?id=${postId}`;
     });
   });
+
+  // 삭제 버튼 이벤트 리스너 등록
   const deleteButtons = postsListElement.querySelectorAll('.delete-btn');
   deleteButtons.forEach((button) => {
-    button.addEventListener('click', function () {
+    button.addEventListener('click', function (event) {
+      // 클릭 이벤트 전파 방지
+      event.stopPropagation();
       const postId = this.getAttribute('data-id');
       if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
         deletePost(postId);
@@ -255,6 +276,7 @@ function renderMyComments(currentPage) {
     renderMyComments,
   );
 }
+
 function renderCommentsList(comments) {
   const commentsListElement = document.getElementById('myCommentsList');
   const emptyMessage = document.getElementById('emptyCommentsMessage');
@@ -276,19 +298,31 @@ function renderCommentsList(comments) {
       const commentElement = document.createElement('div');
       commentElement.className = 'comment-item';
       commentElement.innerHTML = `
-          <div class="comment-content">
-            <div class="comment-title">
-              <a href="../board/post.html?id=${comment.postId}">${comment.content}</a>
-            </div>
-            <div class="comment-meta">
-              게시글: ${comment.postTitle}
-            </div>
+        <div class="comment-content">
+          <div class="comment-title">
+            <a href="../board/post.html?id=${comment.postId}">${comment.content}</a>
           </div>
-          <div class="comment-actions">
-            <button class="action-btn edit-btn" data-id="${comment.id}" data-post-id="${comment.postId}">수정</button>
-            <button class="action-btn delete-btn" data-id="${comment.id}">삭제</button>
+          <div class="comment-meta">
+            게시글: ${comment.postTitle}
           </div>
-        `;
+        </div>
+        <div class="comment-actions">
+          <button class="action-btn edit-btn" data-id="${comment.id}" data-post-id="${comment.postId}">수정</button>
+          <button class="action-btn delete-btn" data-id="${comment.id}">삭제</button>
+        </div>
+      `;
+
+      // 댓글 항목 전체 클릭 시 해당 게시글 페이지로 이동 (단, 버튼이나 링크 클릭은 제외)
+      commentElement.addEventListener('click', (event) => {
+        if (
+          event.target.closest('.comment-actions') ||
+          event.target.tagName.toLowerCase() === 'a'
+        ) {
+          return;
+        }
+        window.location.href = `../board/post.html?postId=${comment.postId}`;
+      });
+
       commentsListElement.appendChild(commentElement);
     });
   }
@@ -296,7 +330,8 @@ function renderCommentsList(comments) {
   // 수정 버튼 이벤트 리스너 등록
   const editButtons = commentsListElement.querySelectorAll('.edit-btn');
   editButtons.forEach((button) => {
-    button.addEventListener('click', function () {
+    button.addEventListener('click', function (event) {
+      event.stopPropagation(); // 부모 클릭 이벤트 방지
       const commentId = this.getAttribute('data-id');
       const postId = this.getAttribute('data-post-id');
       window.location.href = `../board/post.html?id=${postId}&commentId=${commentId}`;
@@ -306,13 +341,27 @@ function renderCommentsList(comments) {
   // 삭제 버튼 이벤트 리스너 등록
   const deleteButtons = commentsListElement.querySelectorAll('.delete-btn');
   deleteButtons.forEach((button) => {
-    button.addEventListener('click', function () {
+    button.addEventListener('click', function (event) {
+      event.stopPropagation(); // 부모 클릭 이벤트 방지
       const commentId = this.getAttribute('data-id');
       if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
         deleteComment(commentId);
       }
     });
   });
+}
+
+function deleteComment(commentId) {
+  api
+    .deleteComment(commentId)
+    .then(() => {
+      alert('댓글이 삭제되었습니다.');
+      loadMyComments();
+    })
+    .catch((error) => {
+      console.error('댓글 삭제에 실패했습니다:', error);
+      alert('댓글 삭제에 실패했습니다.');
+    });
 }
 
 /* ================================
@@ -443,8 +492,14 @@ function saveNickname() {
     - 실제 API 연동 시 주석 처리된 API 호출 코드를 사용
   */
 function deletePost(postId) {
-  setTimeout(() => {
-    alert('게시글이 삭제되었습니다.');
-    loadMyPosts();
-  }, 500);
+  api
+    .deletePost(postId)
+    .then(() => {
+      alert('게시글이 삭제되었습니다.');
+      loadMyPosts();
+    })
+    .catch((error) => {
+      console.error('게시글 삭제에 실패했습니다:', error);
+      alert('게시글 삭제에 실패했습니다.');
+    });
 }
