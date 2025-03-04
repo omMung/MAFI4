@@ -1,6 +1,15 @@
 {
   "achievements": [
     {
+      "id": 0,
+      "name": "첫걸음",
+      "description": "MAFI4에 오신 걸 환영합니다.",
+      "condition": "beginner",
+      "conditionCount": 1,
+      "badge": "beginner",
+      "achieved": false
+    },
+    {
       "id": 1,
       "name": "명추리",
       "description": "투표로 마피아를 1회 잡아내세요.",
