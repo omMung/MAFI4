@@ -8,7 +8,8 @@ export class RoomsRepository {
   // DataSource => 타입orm 에서 기본적으로 주는 기능인데 db랑 연결할때 사용
   constructor() {
     this.redis = new Redis({
-      host: '172.31.37.169', // 🔹 Redis가 실행된 EC2의 프라이빗 IP
+      // host: '172.31.37.169', // 🔹 Redis가 실행된 EC2의 프라이빗 IP
+      host: process.env.REDIS_HOST || 'localhost',
       port: 6379, // 🔹 Redis 기본 포트
       password: undefined, // 🔹 자체 Redis는 기본적으로 비밀번호 없음 (설정한 경우만 추가)
       tls: undefined, // 🔹 자체 Redis는 TLS 사용 안 함 (제거)
