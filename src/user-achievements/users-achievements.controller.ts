@@ -34,6 +34,16 @@ export class UsersAchievementsController {
 
     return { achievements: achievementsWithStatus };
   }
+  @Post(':id')
+  async test(
+    @Param('id') achieveId: number,
+    @Body('userId') userId: number,
+  ): Promise<any> {
+    return await this.userAchievementsService.updateUserAchievements(
+      userId,
+      achieveId,
+    );
+  }
   // @Post()
   // create(@Body() createUsersAchievementDto: CreateUsersAchievementDto) {
   //   return this.usersAchievementsService.create(createUsersAchievementDto);
