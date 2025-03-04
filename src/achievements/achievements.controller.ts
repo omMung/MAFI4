@@ -31,14 +31,4 @@ export class AchievementsController {
   findAll(): Promise<Achieve[]> {
     return this.achievementsService.getAllAchievements();
   }
-
-  @Post(':userId/assign/:achieveId')
-  assign(
-    @Param('userId') userId: string,
-    @Param('achieveId') achieveId: number,
-  ): Promise<UserAchievements> {
-    // User 객체를 찾는 로직 추가 필요
-    const user = new User(); // 이 부분은 실제 User 객체로 대체해야 함
-    return this.achievementsService.assignAchievement(user, achieveId);
-  }
 }

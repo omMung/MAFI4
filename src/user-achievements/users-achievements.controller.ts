@@ -7,21 +7,22 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { UsersAchievementsService } from './users-achievements.service';
+import { UserAchievementsService } from './users-achievements.service';
 import { CreateUsersAchievementDto } from './dto/create-users-achievement.dto';
 import { UpdateUsersAchievementDto } from './dto/update-users-achievement.dto';
+import { AchieveRepository } from 'src/achievements/achievements.repository';
 
 @Controller('users-achievements')
 export class UsersAchievementsController {
   constructor(
-    private readonly usersAchievementsService: UsersAchievementsService,
+    private readonly userAchievementsService: UserAchievementsService,
+    private readonly achieveRepository: AchieveRepository,
   ) {}
-  @Get(':userId/achievements')
-  async getUserAchievements(@Param('userId') userId: string): Promise<any> {
-    const userAchievements = await this.userAchievementsRepository.find({
-      where: { userId },
-    });
-    const achievements = await this.achieveRepository.find();
+  @Get()
+  async getUserAchievements(@Body('userId') userId: number): Promise<any> {
+    const userAchievements =
+      await this.userAchievementsService.getUserAchievements(userId);
+    const achievements = await this.achieveRepository.findAllAchievements();
 
     const achievementsWithStatus = achievements.map((achievement) => {
       const isAchieved = userAchievements.some(

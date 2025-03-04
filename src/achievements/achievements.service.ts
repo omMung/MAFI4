@@ -14,25 +14,15 @@ export class AchievementsService {
     private readonly userAchievementsRepository: UserAchievementsRepository,
   ) {}
   async createAchieve(achieveData: Partial<Achieve>): Promise<Achieve> {
-    const achieve = this.achieveRepository.create(achieveData);
-    return await this.achieveRepository.save(achieve);
+    return this.achieveRepository.createAchieve(achieveData);
   }
 
   async getAllAchievements(): Promise<Achieve[]> {
-    return await this.achieveRepository.find();
+    return await this.achieveRepository.findAllAchievements();
   }
 
-  async assignAchievement(
-    user: User,
-    achieveId: number,
-  ): Promise<UserAchievements> {
-    const achieve = await this.achieveRepository.findOne({
-      where: { id: achieveId },
-    });
-    const userAchievement = this.userAchievementsRepository.create({
-      user,
-      achieve,
-    });
-    return await this.userAchievementsRepository.save(userAchievement);
-  }
+  // 특정 업적 가져오기
+  //  async getAchievementById(id: number): Promise<Achieve | undefined> {
+  //   return await this.achievementsRepository.findAchievementById(id);
+  // }
 }
