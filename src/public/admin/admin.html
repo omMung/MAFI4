@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="admin.css">
+    <script src="../api.js"></script>
+    <script src="admin.js"></script>
+</head>
+
+<body>
+    <main>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h1>관리자 페이지</h1>
+                <div class="admin-status">
+                    <span class="status-indicator online"></span>
+                    <span>관리자 모드 활성화</span>
+                </div>
+            </div>
+
+            <section class="admin-search-section">
+                <div class="search-container">
+                    <h2>사용자 검색</h2>
+                    <div class="search-form">
+                        <div class="search-input-group">
+                            <input type="email" id="userEmailSearch" placeholder="사용자 이메일 입력" class="search-input">
+                            <button id="searchUserBtn" class="search-button">검색</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-user-section" id="userInfoSection" style="display: none;">
+                <div class="user-info-header">
+                    <h2>사용자 정보</h2>
+                    <div class="user-status" id="userStatusBadge">
+                        <span class="status-badge active">활성</span>
+                    </div>
+                </div>
+
+                <div class="user-details">
+                    <div class="user-profile">
+                        <div class="profile-image">
+                            <img id="userProfileImage" src="/placeholder.svg?height=100&width=100" alt="프로필 이미지">
+                        </div>
+                        <div class="profile-info">
+                            <h3 id="userName">사용자 이름</h3>
+                            <p id="userEmail">user@example.com</p>
+                            <p>가입일: <span id="userJoinDate">2023-01-01</span></p>
+                        </div>
+                    </div>
+
+                    <div class="user-actions">
+                        <button id="banGameBtn" class="action-button warning">게임 기능 정지</button>
+                        <button id="banCommunityBtn" class="action-button warning">커뮤니티 기능 정지</button>
+                        <button id="unbanAllBtn" class="action-button success">모든 제한 해제</button>
+                    </div>
+                </div>
+
+                <div class="user-ban-status">
+                    <div class="ban-status-item" id="gameBanStatus">
+                        <span class="status-label">게임 기능:</span>
+                        <span class="status-value">활성</span>
+                    </div>
+                    <div class="ban-status-item" id="communityBanStatus">
+                        <span class="status-label">커뮤니티 기능:</span>
+                        <span class="status-value">활성</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-content-section" id="userContentSection" style="display: none;">
+                <div class="content-tabs">
+                    <button class="tab-button active" data-tab="posts">게시글</button>
+                    <button class="tab-button" data-tab="comments">댓글</button>
+                </div>
+
+                <div class="tab-content active" id="postsTab">
+                    <div class="content-header">
+                        <h3>사용자 게시글</h3>
+                        <div class="content-actions">
+                            <button id="refreshPostsBtn" class="refresh-button">새로고침</button>
+                            <button id="deleteSelectedPostsBtn" class="delete-button" disabled>선택 삭제</button>
+                        </div>
+                    </div>
+
+                    <div class="content-list" id="userPostsList">
+                        <!-- 게시글 목록이 여기에 동적으로 추가됩니다 -->
+                        <div class="empty-message" id="emptyPostsMessage" style="display: none;">
+                            게시글이 없습니다.
+                        </div>
+                    </div>
+
+                    <div class="pagination" id="postsPagenation"></div>
+                </div>
+
+                <div class="tab-content" id="commentsTab">
+                    <div class="content-header">
+                        <h3>사용자 댓글</h3>
+                        <div class="content-actions">
+                            <button id="refreshCommentsBtn" class="refresh-button">새로고침</button>
+                            <button id="deleteSelectedCommentsBtn" class="delete-button" disabled>선택 삭제</button>
+                        </div>
+                    </div>
+
+                    <div class="content-list" id="userCommentsList">
+                        <!-- 댓글 목록이 여기에 동적으로 추가됩니다 -->
+                        <div class="empty-message" id="emptyCommentsMessage" style="display: none;">
+                            댓글이 없습니다.
+                        </div>
+                    </div>
+
+                    <div class="pagination" id="commentsPagenation"></div>
+                </div>
+            </section>
+
+            <section class="admin-log-section">
+                <h2>관리자 활동 로그</h2>
+                <div class="log-container" id="adminLogContainer">
+                    <div class="log-entry">
+                        <span class="log-time">2023-06-15 14:30:22</span>
+                        <span class="log-action">시스템</span>
+                        <span class="log-message">관리자 페이지에 접속했습니다.</span>
+                    </div>
+                    <!-- 추가 로그 항목이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </section>
+        </div>
+    </main>
+</body>
+
+</html>

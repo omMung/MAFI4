@@ -122,4 +122,5 @@ const api = {
   updateComment: (id, data) =>
     fetchAPI(`/comments/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteComment: (id) => fetchAPI(`/comments/${id}`, { method: 'DELETE' }),
+  toggleLike: (data) => fetchAPI(`/likes/${postId}`, { method: 'DELETE' }),
 };

@@ -11,6 +11,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  if (postId) {
+    // 좋아요 데이터 로드
+    loadLikeData();
+
+    // 좋아요 버튼 이벤트 리스너 등록
+    document
+      .getElementById('likeButton')
+      .addEventListener('click', handleLikeClick);
+  }
+
   async function loadPost() {
     try {
       const response = await api.getPost(postId);
@@ -77,6 +87,98 @@ document.addEventListener('DOMContentLoaded', async () => {
       alert('댓글 작성에 실패했습니다. 다시 시도해주세요.');
     }
   });
+
+  // 좋아요 데이터 로드
+  async function loadLikeData() {
+    try {
+      // API를 통해 좋아요 개수 가져오기
+      const response = await fetch(`/likes/${postId}`, { method: 'GET' });
+      if (!response.ok) {
+        throw new Error('좋아요 데이터를 가져오는데 실패했습니다.');
+      }
+
+      const likeData = await response.json();
+
+      // 좋아요 상태 업데이트
+      updateLikeStatus(likeData);
+    } catch (error) {
+      console.error('좋아요 데이터 로드 실패:', error);
+      // 좋아요 데이터 로드 실패 시에도 페이지는 계속 표시
+      document.getElementById('likeCount').textContent = '0';
+    }
+  }
+
+  // 좋아요 상태 업데이트
+  function updateLikeStatus(likeData) {
+    const likeButton = document.getElementById('likeButton');
+    const likeCount = document.getElementById('likeCount');
+    const likeIcon = likeButton.querySelector('.like-icon');
+
+    // 좋아요 개수 업데이트
+    likeCount.textContent = likeData.count || 0;
+
+    // 현재 사용자의 좋아요 상태 업데이트
+    isLiked = likeData.isLiked || false;
+
+    if (isLiked) {
+      likeButton.classList.add('active');
+      likeIcon.textContent = '♥'; // 채워진 하트
+    } else {
+      likeButton.classList.remove('active');
+      likeIcon.textContent = '♡'; // 빈 하트
+    }
+  }
+
+  // 좋아요 버튼 클릭 핸들러
+  async function handleLikeClick() {
+    const likeButton = document.getElementById('likeButton');
+
+    try {
+      // 버튼 비활성화 (중복 클릭 방지)
+      likeButton.disabled = true;
+
+      // 좋아요 토글 API 호출
+      const response = await fetch(`/likes/${postId}`, { method: 'POST' });
+      if (!response.ok) {
+        throw new Error('좋아요 처리에 실패했습니다.');
+      }
+
+      // 좋아요 상태 반전
+      isLiked = !isLiked;
+
+      // 애니메이션 효과 추가
+      likeButton.classList.add('animate');
+
+      // 좋아요 상태 업데이트
+      const likeIcon = likeButton.querySelector('.like-icon');
+      const likeCount = document.getElementById('likeCount');
+
+      if (isLiked) {
+        likeButton.classList.add('active');
+        likeIcon.textContent = '♥'; // 채워진 하트
+        likeCount.textContent = Number.parseInt(likeCount.textContent) + 1;
+      } else {
+        likeButton.classList.remove('active');
+        likeIcon.textContent = '♡'; // 빈 하트
+        likeCount.textContent = Math.max(
+          0,
+          Number.parseInt(likeCount.textContent) - 1,
+        );
+      }
+
+      // 애니메이션 종료 후 클래스 제거
+      setTimeout(() => {
+        likeButton.classList.remove('animate');
+        // 버튼 다시 활성화
+        likeButton.disabled = false;
+      }, 800);
+    } catch (error) {
+      console.error('좋아요 처리 실패:', error);
+      alert('좋아요 처리 중 오류가 발생했습니다.');
+      // 버튼 다시 활성화
+      likeButton.disabled = false;
+    }
+  }
 
   await loadPost();
   await loadComments();
