@@ -9,17 +9,17 @@
     <link rel="stylesheet" href="createPost.css">
     <script src="/scripts/api.js" defer></script>
     <script src="/scripts/common.js" defer></script>
-    <script src="/scripts/api.js" defer></script>
+    <script src="/components/header/header.js" defer></script>
     <script src="createPost.js" defer></script>
 </head>
 
 <body>
     <div id="header-container"></div>
-
     <main>
         <div class="write-container">
             <h1>새 글 작성</h1>
-            <form id="writeForm">
+            <!-- 폼의 enctype을 multipart/form-data로 설정 -->
+            <form id="writeForm" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="title">제목</label>
                     <input type="text" id="title" name="title" required>
@@ -28,11 +28,15 @@
                     <label for="content">내용</label>
                     <textarea id="content" name="content" rows="10" required></textarea>
                 </div>
+                <!-- 파일 업로드 입력 추가 -->
+                <div class="form-group">
+                    <label for="file">파일 업로드 (선택사항)</label>
+                    <input type="file" id="file" name="file">
+                </div>
                 <button type="submit" class="btn btn-primary">글 작성</button>
             </form>
         </div>
     </main>
-
     <div id="footer-container"></div>
 </body>
 

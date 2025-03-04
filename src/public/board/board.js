@@ -3,8 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const postsTableBody = document.querySelector('#postsTable tbody');
 
   createPostBtn.addEventListener('click', () => {
-    // 새 글 작성 페이지로 이동 (아직 구현되지 않음)
-    alert('새 글 작성 기능은 아직 구현되지 않았습니다.');
+    window.location.href = '/createPost/createPost.html';
   });
 
   async function loadPosts() {

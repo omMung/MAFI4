@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const content = document.getElementById('commentContent').value;
 
     try {
-      console.log(postId, content);
       await api.createComment({ postId, content });
       document.getElementById('commentContent').value = '';
       await loadComments();

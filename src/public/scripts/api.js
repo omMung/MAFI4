@@ -57,8 +57,14 @@ const api = {
   refreshToken: () => fetchAPI('/auth/refresh', { method: 'POST' }),
   getPosts: () => fetchAPI('/posts'),
   getPost: (id) => fetchAPI(`/posts/${id}`),
-  createPost: (data) =>
-    fetchAPI('/posts', { method: 'POST', body: JSON.stringify(data) }),
+  createPost: (data) => {
+    // data가 FormData 인스턴스인지 확인하여, 맞으면 그대로 전송하고 아니면 JSON.stringify 처리
+    if (data instanceof FormData) {
+      return fetchAPI('/posts', { method: 'POST', body: data });
+    } else {
+      return fetchAPI('/posts', { method: 'POST', body: JSON.stringify(data) });
+    }
+  },
   updatePost: (id, data) =>
     fetchAPI(`/posts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deletePost: (id) => fetchAPI(`/posts/${id}`, { method: 'DELETE' }),
