@@ -34,6 +34,7 @@ export class UsersAchievementsController {
 
     return { achievements: achievementsWithStatus };
   }
+
   @Post(':id')
   async test(
     @Param('id') achieveId: number,

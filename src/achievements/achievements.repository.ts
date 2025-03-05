@@ -29,10 +29,9 @@ export class AchieveRepository {
   }
 
   // ID로 업적을 찾는 메서드
-  //필요한가?
-  // async findAchievementById(id: number): Promise<Achieve | undefined> {
-  //   return this.achieveRepository.findOne(id);
-  // }
+  async findAchievementById(achieveId: number): Promise<Achieve | undefined> {
+    return this.achieveRepository.findOne({ where: { id: achieveId } });
+  }
 
   //async create(createAchievementDto: CreateAchievementDto) {}
 }

@@ -18,6 +18,8 @@ import { LikesModule } from './likes/likes.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { GameResultsModule } from './gameResults/gameResults.module';
+import { UserAchievementProgressModule } from './user-achievement-progress/user-achievement-progress.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -83,6 +85,8 @@ const typeOrmModuleOptions = {
     UsersAchievementsModule,
     RoomsModule,
     LikesModule,
+    GameResultsModule,
+    UserAchievementProgressModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { UserAchievements } from './entities/users-achievement.entity';
 import { UserAchievementsRepository } from './users-achievements.repository';
+import { AchieveRepository } from 'src/achievements/achievements.repository';
+import { Achieve } from 'src/achievements/entities/achievement.entity';
+import { UserAchievementProgressRepository } from 'src/user-achievement-progress/user-achievement-progress.repository';
 
 @Injectable()
 export class UserAchievementsService {
   constructor(
     private readonly userAchievementsRepository: UserAchievementsRepository,
+    private readonly userAchievementProgressRepo: UserAchievementProgressRepository,
+    private readonly achievementsRepo: AchieveRepository,
   ) {}
 
   async updateUserAchievements(
@@ -31,31 +36,81 @@ export class UserAchievementsService {
   async getUserAchievements(userId: number): Promise<UserAchievements[]> {
     return await this.userAchievementsRepository.findAchievementsByUser(userId);
   }
-  //ai가 제시한 클라측 코드
-  //일단 메모
-  // async submitGameResult(achievedId) {
-  //   fetch('/api/game/result', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': 'Bearer ' + userToken // JWT 또는 세션 기반 인증
-  //     },
-  //     body: JSON.stringify({ achievedId })
-  //   })
-  //   .then(response => {
-  //     if (!response.ok) {
-  //       throw new Error('결과 제출에 실패했습니다.');
-  //     }
-  //     return response.json();
-  //   })
-  //   .then(data => {
-  //     console.log('업적이 성공적으로 업데이트되었습니다:', data);
-  //   })
-  //   .catch(error => {
-  //     console.error('오류 발생:', error);
-  //   });
-  // }
-  // create(createUsersAchievementDto: CreateUsersAchievementDto) {
-  //   return 'This action adds a new usersAchievement';
-  // }
+
+  // ✅ 게임 업적 저장
+  async saveGameAchievements(gameAchievements: any) {
+    console.log(`🎖️ 게임 업적 저장 시작 (gameId: ${gameAchievements.gameId})`);
+
+    for (const [userId, stats] of Object.entries(
+      gameAchievements.playerAchievements,
+    )) {
+      await this.checkAchievements(Number(userId), stats);
+    }
+
+    console.log(`✅ 게임 업적 저장 완료 (gameId: ${gameAchievements.gameId})`);
+  }
+
+  // ✅ 유저 업적 체크 & 저장
+  async checkAchievements(userId: number, stats: any) {
+    const achievements = await this.achievementsRepo.findAllAchievements();
+
+    for (const achievement of achievements) {
+      const condition = JSON.parse(achievement.condition);
+
+      if (this.meetsCondition(stats, condition)) {
+        await this.completeAchievement(userId, achievement.id);
+      } else {
+        await this.updateProgress(userId, achievement.id, stats);
+      }
+    }
+  }
+
+  private meetsCondition(stats: any, condition: any): boolean {
+    return Object.keys(condition).every(
+      (key) => (stats[key] || 0) >= condition[key],
+    );
+  }
+
+  private async completeAchievement(userId: number, achievementId: number) {
+    const exists =
+      await this.userAchievementsRepository.findByUserAndAchievement(
+        userId,
+        achievementId,
+      );
+    if (!exists) {
+      await this.userAchievementsRepository.createAchieve(
+        userId,
+        achievementId,
+      );
+    }
+  }
+
+  private async updateProgress(
+    userId: number,
+    achievementId: number,
+    stats: any,
+  ) {
+    let progress = await this.userAchievementProgressRepo.findOne({
+      where: { user: { id: userId }, achieve: { id: achievementId } },
+    });
+
+    if (!progress) {
+      progress = this.userAchievementProgressRepo.create({
+        user: { id: userId }, // user 객체를 포함
+        achieve: { id: achievementId }, // achieve 객체를 포함
+        progress: 0,
+        achieved: false,
+      });
+    }
+
+    const achievement =
+      await this.achievementsRepo.findAchievementById(achievementId);
+    const condition = JSON.parse(achievement.condition);
+    const newProgress = Math.min(condition.win_count, stats.win_count || 0);
+
+    progress.progress = newProgress;
+    progress.achieved = newProgress >= condition.win_count;
+
+    await this.userAchievementProgressRepo.save(progress);
+  }
 }
