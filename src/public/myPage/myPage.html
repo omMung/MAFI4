@@ -64,6 +64,39 @@
                 </div>
             </section>
 
+            <!-- my-stats-section과 my-posts-section 사이에 추가할 코드 -->
+            <section class="game-stats-section card">
+                <h2>게임 전적</h2>
+                <div class="overall-stats">
+                    <h3>전체 전적</h3>
+                    <div class="stats-grid">
+                        <div class="game-stat-item">
+                            <div class="stat-label">총 게임</div>
+                            <div class="stat-value" id="totalGames">0</div>
+                        </div>
+                        <div class="game-stat-item">
+                            <div class="stat-label">승리</div>
+                            <div class="stat-value win" id="wins">0</div>
+                        </div>
+                        <div class="game-stat-item">
+                            <div class="stat-label">패배</div>
+                            <div class="stat-value loss" id="losses">0</div>
+                        </div>
+                        <div class="game-stat-item">
+                            <div class="stat-label">승률</div>
+                            <div class="stat-value" id="winRate">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="job-stats">
+                    <h3>직업별 전적</h3>
+                    <div class="job-stats-details" id="jobStatsDetails">
+                        <!-- 직업별 상세 통계가 여기에 동적으로 추가됩니다 -->
+                    </div>
+                </div>
+            </section>
+
             <section class="my-stats-section card">
                 <h2>내 활동 통계</h2>
                 <div class="stats-container">

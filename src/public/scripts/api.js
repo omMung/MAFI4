@@ -110,7 +110,7 @@ const api = {
     }
   },
   updatePost: (id, data) =>
-    fetchAPI(`/posts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    fetchAPI(`/posts/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   deletePost: (id) => fetchAPI(`/posts/${id}`, { method: 'DELETE' }),
   getComments: (postId) => fetchAPI(`/comments/${postId}`),
   getCommentsByUser: () => fetchAPI('/comments/me'),
@@ -120,8 +120,13 @@ const api = {
       body: JSON.stringify(data),
     }),
   updateComment: (id, data) =>
-    fetchAPI(`/comments/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    fetchAPI(`/comments/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
   deleteComment: (id) => fetchAPI(`/comments/${id}`, { method: 'DELETE' }),
   toggleLike: (postId) => fetchAPI(`/likes/${postId}`, { method: 'POST' }),
   getLikeCount: (postId) => fetchAPI(`/likes/${postId}`, { method: 'GET' }),
+  getUserRecordByUserId: () => fetchAPI(`/statistics/user`, { method: 'Get' }),
+  getUserRecordByJob: () => fetchAPI(`/statistics/job`, { method: 'Get' }),
 };

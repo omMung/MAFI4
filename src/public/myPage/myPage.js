@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadUserProfile();
   loadMyPosts();
   loadMyComments();
+  loadGameStats();
 
   // 프로필 이미지 변경
   document
@@ -502,4 +503,91 @@ function openModal(modalId) {
 
 function closeModal(modalId) {
   document.getElementById(modalId).style.display = 'none';
+}
+/* ================================
+   게임 전적 로드 및 표시
+================================ */
+async function loadGameStats() {
+  try {
+    // 전체 전적 로드
+    const overallStats = await api.getUserRecordByUserId();
+    renderOverallStats(overallStats.data);
+
+    // 직업별 전적 로드
+    const jobStats = await api.getUserRecordByJob();
+    renderJobDetails(jobStats.data);
+  } catch (error) {
+    console.error('게임 전적을 가져오는데 실패했습니다:', error);
+  }
+}
+
+function renderOverallStats(stats) {
+  if (!stats) return;
+
+  document.getElementById('totalGames').textContent = stats.totalGames;
+  document.getElementById('wins').textContent = stats.wins;
+  document.getElementById('losses').textContent = stats.losses;
+  document.getElementById('winRate').textContent = `${stats.winRate}%`;
+}
+
+function renderJobDetails(jobStats) {
+  if (!jobStats) return;
+
+  const jobStatsDetails = document.getElementById('jobStatsDetails');
+  jobStatsDetails.innerHTML = '';
+
+  // 직업별 아이콘 매핑
+  const jobIcons = {
+    mafia: '🔪',
+    police: '🚔',
+    doctor: '💉',
+    citizen: '👨‍👩‍👧‍👦',
+  };
+
+  // 직업별 한글 이름 매핑
+  const jobNames = {
+    mafia: '마피아',
+    police: '경찰',
+    doctor: '의사',
+    citizen: '시민',
+  };
+
+  // 각 직업별 상세 카드 생성
+  for (const [job, data] of Object.entries(jobStats)) {
+    const jobCard = document.createElement('div');
+    jobCard.className = 'job-detail-card';
+
+    // 승률에 따른 바 너비 계산
+    const winRateWidth = data.winRate || 0;
+
+    jobCard.innerHTML = `
+      <div class="job-detail-header">
+        <span class="job-icon">${jobIcons[job] || '🎮'}</span>
+        <span class="job-detail-title">${jobNames[job] || job}</span>
+      </div>
+      <div class="job-detail-stats">
+        <div class="job-detail-item">
+          <div class="job-detail-label">총 게임</div>
+          <div class="job-detail-value">${data.totalGames}</div>
+        </div>
+        <div class="job-detail-item">
+          <div class="job-detail-label">승률</div>
+          <div class="job-detail-value">${data.winRate}%</div>
+        </div>
+        <div class="job-detail-item">
+          <div class="job-detail-label">승리</div>
+          <div class="job-detail-value win">${data.wins}</div>
+        </div>
+        <div class="job-detail-item">
+          <div class="job-detail-label">패배</div>
+          <div class="job-detail-value loss">${data.losses}</div>
+        </div>
+      </div>
+      <div class="winrate-bar-container">
+        <div class="winrate-bar" style="width: ${winRateWidth}%"></div>
+      </div>
+    `;
+
+    jobStatsDetails.appendChild(jobCard);
+  }
 }

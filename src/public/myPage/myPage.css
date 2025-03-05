@@ -472,3 +472,167 @@
   background-color: #6c757d;
   color: #fff;
 }
+
+/* 게임 전적 섹션 */
+.game-stats-section {
+  margin-bottom: 2rem;
+}
+
+.overall-stats,
+.job-stats {
+  margin-top: 1.5rem;
+}
+
+.overall-stats h3,
+.job-stats h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.overall-stats h3::after,
+.job-stats h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background-color: var(--accent-color);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.game-stat-item {
+  background-color: var(--bg-color-light);
+  border-radius: var(--border-radius);
+  padding: 1.2rem;
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.game-stat-item:hover {
+  transform: translateY(-5px);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.stat-value.win {
+  color: #2ecc71;
+}
+
+.stat-value.loss {
+  color: #e74c3c;
+}
+
+/* 직업별 상세 통계 */
+.job-stats-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.job-detail-card {
+  background-color: var(--bg-color-light);
+  border-radius: var(--border-radius);
+  padding: 1.2rem;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+
+.job-detail-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.job-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.job-detail-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.job-detail-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+}
+
+.job-detail-item {
+  text-align: center;
+}
+
+.job-detail-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 0.3rem;
+}
+
+.job-detail-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.job-detail-value.win {
+  color: #2ecc71;
+}
+
+.job-detail-value.loss {
+  color: #e74c3c;
+}
+
+.winrate-bar-container {
+  margin-top: 1rem;
+  height: 6px;
+  background-color: #f1f1f1;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.winrate-bar {
+  height: 100%;
+  background-color: #2ecc71;
+  border-radius: 3px;
+  transition: width 0.5s ease-in-out;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .job-stats-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .job-detail-stats {
+    grid-template-columns: 1fr;
+  }
+}
