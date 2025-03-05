@@ -11,8 +11,16 @@ export class AchieveRepository {
   ) {}
 
   async createAchieve(achieveData: Partial<Achieve>) {
-    const achieve = this.achieveRepository.create(achieveData);
-    return this.achieveRepository.save(achieve);
+    // 배열인지 확인하고, 배열이 아닐 경우 배열로 감싸줌
+    // const achieveArray = Array.isArray(achieveData)
+    //   ? achieveData
+    //   : [achieveData];
+
+    // 엔티티 생성
+    const achieveEntities = this.achieveRepository.create(achieveData);
+
+    // 데이터베이스에 저장
+    return this.achieveRepository.save(achieveEntities);
   }
 
   // 모든 업적을 가져오는 메서드

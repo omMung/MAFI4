@@ -19,4 +19,10 @@ export class AchievementsController {
   findAll(): Promise<Achieve[]> {
     return this.achievementsService.getAllAchievements();
   }
+
+  @Post('load')
+  async loadAchievements() {
+    await this.achievementsService.loadAchievementsFromJson();
+    return { message: 'Achievements loaded successfully' };
+  }
 }
