@@ -9,12 +9,21 @@ import { RedisModule } from 'src/redis/redis.module';
 import { AuthRepository } from './repositories/auth.repository';
 import { UsersService } from 'src/users/users.service';
 import { UsersRepository } from 'src/users/users.repository';
+import { BullModule } from '@nestjs/bull';
+import { EmailProcessor } from './processors/email.processor'; // 이메일 처리 프로세서 추가
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     RedisModule,
     ConfigModule,
+    BullModule.registerQueue({
+      name: 'email-queue', // 이메일 전송을 위한 Bull Queue 등록
+      redis: {
+        host: 'localhost', // 로컬 Redis 사용
+        port: 6379,
+      },
+    }),
     // JwtModule.registerAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],
@@ -27,7 +36,13 @@ import { UsersRepository } from 'src/users/users.repository';
     // }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, AuthRepository, UsersRepository],
+  providers: [
+    AuthService,
+    UsersService,
+    AuthRepository,
+    UsersRepository,
+    EmailProcessor, // 이메일 처리 프로세서 추가
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}
