@@ -212,7 +212,12 @@
     <div class="container-custom" id="mainContainer" style="display: none">
       <!-- 채팅 영역 -->
       <div class="chat-container" id="chatRoom">
-        <h2 id="roomTitle"></h2>
+        <h2 id="roomTitle">
+          <span
+            id="phaseTimer"
+            style="font-size: 16px; margin-left: 10px; color: gray"
+          ></span>
+        </h2>
         <div id="chatMessages"></div>
         <input
           type="text"
@@ -226,6 +231,14 @@
       <div class="occupant-container" id="roomOccupants">
         <h2>현재 접속 인원</h2>
         <div id="occupantList"></div>
+        <div
+          id="myOccupantDiv"
+          style="
+            margin-top: 10px;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+          "
+        ></div>
       </div>
     </div>
     <!-- 투표 확정 버튼 컨테이너 (기본적으로 숨김) -->
@@ -286,6 +299,15 @@
       var policeBtn = document.getElementById('policeActionBtn');
       var doctorBtn = document.getElementById('doctorActionBtn');
 
+      //타이머 관련 로직
+      // UI 업데이트 함수
+      function updatePhaseTimer(phase, remainingTime) {
+        const phaseTimerElement = document.getElementById('phaseTimer');
+        if (phaseTimerElement) {
+          phaseTimerElement.textContent = `(${phase}) ⏳ ${remainingTime}초`;
+        }
+      }
+
       // 로그인 및 룸 입장
 
       window.onload = function () {
@@ -344,6 +366,11 @@
           );
         });
 
+        socket.on('updateTimer', (data) => {
+          console.log('⏳ 타이머 업데이트:', data);
+          updatePhaseTimer(data.phase, data.remainingTime);
+        });
+
         socket.on('voteSuccess', function (data) {
           appendChatMessage(
             '[' + data.voterId + '] ' + data.message,
@@ -377,7 +404,20 @@
           //currentUserRole = data.role;
           sender = data.sender;
           appendChatMessage(data.message, true);
+          updateMyRole(sender.role);
         });
+
+        function updateMyRole(role) {
+          var myOccupantDiv = document.getElementById('myOccupantDiv');
+          myOccupantDiv.innerHTML = ''; // 기존 내용 초기화
+
+          var myBtn = document.createElement('button');
+          myBtn.className = 'btn btn-secondary occupant-btn';
+          myBtn.textContent = `👤 나 (사용자 ${currentUserId}) - [${role}]`;
+          myBtn.disabled = true;
+
+          myOccupantDiv.appendChild(myBtn);
+        }
 
         socket.on('error', function (data) {
           if (data.message === '방 최대 인원에 도달했습니다.') {
@@ -405,6 +445,14 @@
           policeBtn.classList.remove('disabled-btn');
           doctorBtn.classList.remove('disabled-btn');
           console.log(mafiaBtn, policeBtn, doctorBtn);
+          socket.emit('UPDATE:MY_INFO', {
+            roomId: roomId,
+            userId: currentUserId,
+          });
+          socket.on('myInfo', function (data) {
+            sender = data.sender;
+            console.log(sender);
+          });
         });
 
         socket.on('NOT:CHAT', function () {
@@ -776,8 +824,13 @@
         // 접속 인원 업데이트 함수
         function updateOccupantList(roomData) {
           console.log('접속 인원 업데이트:', roomData);
+
           var occupantListDiv = document.getElementById('occupantList');
-          occupantListDiv.innerHTML = '';
+          var myOccupantDiv = document.getElementById('myOccupantDiv');
+
+          occupantListDiv.innerHTML = ''; // 일반 유저 리스트 초기화
+          myOccupantDiv.innerHTML = ''; // 본인 표시 영역 초기화
+
           var players = [];
           try {
             players =
@@ -787,29 +840,49 @@
           } catch (error) {
             players = [];
           }
+
+          var otherPlayers = [];
+          var currentPlayer = null;
+
+          // 본인과 다른 플레이어를 분리
           players.forEach(function (player) {
-            var btn = document.createElement('button');
             if (player.id === currentUserId) {
-              btn.className = 'btn btn-secondary occupant-btn';
-              btn.disabled = true;
+              currentPlayer = player;
             } else {
-              btn.className = 'btn btn-outline-primary occupant-btn';
+              otherPlayers.push(player);
             }
+          });
+
+          // 다른 플레이어 먼저 추가 (접속 순서 유지)
+          otherPlayers.forEach(function (player) {
+            var btn = document.createElement('button');
+            btn.className = 'btn btn-outline-primary occupant-btn';
             btn.textContent = '사용자 ' + player.id;
             btn.dataset.userid = player.id;
             btn.addEventListener('click', function () {
-              var allBtns = document.querySelectorAll(
-                '.occupant-btn:not([disabled])',
-              );
-              allBtns.forEach(function (b) {
-                b.classList.remove('selected');
-              });
+              document
+                .querySelectorAll('.occupant-btn:not([disabled])')
+                .forEach(function (b) {
+                  b.classList.remove('selected');
+                });
               btn.classList.add('selected');
               selectedTargetId = Number(btn.dataset.userid);
               console.log('선택된 대상:', selectedTargetId);
             });
             occupantListDiv.appendChild(btn);
           });
+
+          // 본인 버튼을 새로운 div에 추가 (하단 고정)
+          if (currentPlayer) {
+            var myBtn = document.createElement('button');
+            myBtn.className = 'btn btn-secondary occupant-btn';
+            var roleText = currentPlayer.role
+              ? ` - [${currentPlayer.role}]`
+              : ''; // 역할이 있으면 추가
+            myBtn.textContent = `👤 나 (사용자 ${currentUserId})${roleText}`;
+            myBtn.disabled = true;
+            myOccupantDiv.appendChild(myBtn);
+          }
         }
 
         // 선택 해제 함수
