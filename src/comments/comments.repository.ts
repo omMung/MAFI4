@@ -27,6 +27,7 @@ export class CommentsRepository {
   async findAllByUserId(userId: number) {
     const comments = await this.commentRepository.find({
       where: { user: { id: userId } },
+      relations: ['post'],
     });
     return comments;
   }

@@ -91,14 +91,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 좋아요 데이터 로드
   async function loadLikeData() {
     try {
-      // API를 통해 좋아요 개수 가져오기
-      const response = await fetch(`/likes/${postId}`, { method: 'GET' });
-      if (!response.ok) {
-        throw new Error('좋아요 데이터를 가져오는데 실패했습니다.');
-      }
-
-      const likeData = await response.json();
-
+      // 이미 JSON 데이터가 반환됨
+      const likeData = await api.getLikeCount(postId);
+      console.log(likeData);
       // 좋아요 상태 업데이트
       updateLikeStatus(likeData);
     } catch (error) {
@@ -115,10 +110,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const likeIcon = likeButton.querySelector('.like-icon');
 
     // 좋아요 개수 업데이트
-    likeCount.textContent = likeData.count || 0;
+    likeCount.textContent = likeData.data.count || 0;
 
     // 현재 사용자의 좋아요 상태 업데이트
-    isLiked = likeData.isLiked || false;
+    isLiked = likeData.data.isLiked || false;
 
     if (isLiked) {
       likeButton.classList.add('active');
@@ -137,11 +132,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       // 버튼 비활성화 (중복 클릭 방지)
       likeButton.disabled = true;
 
-      // 좋아요 토글 API 호출
-      const response = await fetch(`/likes/${postId}`, { method: 'POST' });
-      if (!response.ok) {
-        throw new Error('좋아요 처리에 실패했습니다.');
-      }
+      // 좋아요 토글 API 호출 (JSON 데이터가 반환됨)
+      const response = await api.toggleLike(postId);
+      // 더 이상 response.ok 체크하지 않음
 
       // 좋아요 상태 반전
       isLiked = !isLiked;
@@ -166,16 +159,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
       }
 
-      // 애니메이션 종료 후 클래스 제거
+      // 애니메이션 종료 후 클래스 제거 및 버튼 활성화
       setTimeout(() => {
         likeButton.classList.remove('animate');
-        // 버튼 다시 활성화
         likeButton.disabled = false;
       }, 800);
     } catch (error) {
       console.error('좋아요 처리 실패:', error);
       alert('좋아요 처리 중 오류가 발생했습니다.');
-      // 버튼 다시 활성화
       likeButton.disabled = false;
     }
   }

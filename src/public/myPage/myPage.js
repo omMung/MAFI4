@@ -1,23 +1,16 @@
-// DOMContentLoaded 이벤트: 페이지가 모두 로드된 후 초기 작업 수행
 document.addEventListener('DOMContentLoaded', () => {
-  // 사용자 인증 상태 업데이트
+  // 초기 작업
   updateAuthDisplay();
-
-  // 사용자 프로필 정보 로드 (토큰 확인 포함)
   loadUserProfile();
-
-  // 내 게시글 로드 (최초 페이지: 1)
   loadMyPosts();
-
-  // 내 댓글 로드 (첫 페이지 렌더링)
   loadMyComments();
 
-  // 프로필 이미지 업로드 이벤트 리스너 등록 (파일 변경 시 saveProfileImage 호출)
+  // 프로필 이미지 변경
   document
     .getElementById('profileImageUpload')
     .addEventListener('change', saveProfileImage);
 
-  // 닉네임 수정 관련 이벤트 리스너 등록
+  // 닉네임 수정 관련 이벤트
   document
     .getElementById('editNicknameBtn')
     .addEventListener('click', showNicknameEdit);
@@ -27,11 +20,67 @@ document.addEventListener('DOMContentLoaded', () => {
   document
     .getElementById('cancelNicknameBtn')
     .addEventListener('click', hideNicknameEdit);
+
+  // 모달 닫기 이벤트 (모달 내부의 닫기 아이콘)
+  document.querySelectorAll('.modal .close').forEach((closeBtn) => {
+    closeBtn.addEventListener('click', (e) => {
+      const targetModal = e.target.getAttribute('data-target');
+      closeModal(targetModal);
+    });
+  });
+  // 모달 취소 버튼 (btn-secondary)에 닫기 이벤트 적용
+  document.querySelectorAll('.btn-secondary').forEach((cancelBtn) => {
+    cancelBtn.addEventListener('click', (e) => {
+      const targetModal = e.target.getAttribute('data-target');
+      if (targetModal) closeModal(targetModal);
+    });
+  });
+
+  // 게시글 수정 모달 저장 이벤트
+  document
+    .getElementById('savePostEdit')
+    .addEventListener('click', function () {
+      const postId = document.getElementById('postEditForm').dataset.postId;
+      const updatedTitle = document.getElementById('postTitle').value;
+      const updatedContent = document.getElementById('postContent').value;
+      // API를 호출하여 게시글 업데이트 (api.updatePost가 있다고 가정)
+      api
+        .updatePost(postId, { title: updatedTitle, content: updatedContent })
+        .then(() => {
+          loadMyPosts();
+          closeModal('postEditModal');
+          alert('게시글이 수정되었습니다.');
+        })
+        .catch((error) => {
+          console.error('게시글 수정 실패:', error);
+          alert('게시글 수정에 실패했습니다.');
+        });
+    });
+
+  // 댓글 수정 모달 저장 이벤트
+  document
+    .getElementById('saveCommentEdit')
+    .addEventListener('click', function () {
+      const commentId =
+        document.getElementById('commentEditForm').dataset.commentId;
+      const updatedContent = document.getElementById('commentContent').value;
+      // API를 호출하여 댓글 업데이트 (api.updateComment가 있다고 가정)
+      api
+        .updateComment(commentId, { content: updatedContent })
+        .then(() => {
+          loadMyComments();
+          closeModal('commentEditModal');
+          alert('댓글이 수정되었습니다.');
+        })
+        .catch((error) => {
+          console.error('댓글 수정 실패:', error);
+          alert('댓글 수정에 실패했습니다.');
+        });
+    });
 });
 
 /* ================================
    사용자 프로필 정보 로드
-   - 토큰 확인 후 getProfile API 호출하여 최신 사용자 정보 표시
 ================================ */
 function loadUserProfile() {
   const accessToken = localStorage.getItem('accessToken');
@@ -59,26 +108,22 @@ function loadUserProfile() {
 }
 
 /* ================================
-   내 게시글 목록 로드 및 페이지네이션 처리
-   - 모든 내 게시글을 불러와 전역 변수(allMyPosts)에 저장하고, 
-     클라이언트에서 5개씩 잘라 페이지별로 렌더링
+   게시글 로드 및 페이지네이션
 ================================ */
 let allMyPosts = [];
 
 async function loadMyPosts() {
   try {
     const response = await api.getPostsByUser();
-    // 응답 구조가 { message, data: { posts } } 형태라고 가정
     allMyPosts = response.data.posts;
-    renderMyPosts(1); // 첫 페이지 렌더링
-    updateStats(); // 통계 업데이트
+    renderMyPosts(1);
+    updateStats();
   } catch (error) {
     console.error('게시글을 가져오는데 실패했습니다:', error);
     showEmptyPosts();
   }
 }
 
-/* renderMyPosts: 클라이언트 사이드 페이지네이션 처리 */
 function renderMyPosts(currentPage) {
   const postsPerPage = 5;
   const totalPosts = allMyPosts.length;
@@ -89,7 +134,6 @@ function renderMyPosts(currentPage) {
   renderPagination('postsPagenation', totalPages, currentPage, renderMyPosts);
 }
 
-/* renderPostsList: 게시글 목록을 화면에 출력하는 함수 */
 function renderPostsList(posts) {
   const postsListElement = document.getElementById('myPostsList');
   const emptyMessage = document.getElementById('emptyPostsMessage');
@@ -119,7 +163,7 @@ function renderPostsList(posts) {
           <button class="action-btn delete-btn" data-id="${post.id}">삭제</button>
         </div>
       `;
-      // 전체 클릭 시, 버튼이나 링크가 아닌 경우 상세 페이지로 이동
+      // 전체 영역 클릭 시 상세 페이지 이동
       postElement.addEventListener('click', (event) => {
         if (
           event.target.closest('.post-actions') ||
@@ -131,30 +175,150 @@ function renderPostsList(posts) {
       });
       postsListElement.appendChild(postElement);
     });
+
+    // 게시글 수정 버튼 이벤트 등록 (모달 열기)
+    const editButtons = postsListElement.querySelectorAll('.edit-btn');
+    editButtons.forEach((button) => {
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        const postId = this.getAttribute('data-id');
+        const post = allMyPosts.find((p) => p.id == postId);
+        if (post) {
+          // 게시글 수정 모달의 제목, 내용 필드에 기존 데이터를 채워넣음
+          document.getElementById('postTitle').value = post.title;
+          // post.content가 없을 경우 빈 문자열을 할당 (데이터 구조에 맞게 조정)
+          document.getElementById('postContent').value = post.content || '';
+          // 수정할 게시글 id를 폼에 저장
+          document.getElementById('postEditForm').dataset.postId = postId;
+          openModal('postEditModal');
+        }
+      });
+    });
+
+    // 게시글 삭제 버튼 이벤트 등록
+    const deleteButtons = postsListElement.querySelectorAll('.delete-btn');
+    deleteButtons.forEach((button) => {
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        const postId = this.getAttribute('data-id');
+        if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+          deletePost(postId);
+        }
+      });
+    });
   }
-  // 수정 버튼 이벤트 등록
-  const editButtons = postsListElement.querySelectorAll('.edit-btn');
-  editButtons.forEach((button) => {
-    button.addEventListener('click', function (event) {
-      event.stopPropagation();
-      const postId = this.getAttribute('data-id');
-      window.location.href = `../board/edit.html?id=${postId}`;
-    });
-  });
-  // 삭제 버튼 이벤트 등록
-  const deleteButtons = postsListElement.querySelectorAll('.delete-btn');
-  deleteButtons.forEach((button) => {
-    button.addEventListener('click', function (event) {
-      event.stopPropagation();
-      const postId = this.getAttribute('data-id');
-      if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
-        deletePost(postId);
-      }
-    });
-  });
 }
 
-/* renderPagination: 페이지네이션 버튼 렌더링 함수 */
+/* ================================
+   댓글 로드 및 페이지네이션
+================================ */
+let allMyComments = [];
+
+async function loadMyComments() {
+  try {
+    const response = await api.getCommentsByUser();
+    console.log(response);
+    allMyComments = response.data.comments;
+    renderMyComments(1);
+    updateStats();
+  } catch (error) {
+    console.error('댓글을 가져오는데 실패했습니다:', error);
+    showEmptyComments();
+  }
+}
+
+function renderMyComments(currentPage) {
+  const commentsPerPage = 5;
+  const totalComments = allMyComments.length;
+  const totalPages = Math.ceil(totalComments / commentsPerPage);
+  const startIndex = (currentPage - 1) * commentsPerPage;
+  const currentComments = allMyComments.slice(
+    startIndex,
+    startIndex + commentsPerPage,
+  );
+  renderCommentsList(currentComments);
+  renderPagination(
+    'commentsPagenation',
+    totalPages,
+    currentPage,
+    renderMyComments,
+  );
+}
+
+function renderCommentsList(comments) {
+  const commentsListElement = document.getElementById('myCommentsList');
+  const emptyMessage = document.getElementById('emptyCommentsMessage');
+  if (emptyMessage) {
+    emptyMessage.style.display = 'none';
+  }
+  if (!comments || comments.length === 0) {
+    showEmptyComments();
+    return;
+  }
+  if (commentsListElement) {
+    commentsListElement.innerHTML = '';
+    comments.forEach((comment) => {
+      const commentElement = document.createElement('div');
+      commentElement.className = 'comment-item';
+      commentElement.innerHTML = `
+          <div class="comment-content">
+            <div class="comment-title">
+              <a href="../post/post.html?postId=${comment.post.id}">${comment.content}</a>
+            </div>
+            <div class="comment-meta">
+              게시글: ${comment.postTitle}
+            </div>
+          </div>
+          <div class="comment-actions">
+            <button class="action-btn edit-btn" data-id="${comment.id}" data-post-id="${comment.postId}">수정</button>
+            <button class="action-btn delete-btn" data-id="${comment.id}">삭제</button>
+          </div>
+        `;
+      commentElement.addEventListener('click', (event) => {
+        if (
+          event.target.closest('.comment-actions') ||
+          event.target.tagName.toLowerCase() === 'a'
+        ) {
+          return;
+        }
+        window.location.href = `../post/post.html?postId=${comment.post.id}`;
+      });
+      commentsListElement.appendChild(commentElement);
+    });
+
+    // 댓글 수정 버튼 이벤트 등록 (모달 열기)
+    const editButtons = commentsListElement.querySelectorAll('.edit-btn');
+    editButtons.forEach((button) => {
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        const commentId = this.getAttribute('data-id');
+        const comment = allMyComments.find((c) => c.id == commentId);
+        if (comment) {
+          document.getElementById('commentContent').value = comment.content;
+          document.getElementById('commentEditForm').dataset.commentId =
+            commentId;
+          openModal('commentEditModal');
+        }
+      });
+    });
+
+    // 댓글 삭제 버튼 이벤트 등록
+    const deleteButtons = commentsListElement.querySelectorAll('.delete-btn');
+    deleteButtons.forEach((button) => {
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        const commentId = this.getAttribute('data-id');
+        if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+          deleteComment(commentId);
+        }
+      });
+    });
+  }
+}
+
+/* ================================
+   페이지네이션 렌더링
+================================ */
 function renderPagination(elementId, totalPages, currentPage, onPageChange) {
   const paginationElement = document.getElementById(elementId);
   paginationElement.innerHTML = '';
@@ -182,118 +346,15 @@ function renderPagination(elementId, totalPages, currentPage, onPageChange) {
   }
 }
 
-/* showEmptyPosts: 게시글이 없을 경우 빈 메시지 표시 */
+/* ================================
+   게시글/댓글 없을 시 처리
+================================ */
 function showEmptyPosts() {
   document.getElementById('myPostsList').innerHTML = '';
   document.getElementById('emptyPostsMessage').style.display = 'block';
   document.getElementById('postsPagenation').innerHTML = '';
 }
 
-/* ================================
-   전역 변수: 전체 내 댓글 저장
-================================ */
-let allMyComments = [];
-
-/* ================================
-   내 댓글 목록 로드 및 페이지네이션 처리
-   - 모든 내 댓글을 불러와 전역 변수에 저장 후, 첫 페이지 렌더링 시작
-================================ */
-async function loadMyComments() {
-  try {
-    const response = await api.getCommentsByUser();
-    allMyComments = response.data.comments;
-    renderMyComments(1);
-    updateStats();
-  } catch (error) {
-    console.error('댓글을 가져오는데 실패했습니다:', error);
-    showEmptyComments();
-  }
-}
-
-/* renderMyComments: 클라이언트 사이드 페이지네이션 처리 */
-function renderMyComments(currentPage) {
-  const commentsPerPage = 5;
-  const totalComments = allMyComments.length;
-  const totalPages = Math.ceil(totalComments / commentsPerPage);
-  const startIndex = (currentPage - 1) * commentsPerPage;
-  const currentComments = allMyComments.slice(
-    startIndex,
-    startIndex + commentsPerPage,
-  );
-  renderCommentsList(currentComments);
-  renderPagination(
-    'commentsPagenation',
-    totalPages,
-    currentPage,
-    renderMyComments,
-  );
-}
-
-/* renderCommentsList: 댓글 목록을 화면에 출력하는 함수 */
-function renderCommentsList(comments) {
-  const commentsListElement = document.getElementById('myCommentsList');
-  const emptyMessage = document.getElementById('emptyCommentsMessage');
-  if (emptyMessage) {
-    emptyMessage.style.display = 'none';
-  }
-  if (!comments || comments.length === 0) {
-    showEmptyComments();
-    return;
-  }
-  if (commentsListElement) {
-    commentsListElement.innerHTML = '';
-    comments.forEach((comment) => {
-      const commentElement = document.createElement('div');
-      commentElement.className = 'comment-item';
-      commentElement.innerHTML = `
-          <div class="comment-content">
-            <div class="comment-title">
-              <a href="../post/post.html?postId=${comment.postId}">${comment.content}</a>
-            </div>
-            <div class="comment-meta">
-              게시글: ${comment.postTitle}
-            </div>
-          </div>
-          <div class="comment-actions">
-            <button class="action-btn edit-btn" data-id="${comment.id}" data-post-id="${comment.postId}">수정</button>
-            <button class="action-btn delete-btn" data-id="${comment.id}">삭제</button>
-          </div>
-        `;
-      // 댓글 항목 전체 클릭 시, 버튼이나 링크가 아닌 경우 해당 게시글 상세 페이지로 이동
-      commentElement.addEventListener('click', (event) => {
-        if (
-          event.target.closest('.comment-actions') ||
-          event.target.tagName.toLowerCase() === 'a'
-        ) {
-          return;
-        }
-        window.location.href = `../post/post.html?postId=${comment.postId}`;
-      });
-      commentsListElement.appendChild(commentElement);
-    });
-  }
-  const editButtons = commentsListElement.querySelectorAll('.edit-btn');
-  editButtons.forEach((button) => {
-    button.addEventListener('click', function (event) {
-      event.stopPropagation();
-      const commentId = this.getAttribute('data-id');
-      const postId = this.getAttribute('data-post-id');
-      window.location.href = `../board/post.html?id=${postId}&commentId=${commentId}`;
-    });
-  });
-  const deleteButtons = commentsListElement.querySelectorAll('.delete-btn');
-  deleteButtons.forEach((button) => {
-    button.addEventListener('click', function (event) {
-      event.stopPropagation();
-      const commentId = this.getAttribute('data-id');
-      if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
-        deleteComment(commentId);
-      }
-    });
-  });
-}
-
-/* showEmptyComments: 댓글이 없을 경우 빈 메시지 표시 */
 function showEmptyComments() {
   const commentsListElement = document.getElementById('myCommentsList');
   const emptyMessage = document.getElementById('emptyCommentsMessage');
@@ -306,7 +367,9 @@ function showEmptyComments() {
   if (paginationElement) paginationElement.innerHTML = '';
 }
 
-/* deleteComment: 댓글 삭제 처리 (API 호출) */
+/* ================================
+   댓글 삭제 처리
+================================ */
 function deleteComment(commentId) {
   api
     .deleteComment(commentId)
@@ -320,22 +383,24 @@ function deleteComment(commentId) {
     });
 }
 
-/* updateStats: 전체 게시글 및 댓글 수 업데이트 */
-function updateStats() {
-  const postsCount = allMyPosts.length;
-  const commentsCount = allMyComments.length;
-  const statsItems = document.querySelectorAll(
-    '.stats-placeholder .stats-item .stats-value',
-  );
-  if (statsItems.length >= 2) {
-    statsItems[0].textContent = postsCount;
-    statsItems[1].textContent = commentsCount;
-  }
+/* ================================
+   게시글 삭제 처리
+================================ */
+function deletePost(postId) {
+  api
+    .deletePost(postId)
+    .then(() => {
+      alert('게시글이 삭제되었습니다.');
+      loadMyPosts();
+    })
+    .catch((error) => {
+      console.error('게시글 삭제에 실패했습니다:', error);
+      alert('게시글 삭제에 실패했습니다.');
+    });
 }
 
 /* ================================
    프로필 이미지 업데이트 처리
-   - 파일 선택 시 미리보기 및 updateProfile API 호출
 ================================ */
 function saveProfileImage() {
   const fileInput = document.getElementById('profileImageUpload');
@@ -353,19 +418,15 @@ function saveProfileImage() {
     return;
   }
 
-  // FormData 생성 및 파일 추가
-
   const formData = new FormData();
   formData.append('file', file);
 
-  // updateProfile API 호출 (FormData일 경우 Content-Type은 자동 처리)
   api
     .updateProfile(formData)
     .then((response) => {
       return api.getProfile();
     })
     .then((user) => {
-      // 업데이트된 프로필 이미지로 UI 갱신
       document.getElementById('profileImage').src = user.file;
       updateAuthDisplay();
       alert('프로필 이미지가 변경되었습니다.');
@@ -418,17 +479,27 @@ function saveNickname() {
 }
 
 /* ================================
-   게시글 삭제 처리
+   활동 통계 업데이트
 ================================ */
-function deletePost(postId) {
-  api
-    .deletePost(postId)
-    .then(() => {
-      alert('게시글이 삭제되었습니다.');
-      loadMyPosts();
-    })
-    .catch((error) => {
-      console.error('게시글 삭제에 실패했습니다:', error);
-      alert('게시글 삭제에 실패했습니다.');
-    });
+function updateStats() {
+  const postsCount = allMyPosts.length;
+  const commentsCount = allMyComments.length;
+  const statsItems = document.querySelectorAll(
+    '.stats-placeholder .stats-item .stats-value',
+  );
+  if (statsItems.length >= 2) {
+    statsItems[0].textContent = postsCount;
+    statsItems[1].textContent = commentsCount;
+  }
+}
+
+/* ================================
+   모달 열기/닫기 함수
+================================ */
+function openModal(modalId) {
+  document.getElementById(modalId).style.display = 'block';
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
 }

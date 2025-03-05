@@ -115,6 +115,58 @@
                 </div>
             </section>
         </div>
+
+        <!-- 글 수정 모달 -->
+        <div id="postEditModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>게시글 수정</h2>
+                    <span class="close" data-target="postEditModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="postEditForm">
+                        <div class="form-group">
+                            <label for="postTitle">제목</label>
+                            <input type="text" id="postTitle" name="postTitle" placeholder="제목을 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postContent">내용</label>
+                            <textarea id="postContent" name="postContent" rows="8" placeholder="내용을 입력하세요"
+                                required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="savePostEdit" class="btn btn-primary">저장</button>
+                    <button id="cancelPostEdit" class="btn btn-secondary" data-target="postEditModal">취소</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 댓글 수정 모달 -->
+        <div id="commentEditModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>댓글 수정</h2>
+                    <span class="close" data-target="commentEditModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="commentEditForm">
+                        <div class="form-group">
+                            <label for="commentContent">내용</label>
+                            <textarea id="commentContent" name="commentContent" rows="4" placeholder="댓글 내용을 입력하세요"
+                                required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="saveCommentEdit" class="btn btn-primary">저장</button>
+                    <button id="cancelCommentEdit" class="btn btn-secondary" data-target="commentEditModal">취소</button>
+                </div>
+            </div>
+        </div>
+
+
     </main>
 
     <div id="footer-container"></div>
