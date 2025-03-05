@@ -1,22 +1,20 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param} from '@nestjs/common';
 import { AchievementsService } from './achievements.service';
-import { Achieve } from './entities/achievement.entity';
+
 
 @Controller('achievements')
 export class AchievementsController {
   constructor(private readonly achievementsService: AchievementsService) {}
 
-  @Post()
-  create(@Body() achieveData: Partial<Achieve>): Promise<Achieve> {
-    return this.achievementsService.createAchieve(achieveData);
+  // 특정 유저 업적 조회
+  @Get(':id') //id 는 유저id
+  getAchievements(@Param('id') id: string) {
+    return this.achievementsService.getAchievements(+id);
   }
-  // @Post()
-  // create(@Body() createAchievementDto: CreateAchievementDto) {
-  //   return this.achievementsService.createAchieve(createAchievementDto);
-  // }
 
+  // 모든 유저의 업적 조회
   @Get()
-  findAll(): Promise<Achieve[]> {
+  getAllAchievements() {
     return this.achievementsService.getAllAchievements();
   }
 }

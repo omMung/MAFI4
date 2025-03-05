@@ -9,5 +9,6 @@ import { AchieveRepository } from './achievements.repository';
   imports: [TypeOrmModule.forFeature([Achieve])],
   controllers: [AchievementsController],
   providers: [AchievementsService, AchieveRepository],
+  exports: [AchievementsService]
 })
 export class AchievementsModule {}
