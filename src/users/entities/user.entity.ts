@@ -12,6 +12,7 @@ import { Game } from '../../games/entities/game.entity';
 //   import { Ranking } from '../../ranking/ranking.entity';
 import { UserAchievements } from '../../user-achievements/entities/users-achievement.entity';
 import { Like } from 'src/likes/entities/like.entity';
+import { UserItem } from 'src/user-item/entities/user-item.entity';
 
 @Entity()
 export class User {
@@ -29,6 +30,8 @@ export class User {
   verifyCode: string;
   @Column({ type: 'varchar', length: 255 })
   title: string;
+  @Column({ type: 'int', default: 0 })
+  money: number;
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })
@@ -49,4 +52,8 @@ export class User {
   userAchievements: UserAchievements[];
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
+  @OneToMany(() => UserItem, (userItem) => userItem.users, {
+    onDelete: 'CASCADE',
+  })
+  userItems: UserItem[];
 }

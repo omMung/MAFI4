@@ -1,26 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
+import { ItemsRepository } from './items.repository';
+import { isNil } from 'lodash';
+import { UserNotFoundException } from 'src/common/exceptions/users.exception';
+import { ItemNotFoundException } from 'src/common/exceptions/item.exception';
 
 @Injectable()
 export class ItemsService {
-  create(createItemDto: CreateItemDto) {
-    return 'This action adds a new item';
+  constructor(private readonly itemsRepository: ItemsRepository) {}
+  async createItem(name: string, price: number) {
+    const itemData = await this.itemsRepository.createItem(name, price);
+    return itemData;
   }
 
-  findAll() {
-    return `This action returns all items`;
+  async findAllItems() {
+    const items = await this.itemsRepository.findAllItems();
+    if (isNil(items)) {
+      throw new ItemNotFoundException();
+    }
+    return items;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
+  async findOneItem(itemId: number) {
+    const itemDate = await this.itemsRepository.findOneItem(itemId);
+    if (isNil(itemDate)) {
+      throw new ItemNotFoundException();
+    }
+    return itemDate;
   }
 
-  update(id: number, updateItemDto: UpdateItemDto) {
-    return `This action updates a #${id} item`;
+  async updateItem(itemId: number, name: string, price: number) {
+    const updateItemData = await this.itemsRepository.updateItem(
+      itemId,
+      name,
+      price,
+    );
+    return updateItemData;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} item`;
+  async deleteItem(itemId: number) {
+    return await this.itemsRepository.deleteItem(itemId);
   }
 }

@@ -1,4 +1,5 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { UserItem } from 'src/user-item/entities/user-item.entity';
+import { Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 export class Item {
   @PrimaryGeneratedColumn({ unsigned: true })
@@ -9,4 +10,9 @@ export class Item {
 
   @Column({ type: 'int' })
   price: number;
+
+  @OneToMany(() => UserItem, (userItem) => userItem.items, {
+    onDelete: 'CASCADE',
+  })
+  userItems: UserItem[];
 }

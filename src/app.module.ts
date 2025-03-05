@@ -16,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LikesModule } from './likes/likes.module';
 import { ItemsModule } from './items/items.module';
+import { UserItemModule } from './user-item/user-item.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -77,6 +78,7 @@ const typeOrmModuleOptions = {
     UsersAchievementsModule,
     LikesModule,
     ItemsModule,
+    UserItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],

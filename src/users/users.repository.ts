@@ -41,11 +41,23 @@ export class UsersRepository {
     });
     return user;
   }
+  //id검색 돈만 검색
+  async findUserMoney(userId: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      select: ['money'],
+    });
+    return user;
+  }
 
   //업데이트 로직
   async updateUserInfo(userId: number, updatedData: Partial<User>) {
     await this.usersRepository.update(userId, updatedData);
     return this.usersRepository.findOne({ where: { id: userId } });
+  }
+
+  async updateUserMoney(remainingMoney: number) {
+    await this.usersRepository.update(money: remainingMoney);
   }
 
   async deleteUser(userId: number) {
