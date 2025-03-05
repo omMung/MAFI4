@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateUserItemDto } from './dto/update-user-item.dto';
 import { UserItemRepository } from './user-item.repository';
 import { UsersRepository } from 'src/users/users.repository';
 import { ItemsRepository } from 'src/items/items.repository';
@@ -39,7 +38,7 @@ export class UserItemService {
     const itemMount = await this.userItemRepository.updateUserItem(
       userId,
       itemId,
-      changeMount,
+      mount,
     );
     return;
   }

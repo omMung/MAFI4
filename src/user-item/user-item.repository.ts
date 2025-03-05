@@ -10,11 +10,7 @@ export class UserItemRepository {
     private readonly userItemRepository: Repository<UserItem>,
   ) {}
 
-  async createUserItem(
-    itemId: number,
-    userId: number,
-    mount: boolean,
-  ): Promise<UserItem> {
+  async createUserItem(itemId: number, userId: number, mount: boolean) {
     const buyItem = this.userItemRepository.create({
       itemId,
       userId,
@@ -25,8 +21,13 @@ export class UserItemRepository {
   }
 
   async findMyItem(userId: number) {
-    const myitems = this.userItemRepository.find();
+    const myItems = this.userItemRepository.find();
+    return myItems;
   }
 
-  async updateUserItem() {}
+  async updateUserItem(userId: number, itemId: number, mount: boolean) {
+    const mountItem = await this.userItemRepository.findOne({
+      where: { users: userId, itemId },
+    });
+  }
 }
