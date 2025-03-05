@@ -12,6 +12,6 @@ import { AuthRepository } from 'src/auth/repositories/auth.repository';
   imports: [TypeOrmModule.forFeature([User]), RedisModule],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository, AuthService, AuthRepository],
-  exports: [UsersService],
+  exports: [UsersService, UsersRepository],
 })
 export class UsersModule {}
