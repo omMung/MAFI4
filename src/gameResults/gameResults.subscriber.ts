@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { GameResultsService } from './gameResults.service';
-import { AchievementsService } from './achievements.service'; //  업적 서비스 추가
+// import { AchievementsService } from './achievements.service'; //  업적 서비스 추가
 import Redis from 'ioredis';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class GameResultsSubscriber implements OnModuleInit {
 
   constructor(
     private readonly gameResultsService: GameResultsService,
-    private readonly achievementsService: AchievementsService, // ✅ 업적 서비스 추가
+    // private readonly achievementsService: AchievementsService, // ✅ 업적 서비스 추가
   ) {
     // 일반 Redis 클라이언트 (데이터 조회 용)
     this.redisClient = new Redis({
@@ -46,7 +46,7 @@ export class GameResultsSubscriber implements OnModuleInit {
       if (channel === 'gameResults') {
         await this.processGameResult(message);
       } else if (channel === 'gameAchievements') {
-        await this.processGameAchievements(message);
+        // await this.processGameAchievements(message);
       }
     });
   }
@@ -73,27 +73,27 @@ export class GameResultsSubscriber implements OnModuleInit {
     // await this.redisClient.del(gameResultKey);
   }
 
-  //  게임 업적 처리 (RDS 저장)
-  private async processGameAchievements(message: string) {
-    console.log(`게임 업적 수신: ${message}`);
-    const gameAchievements = JSON.parse(message);
-    const gameId = gameAchievements.gameId;
-    const gameAchievementsKey = `gameAchievements:${gameId}`;
+  // //  게임 업적 처리 (RDS 저장)
+  // private async processGameAchievements(message: string) {
+  //   console.log(`게임 업적 수신: ${message}`);
+  //   const gameAchievements = JSON.parse(message);
+  //   const gameId = gameAchievements.gameId;
+  //   const gameAchievementsKey = `gameAchievements:${gameId}`;
 
-    // 중복 방지: 이미 저장된 업적 데이터인지 확인
-    const isAlreadyStored = await this.redisClient.exists(gameAchievementsKey);
-    if (!isAlreadyStored) {
-      console.warn(
-        `게임 업적 데이터가 Redis에 없음 (gameId: ${gameId}), 무시.`,
-      );
-      return;
-    }
+  //   // 중복 방지: 이미 저장된 업적 데이터인지 확인
+  //   const isAlreadyStored = await this.redisClient.exists(gameAchievementsKey);
+  //   if (!isAlreadyStored) {
+  //     console.warn(
+  //       `게임 업적 데이터가 Redis에 없음 (gameId: ${gameId}), 무시.`,
+  //     );
+  //     return;
+  //   }
 
-    //  게임 업적 RDS 저장
-    await this.achievementsService.saveGameAchievements(gameAchievements);
-    console.log(` 게임 업적이 RDS에 저장됨 (gameId: ${gameId}).`);
+  //   //  게임 업적 RDS 저장
+  //   await this.achievementsService.saveGameAchievements(gameAchievements);
+  //   console.log(` 게임 업적이 RDS에 저장됨 (gameId: ${gameId}).`);
 
-    // RDS에 저장 완료 후, Redis에서 해당 게임 업적 삭제 (필요 시)
-    // await this.redisClient.del(gameAchievementsKey);
-  }
+  //   // RDS에 저장 완료 후, Redis에서 해당 게임 업적 삭제 (필요 시)
+  //   // await this.redisClient.del(gameAchievementsKey);
+  // }
 }

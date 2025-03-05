@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { UsersAchievementsService } from './users-achievements.service';
 import { CreateUsersAchievementDto } from './dto/create-users-achievement.dto';
 import { UpdateUsersAchievementDto } from './dto/update-users-achievement.dto';
 
 @Controller('users-achievements')
 export class UsersAchievementsController {
-  constructor(private readonly usersAchievementsService: UsersAchievementsService) {}
+  constructor(
+    private readonly usersAchievementsService: UsersAchievementsService,
+  ) {}
 
   @Post()
   create(@Body() createUsersAchievementDto: CreateUsersAchievementDto) {
@@ -23,7 +33,10 @@ export class UsersAchievementsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsersAchievementDto: UpdateUsersAchievementDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUsersAchievementDto: UpdateUsersAchievementDto,
+  ) {
     return this.usersAchievementsService.update(+id, updateUsersAchievementDto);
   }
 
