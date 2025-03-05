@@ -6,30 +6,29 @@ import {
   Param,
   Patch,
   Post,
-  // UseGuards, // JWT 인증 주석 처리
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-// import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'; // 주석 처리
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  // @UseGuards(JwtAuthGuard)  // 주석 처리
+  @UseGuards(JwtAuthGuard)
   @Post(':postId')
   async createComment(
     @Request() req,
     @Param('postId') postId: number,
     @Body() createCommentDto: CreateCommentDto,
   ) {
-    // const user = req.user; // JWT 미사용으로 주석 처리
-    const userId = 1; // 임시 사용자 ID (디버깅용)
+    const user = req.user; // JWT 미사용으로 주석 처리
     const comment = await this.commentsService.createComment(
       postId,
-      userId,
+      user.id,
       createCommentDto.content,
     );
 
@@ -48,30 +47,29 @@ export class CommentsController {
     return { data: comment };
   }
 
-  // @UseGuards(JwtAuthGuard)  // 주석 처리
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateComment(
     @Request() req,
     @Param('id') id: number,
     @Body() updateCommentDto: UpdateCommentDto,
   ) {
-    // const user = req.user; // JWT 미사용으로 주석 처리
-    const userId = 1; // 임시 사용자 ID
+    const user = req.user;
     const comment = await this.commentsService.updateComment(
       id,
-      userId,
+      user.id,
       updateCommentDto.content,
     );
 
     return { data: comment };
   }
 
-  // @UseGuards(JwtAuthGuard)  // 주석 처리
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteComment(@Request() req, @Param('id') id: number) {
-    // const user = req.user; // JWT 미사용으로 주석 처리
-    const userId = 1; // 임시 사용자 ID
-    await this.commentsService.deleteComment(id, userId);
+    const user = req.user;
+
+    await this.commentsService.deleteComment(id, user.id);
     return { message: '댓글이 삭제되었습니다.' };
   }
 }

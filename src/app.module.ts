@@ -15,6 +15,8 @@ import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LikesModule } from './likes/likes.module';
+import { S3UploaderModule } from './s3uploader/s3uploader.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { RoomsModule } from './rooms/rooms.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -72,7 +74,12 @@ const typeOrmModuleOptions = {
     //   rootPath: join(__dirname, '..', 'dist', 'public'),
     //   serveRoot: '/', //  루트 URL에서 정적 파일 제공
     // }),
-
+    // ThrottlerModule.forRoot([
+    //   {
+    //     ttl: 60, // 제한 시간 (초 단위) - 60초 동안
+    //     limit: 10, // 요청 가능 횟수 - 10번까지만 허용
+    //   },
+    // ]),
     UsersModule,
     PostsModule,
     CommentsModule,
@@ -83,6 +90,7 @@ const typeOrmModuleOptions = {
     UsersAchievementsModule,
     RoomsModule,
     LikesModule,
+    S3UploaderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
