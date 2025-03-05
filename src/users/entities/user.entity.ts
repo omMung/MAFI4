@@ -52,7 +52,7 @@ export class User {
   userAchievements: UserAchievements[];
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
-  @OneToMany(() => UserItem, (userItem) => userItem.users, {
+  @OneToMany(() => UserItem, (userItem) => userItem.user, {
     onDelete: 'CASCADE',
   })
   userItems: UserItem[];
