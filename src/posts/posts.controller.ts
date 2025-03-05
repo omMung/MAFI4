@@ -36,6 +36,7 @@ export class PostsController {
           new FileTypeValidator({ fileType: /(jpg|jpeg|png|gif)$/ }),
           new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }), // 5MB 제한
         ],
+        fileIsRequired: false,
       }),
     )
     file: Express.Multer.File,
