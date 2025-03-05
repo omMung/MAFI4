@@ -12,8 +12,8 @@ export class UserItemRepository {
 
   async createUserItem(itemId: number, userId: number, mount: boolean) {
     const buyItem = this.userItemRepository.create({
-      itemId,
-      userId,
+      items: { id: itemId },
+      users: { id: userId },
       mount,
     });
     await this.userItemRepository.save(buyItem);
@@ -25,9 +25,9 @@ export class UserItemRepository {
     return myItems;
   }
 
-  async updateUserItem(userId: number, itemId: number, mount: boolean) {
+  async updateUserItem(userId: number, itemId: number) {
     const mountItem = await this.userItemRepository.findOne({
-      where: { users: userId, itemId },
+      where: { users: { id: userId }, items: { id: itemId } },
     });
   }
 }

@@ -10,17 +10,19 @@ import {
 } from '@nestjs/common';
 import { UserItemService } from './user-item.service';
 import { CreateUserItemDto } from './dto/create-user-item.dto';
-import { UpdateUserItemDto } from './dto/update-user-item.dto';
 
 @Controller('user-item')
 export class UserItemController {
   constructor(private readonly userItemService: UserItemService) {}
 
   // 아이탬 구매
+
   @Post()
-  createUserItem(@Body() createUserItemDto: CreateUserItemDto) {
+  async createUserItem(
+    @Body() createUserItemDto: CreateUserItemDto,
+  ): Promise<void> {
     const { itemId, userId, mount } = createUserItemDto;
-    return this.userItemService.createUserItem(itemId, userId, mount);
+    return await this.userItemService.createUserItem(itemId, userId, mount);
   }
 
   // 내 아이탬 조회

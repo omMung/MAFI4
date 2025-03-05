@@ -25,7 +25,7 @@ export class UserItemService {
       throw new UserNoMoneyException();
     }
     const remainingMoney = myMoney.money - itemPrice.price;
-    await this.usersRepository.updateUserMoney(remainingMoney);
+    await this.usersRepository.updateUserMoney(userId, remainingMoney);
     return;
   }
 
@@ -38,7 +38,7 @@ export class UserItemService {
     const itemMount = await this.userItemRepository.updateUserItem(
       userId,
       itemId,
-      mount,
+      // mount,
     );
     return;
   }

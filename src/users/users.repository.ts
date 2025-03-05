@@ -56,8 +56,8 @@ export class UsersRepository {
     return this.usersRepository.findOne({ where: { id: userId } });
   }
 
-  async updateUserMoney(remainingMoney: number) {
-    await this.usersRepository.update(money: remainingMoney);
+  async updateUserMoney(userId: number, remainingMoney: number) {
+    await this.usersRepository.update(userId, { money: remainingMoney });
   }
 
   async deleteUser(userId: number) {
