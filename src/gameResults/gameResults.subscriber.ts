@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { GameResultsService } from './gameResults.service';
-import { AchievementsService } from './achievements.service'; //  업적 서비스 추가
 import Redis from 'ioredis';
+import { UserAchievementProgressService } from 'src/user-achievement-progress/user-achievement-progress.service';
 
 @Injectable()
 export class GameResultsSubscriber implements OnModuleInit {
@@ -10,7 +10,7 @@ export class GameResultsSubscriber implements OnModuleInit {
 
   constructor(
     private readonly gameResultsService: GameResultsService,
-    private readonly achievementsService: AchievementsService, // ✅ 업적 서비스 추가
+    private readonly userAchievementProgressService: UserAchievementProgressService, // ✅ 업적 서비스 추가
   ) {
     // 일반 Redis 클라이언트 (데이터 조회 용)
     this.redisClient = new Redis({
@@ -90,7 +90,7 @@ export class GameResultsSubscriber implements OnModuleInit {
     }
 
     //  게임 업적 RDS 저장
-    await this.achievementsService.saveGameAchievements(gameAchievements);
+    await this.userAchievementProgressService.create(gameAchievements);
     console.log(` 게임 업적이 RDS에 저장됨 (gameId: ${gameId}).`);
 
     // RDS에 저장 완료 후, Redis에서 해당 게임 업적 삭제 (필요 시)

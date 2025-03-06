@@ -64,6 +64,9 @@ export class UserAchievementProgressService {
         `Progress for user ${userId} and achievement ${achievementId} not found`,
       );
     }
+    // if(progressData.achieved===true){
+
+    // }
     return updatedProgress;
   }
 

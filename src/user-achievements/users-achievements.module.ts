@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserAchievements } from './entities/users-achievement.entity';
 import { UserAchievementsRepository } from './users-achievements.repository';
 import { Achieve } from 'src/achievements/entities/achievement.entity';
+import { UserAchievementProgressRepository } from 'src/user-achievement-progress/user-achievement-progress.repository';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Achieve } from 'src/achievements/entities/achievement.entity';
     UserAchievementsService,
     AchieveRepository,
     UserAchievementsRepository,
+    UserAchievementProgressRepository,
   ],
 })
 export class UsersAchievementsModule {}

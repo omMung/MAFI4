@@ -45,7 +45,7 @@ export class UserAchievementProgressRepository extends Repository<UserAchievemen
     );
 
     if (userAchievementProgress) {
-      userAchievementProgress.progress = progress;
+      userAchievementProgress.progress += progress;
       userAchievementProgress.achieved = achieved;
       return await this.save(userAchievementProgress);
     }
