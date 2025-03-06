@@ -208,16 +208,19 @@
   </head>
 
   <body>
+    <!-- 헤더용 빈공간 -->
+    <!-- <div class="header-placeholder" style="height: 50px"></div>
+    <div
+      class="container-custom"
+      id="mainContainer"
+      style="display: none"
+    ></div> -->
+
     <!-- 전체 컨테이너: 채팅과 접속 인원 영역 -->
     <div class="container-custom" id="mainContainer" style="display: none">
       <!-- 채팅 영역 -->
       <div class="chat-container" id="chatRoom">
-        <h2 id="roomTitle">
-          <span
-            id="phaseTimer"
-            style="font-size: 16px; margin-left: 10px; color: gray"
-          ></span>
-        </h2>
+        <h2 id="roomTitle"></h2>
         <div id="chatMessages"></div>
         <input
           type="text"
@@ -239,6 +242,12 @@
             padding-top: 10px;
           "
         ></div>
+        <div
+          id="phaseTimerContainer"
+          style="text-align: center; margin-top: 10px"
+        >
+          <span id="phaseTimer" style="font-size: 16px; color: gray"></span>
+        </div>
       </div>
     </div>
     <!-- 투표 확정 버튼 컨테이너 (기본적으로 숨김) -->
@@ -303,9 +312,15 @@
       // UI 업데이트 함수
       function updatePhaseTimer(phase, remainingTime) {
         const phaseTimerElement = document.getElementById('phaseTimer');
-        if (phaseTimerElement) {
-          phaseTimerElement.textContent = `(${phase}) ⏳ ${remainingTime}초`;
+
+        if (!phaseTimerElement) {
+          console.error('❌ phaseTimer 요소를 찾을 수 없음!');
+          return;
         }
+
+        // 타이머 표시 업데이트
+        phaseTimerElement.textContent = `(${phase}) ⏳ ${remainingTime}초`;
+        phaseTimerElement.style.display = 'inline'; // 혹시 숨겨져 있을 경우 보이도록 설정
       }
 
       // 로그인 및 룸 입장
@@ -368,7 +383,7 @@
 
         socket.on('updateTimer', (data) => {
           console.log('⏳ 타이머 업데이트:', data);
-          updatePhaseTimer(data.phase, data.remainingTime);
+          updatePhaseTimer(data.phase, data.timerTime);
         });
 
         socket.on('voteSuccess', function (data) {
@@ -677,10 +692,6 @@
               return;
             }
 
-            if (!selectedTargetId) {
-              alert('투표할 대상을 선택하세요.');
-              return;
-            }
             var executeBtn = document.getElementById('executeBtn');
             var survivalBtn = document.getElementById('survivalBtn');
             executeBtn.disabled = true;
