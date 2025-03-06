@@ -15,54 +15,36 @@ export class AdminService {
     return this.adminRepository.findUserByNickname(nickName);
   }
 
-  // (3) 사용자 기능 제한 상태 변경 (duration: 제재 기간, 단위: 일)
+  // (3) 제재 API: 사용자 기능 제한 상태 변경 (userId, type, duration)
   async updateUserBanStatus(
     userId: number,
     type: string,
-    ban: boolean,
-    duration?: number,
+    duration: number,
   ): Promise<void> {
-    // 제재가 적용될 때는 duration이 필요합니다.
-    if (ban) {
-      const allowedDurations = [1, 3, 7, 30];
-      if (!duration || !allowedDurations.includes(duration)) {
-        throw new NotFoundException(
-          '제재 기간은 1, 3, 7, 30일 중 하나여야 합니다.',
-        );
-      }
-    }
-
     const currentDate = new Date();
     let updateData = {};
 
     if (type === 'game') {
-      if (ban) {
-        // 현재 시간에서 duration일 후 계산
-        const banDueDate = new Date(
-          currentDate.getTime() + duration * 24 * 60 * 60 * 1000,
-        );
-        updateData['gameBanDate'] = banDueDate;
-      } else {
-        updateData['gameBanDate'] = null;
-      }
+      updateData['gameBanDate'] = new Date(
+        currentDate.getTime() + duration * 24 * 60 * 60 * 1000,
+      );
     } else if (type === 'community') {
-      if (ban) {
-        const banDueDate = new Date(
-          currentDate.getTime() + duration * 24 * 60 * 60 * 1000,
-        );
-        updateData['CommunityBanDate'] = banDueDate;
-      } else {
-        updateData['CommunityBanDate'] = null;
-      }
+      updateData['CommunityBanDate'] = new Date(
+        currentDate.getTime() + duration * 24 * 60 * 60 * 1000,
+      );
     } else {
-      throw new NotFoundException('잘못된 제재 타입입니다.');
+      throw new NotFoundException('잘못된 기능 제한 타입입니다.');
     }
 
     await this.adminRepository.updateUserBanStatus(userId, updateData);
 
-    // 로그 메시지 생성 (AdminLogMessages에서 확장된 버전 사용 가능)
-    const logMessage = `사용자 ID ${userId}의 ${type} 제재를 ${ban ? `적용 (기간: ${duration}일)` : '해제'} 했습니다.`;
-    await this.addAdminLog('제재 변경', logMessage);
+    // 로그 메시지 생성 (여기서는 ban은 항상 적용됨)
+    const logMessage = AdminLogMessages.updateUserBanStatus(
+      userId,
+      type,
+      duration,
+    );
+    await this.addAdminLog('제재 적용', logMessage);
   }
 
   // (4) 사용자 전체 제한 해제

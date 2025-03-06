@@ -42,14 +42,14 @@ export class AdminController {
   @Patch('users/:userId/ban')
   async updateUserBanStatus(
     @Param('userId') userId: number,
-    @Body() banDto: { type: string; ban: boolean },
+    @Body() banDto: { type: string; duration: number },
   ) {
     await this.adminService.updateUserBanStatus(
       userId,
       banDto.type,
-      banDto.ban,
+      banDto.duration,
     );
-    return { message: '사용자 기능 제한 상태가 변경되었습니다.' };
+    return { message: '사용자 제재 상태가 변경되었습니다.' };
   }
 
   // 사용자 전체 제한 해제 API

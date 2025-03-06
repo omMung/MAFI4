@@ -3,10 +3,9 @@ export const AdminLogMessages = {
   updateUserBanStatus: (
     userId: number,
     type: string,
-    ban: boolean,
     duration?: number,
   ): string =>
-    `사용자 ID ${userId}의 ${type} 제재를 ${ban ? `적용 (기간: ${duration}일)` : '해제'} 했습니다.`,
+    `사용자 ID ${userId}의 ${type} 제재를 ${`적용 (기간: ${duration}일)`} 했습니다.`,
 
   unbanAllFeatures: (userId: number): string =>
     `사용자 ID ${userId}의 모든 기능 제한을 해제했습니다.`,

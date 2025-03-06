@@ -149,13 +149,14 @@ const api = {
     // 사용자 기능 제한 상태 변경
 
     updateUserBanStatus: (userId, data) =>
-      fetch(`/admin/users/${userId}/ban`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
+      fetchAPI(
+        `/admin/users/${userId}/ban`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify(data),
         },
-        body: JSON.stringify(data),
-      }).then((res) => res.json()),
+        console.log(`api.js : ${userId}, ${data.type}, ${data.duration}`),
+      ),
 
     // 사용자 전체 제한 해제
     unbanAllFeatures: (userId) =>

@@ -8,10 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     .addEventListener('click', searchUser);
   document
     .getElementById('banGameBtn')
-    .addEventListener('click', () => toggleBanStatus('game'));
+    .addEventListener('click', () => applyBanStatus('game'));
   document
     .getElementById('banCommunityBtn')
-    .addEventListener('click', () => toggleBanStatus('community'));
+    .addEventListener('click', () => applyBanStatus('community'));
   document.getElementById('unbanAllBtn').addEventListener('click', unbanAll);
   document
     .getElementById('refreshPostsBtn')
@@ -134,7 +134,9 @@ function updateUserStatusBadge(user) {
 
   if (gameBanned && communityBanned) {
     badgeHTML = '<span class="status-badge banned">제한됨</span>';
-  } else if (gameBanned || communityBanned) {
+  } else if (gameBanned) {
+    badgeHTML = '<span class="status-badge partial">부분 제한</span>';
+  } else if (communityBanned) {
     badgeHTML = '<span class="status-badge partial">부분 제한</span>';
   } else {
     badgeHTML = '<span class="status-badge active">활성</span>';
@@ -164,55 +166,66 @@ function updateBanStatus(type, isBanned) {
 }
 
 // 기능 제한 토글
-function toggleBanStatus(type) {
+function applyBanStatus(type) {
   const userId = document
     .getElementById('userInfoSection')
     .getAttribute('data-user-id');
-  const statusElement = document.getElementById(`${type}BanStatus`);
-  const currentStatus =
-    statusElement.querySelector('.status-value').textContent === '제한됨';
-  const newStatus = !currentStatus;
 
-  // API 호출: 사용자 기능 제한 상태 변경
+  // 제재 기간을 입력받음 (예: 1, 3, 7, 30일 중 하나)
+  const durationInput = prompt(
+    `"${type === 'game' ? '게임' : '커뮤니티'}" 제재 기간(일)을 입력하세요 (1, 3, 7, 30 중 하나):`,
+  );
+  const duration = parseInt(durationInput, 10);
+  const allowedDurations = [1, 3, 7, 30];
+  if (!duration || !allowedDurations.includes(duration)) {
+    alert('제재 기간은 1, 3, 7, 30일 중 하나여야 합니다.');
+    return;
+  }
+
+  // API 호출: 서버에 userId, type, duration 전달 (ban은 적용 상태로 고정)
   api.admin
-    .updateUserBanStatus(userId, type, newStatus)
+    .updateUserBanStatus(userId, { type: type, duration: duration })
     .then((response) => {
-      updateBanStatus(type, newStatus);
+      // UI 업데이트: 해당 기능의 제재 상태를 '제한됨'으로 표시
+      updateBanStatus(type, true);
 
       // 사용자 상태 배지 업데이트
       const user = {
         id: userId,
         gameBanned:
           type === 'game'
-            ? newStatus
+            ? true
             : document
                 .getElementById('gameBanStatus')
                 .querySelector('.status-value').textContent === '제한됨',
         communityBanned:
           type === 'community'
-            ? newStatus
+            ? true
             : document
                 .getElementById('communityBanStatus')
                 .querySelector('.status-value').textContent === '제한됨',
       };
       updateUserStatusBadge(user);
 
+      // 관리 로그 UI 업데이트 및 API 로그 기록
       addAdminLog(
-        '제한 관리',
-        `사용자 "${document.getElementById('userEmail').textContent}"의 ${type === 'game' ? '게임' : '커뮤니티'} 기능을 ${newStatus ? '제한' : '해제'}했습니다.`,
+        '제재 적용',
+        `사용자 "${document.getElementById('userEmail').textContent}"의 ${
+          type === 'game' ? '게임' : '커뮤니티'
+        } 제재를 ${duration}일 적용했습니다.`,
       );
-
-      // 관리자 로그 API 호출
       api.admin
         .addAdminLog(
-          '제한 관리',
-          `사용자 "${document.getElementById('userEmail').textContent}"의 ${type === 'game' ? '게임' : '커뮤니티'} 기능을 ${newStatus ? '제한' : '해제'}했습니다.`,
+          '제재 적용',
+          `사용자 "${document.getElementById('userEmail').textContent}"의 ${
+            type === 'game' ? '게임' : '커뮤니티'
+          } 제재를 ${duration}일 적용했습니다.`,
         )
         .catch((e) => console.error('관리자 로그 기록 실패:', e));
     })
     .catch((error) => {
-      console.error('사용자 기능 제한 상태 변경 실패:', error);
-      alert('사용자 기능 제한 상태 변경에 실패했습니다.');
+      console.error('사용자 제재 상태 변경 실패:', error);
+      alert('사용자 제재 상태 변경에 실패했습니다.');
     });
 }
 
