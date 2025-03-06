@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game, Role } from 'src/games/entities/game.entity';
-import { userRecordNotFoundException } from '../common/exceptions/statistics.exception';
 
 @Injectable()
 export class StatisticsService {
@@ -17,8 +16,9 @@ export class StatisticsService {
       where: { user: { id: userId } },
     });
 
-    if (!totalGames) {
-      throw new userRecordNotFoundException();
+    // 게임 기록이 없으면 기본값 반환
+    if (totalGames === 0) {
+      return { totalGames: 0, wins: 0, losses: 0, winRate: 0 };
     }
 
     // 승리 횟수
@@ -72,7 +72,6 @@ export class StatisticsService {
 
       result[role] = { totalGames, wins, losses, winRate };
     }
-    console.log(result);
     return result;
   }
 }
