@@ -22,6 +22,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AdminModule } from './admin/admin.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ScheduleModule as CustomScheduleModule } from './schedule/schedule.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -43,7 +44,7 @@ const typeOrmModuleOptions = {
 @Global()
 @Module({
   imports: [
-    ScheduleModule.forRoot(),
+    ScheduleModule.forRoot(), // bandate 만료 시 자동 null 처리를 위해 추가
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -79,6 +80,7 @@ const typeOrmModuleOptions = {
     //     limit: 10, // 요청 가능 횟수 - 10번까지만 허용
     //   },
     // ]),
+    CustomScheduleModule, // BanExpirationService가 포함된 스케줄 모듈
     UsersModule,
     PostsModule,
     CommentsModule,
