@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지</title>
-    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="admin.css">
-    <script src="../api.js"></script>
+    <script src="../scripts/api.js"></script>
     <script src="admin.js"></script>
 </head>
 
@@ -16,10 +16,7 @@
         <div class="admin-container">
             <div class="admin-header">
                 <h1>관리자 페이지</h1>
-                <div class="admin-status">
-                    <span class="status-indicator online"></span>
-                    <span>관리자 모드 활성화</span>
-                </div>
+
             </div>
 
             <section class="admin-search-section">
@@ -27,7 +24,7 @@
                     <h2>사용자 검색</h2>
                     <div class="search-form">
                         <div class="search-input-group">
-                            <input type="email" id="userEmailSearch" placeholder="사용자 이메일 입력" class="search-input">
+                            <input type="email" id="userNickNameSearch" placeholder="사용자 닉네임 입력" class="search-input">
                             <button id="searchUserBtn" class="search-button">검색</button>
                         </div>
                     </div>
@@ -45,7 +42,7 @@
                 <div class="user-details">
                     <div class="user-profile">
                         <div class="profile-image">
-                            <img id="userProfileImage" src="/placeholder.svg?height=100&width=100" alt="프로필 이미지">
+                            <img id="userProfileImage" alt="프로필 이미지">
                         </div>
                         <div class="profile-info">
                             <h3 id="userName">사용자 이름</h3>

@@ -40,105 +40,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 관리자 권한 확인
 function checkAdminPermission() {
-  /* 
-      // API 호출: 관리자 권한 확인
-      api.checkAdminPermission()
-        .then(response => {
-          if (!response.isAdmin) {
-            // 관리자가 아닌 경우 메인 페이지로 리디렉션
-            window.location.href = '/index.html';
-          }
-        })
-        .catch(error => {
-          console.error('관리자 권한 확인 실패:', error);
-          window.location.href = '/index.html';
-        });
-    */
+  // API 호출: 관리자 권한 확인
+  api.admin
+    .checkPermission()
+    .then((response) => {
+      if (!response.isAdmin) {
+        // 관리자가 아닌 경우 메인 페이지로 리디렉션
+        window.location.href = '/home/home.html';
+      }
+    })
+    .catch((error) => {
+      console.error('관리자 권한 확인 실패:', error);
+      window.location.href = '/home/home.html';
 
-  // 임시 처리 (API 연동 전)
-  console.log('관리자 권한 확인 (임시)');
+      // 실패 로그 추가
+      addAdminLog('오류', '관리자 권한 확인에 실패했습니다.');
+    });
 }
 
 // 사용자 검색
 function searchUser() {
-  const email = document.getElementById('userEmailSearch').value.trim();
-
-  if (!email) {
+  const nickName = document.getElementById('userNickNameSearch').value.trim();
+  console.log(`searchUser:${nickName}`);
+  if (!nickName) {
     alert('이메일을 입력해주세요.');
     return;
   }
 
-  /* 
-      // API 호출: 이메일로 사용자 검색
-      api.searchUserByEmail(email)
-        .then(user => {
-          if (user) {
-            displayUserInfo(user);
-            fetchUserPosts(1);
-            fetchUserComments(1);
-            
-            // 사용자 정보 및 콘텐츠 섹션 표시
-            document.getElementById('userInfoSection').style.display = 'block';
-            document.getElementById('userContentSection').style.display = 'block';
-            
-            addAdminLog('검색', `사용자 "${user.email}" 정보를 조회했습니다.`);
-          } else {
-            alert('해당 이메일의 사용자를 찾을 수 없습니다.');
-          }
-        })
-        .catch(error => {
-          console.error('사용자 검색 실패:', error);
-          alert('사용자 검색에 실패했습니다.');
-        });
-    */
+  // API 호출: 이메일로 사용자 검색
+  api.admin
+    .searchUser(nickName)
+    .then((user) => {
+      if (user) {
+        displayUserInfo(user);
+        fetchUserPosts(1);
+        fetchUserComments(1);
 
-  // 임시 처리 (API 연동 전)
-  setTimeout(() => {
-    const dummyUser = {
-      id: 123,
-      name: '홍길동',
-      email: email,
-      joinDate: '2023-01-15',
-      profileImage: null,
-      gameBanned: false,
-      communityBanned: false,
-    };
+        // 사용자 정보 및 콘텐츠 섹션 표시
+        document.getElementById('userInfoSection').style.display = 'block';
+        document.getElementById('userContentSection').style.display = 'block';
 
-    displayUserInfo(dummyUser);
-    fetchUserPosts(1);
-    fetchUserComments(1);
-
-    // 사용자 정보 및 콘텐츠 섹션 표시
-    document.getElementById('userInfoSection').style.display = 'block';
-    document.getElementById('userContentSection').style.display = 'block';
-
-    addAdminLog('검색', `사용자 "${email}" 정보를 조회했습니다.`);
-  }, 500);
+        addAdminLog(
+          '검색',
+          `사용자 "${user.data.nickName}" 정보를 조회했습니다.`,
+        );
+      } else {
+        alert('해당 이메일의 사용자를 찾을 수 없습니다.');
+      }
+    })
+    .catch((error) => {
+      console.error('사용자 검색 실패:', error);
+      alert('사용자 검색에 실패했습니다.');
+    });
 }
 
 // 사용자 정보 표시
 function displayUserInfo(user) {
-  document.getElementById('userName').textContent = user.name;
+  console.log(user);
+  document.getElementById('userName').textContent =
+    user.data.nickName || '이름 없음';
   document.getElementById('userEmail').textContent = user.email;
   document.getElementById('userJoinDate').textContent = new Date(
-    user.joinDate,
+    user.data.createdAt || '알 수 없음',
   ).toLocaleDateString();
 
-  if (user.profileImage) {
-    document.getElementById('userProfileImage').src = user.profileImage;
+  if (user.data.file) {
+    document.getElementById('userProfileImage').src = user.data.file;
   }
 
   // 사용자 상태 배지 업데이트
   updateUserStatusBadge(user);
 
   // 기능 제한 상태 업데이트
-  updateBanStatus('game', user.gameBanned);
-  updateBanStatus('community', user.communityBanned);
+  updateBanStatus('game', user.gameBanned || user.banStatus?.game);
+  updateBanStatus(
+    'community',
+    user.communityBanned || user.banStatus?.community,
+  );
 
   // 현재 사용자 ID를 데이터 속성에 저장
   document
     .getElementById('userInfoSection')
-    .setAttribute('data-user-id', user.id);
+    .setAttribute('data-user-id', user.data.id);
 }
 
 // 사용자 상태 배지 업데이트
@@ -146,9 +129,12 @@ function updateUserStatusBadge(user) {
   const statusBadge = document.getElementById('userStatusBadge');
   let badgeHTML = '';
 
-  if (user.gameBanned && user.communityBanned) {
+  const gameBanned = user.gameBanned || user.banStatus?.game;
+  const communityBanned = user.communityBanned || user.banStatus?.community;
+
+  if (gameBanned && communityBanned) {
     badgeHTML = '<span class="status-badge banned">제한됨</span>';
-  } else if (user.gameBanned || user.communityBanned) {
+  } else if (gameBanned || communityBanned) {
     badgeHTML = '<span class="status-badge partial">부분 제한</span>';
   } else {
     badgeHTML = '<span class="status-badge active">활성</span>';
@@ -187,59 +173,47 @@ function toggleBanStatus(type) {
     statusElement.querySelector('.status-value').textContent === '제한됨';
   const newStatus = !currentStatus;
 
-  /* 
-      // API 호출: 사용자 기능 제한 상태 변경
-      api.updateUserBanStatus(userId, type, newStatus)
-        .then(response => {
-          updateBanStatus(type, newStatus);
-          
-          //  newStatus)
-        .then(response => {
-          updateBanStatus(type, newStatus);
-          
-          // 사용자 상태 배지 업데이트
-          const user = {
-            id: userId,
-            gameBanned: type === 'game' ? newStatus : document.getElementById('gameBanStatus').querySelector('.status-value').textContent === '제한됨',
-            communityBanned: type === 'community' ? newStatus : document.getElementById('communityBanStatus').querySelector('.status-value').textContent === '제한됨'
-          };
-          updateUserStatusBadge(user);
-          
-          addAdminLog('제한 관리', `사용자 "${document.getElementById('userEmail').textContent}"의 ${type === 'game' ? '게임' : '커뮤니티'} 기능을 ${newStatus ? '제한' : '해제'}했습니다.`);
-        })
-        .catch(error => {
-          console.error('사용자 기능 제한 상태 변경 실패:', error);
-          alert('사용자 기능 제한 상태 변경에 실패했습니다.');
-        });
-    */
+  // API 호출: 사용자 기능 제한 상태 변경
+  api.admin
+    .updateUserBanStatus(userId, type, newStatus)
+    .then((response) => {
+      updateBanStatus(type, newStatus);
 
-  // 임시 처리 (API 연동 전)
-  setTimeout(() => {
-    updateBanStatus(type, newStatus);
+      // 사용자 상태 배지 업데이트
+      const user = {
+        id: userId,
+        gameBanned:
+          type === 'game'
+            ? newStatus
+            : document
+                .getElementById('gameBanStatus')
+                .querySelector('.status-value').textContent === '제한됨',
+        communityBanned:
+          type === 'community'
+            ? newStatus
+            : document
+                .getElementById('communityBanStatus')
+                .querySelector('.status-value').textContent === '제한됨',
+      };
+      updateUserStatusBadge(user);
 
-    // 사용자 상태 배지 업데이트
-    const user = {
-      id: userId,
-      gameBanned:
-        type === 'game'
-          ? newStatus
-          : document
-              .getElementById('gameBanStatus')
-              .querySelector('.status-value').textContent === '제한됨',
-      communityBanned:
-        type === 'community'
-          ? newStatus
-          : document
-              .getElementById('communityBanStatus')
-              .querySelector('.status-value').textContent === '제한됨',
-    };
-    updateUserStatusBadge(user);
+      addAdminLog(
+        '제한 관리',
+        `사용자 "${document.getElementById('userEmail').textContent}"의 ${type === 'game' ? '게임' : '커뮤니티'} 기능을 ${newStatus ? '제한' : '해제'}했습니다.`,
+      );
 
-    addAdminLog(
-      '제한 관리',
-      `사용자 "${document.getElementById('userEmail').textContent}"의 ${type === 'game' ? '게임' : '커뮤니티'} 기능을 ${newStatus ? '제한' : '해제'}했습니다.`,
-    );
-  }, 500);
+      // 관리자 로그 API 호출
+      api.admin
+        .addAdminLog(
+          '제한 관리',
+          `사용자 "${document.getElementById('userEmail').textContent}"의 ${type === 'game' ? '게임' : '커뮤니티'} 기능을 ${newStatus ? '제한' : '해제'}했습니다.`,
+        )
+        .catch((e) => console.error('관리자 로그 기록 실패:', e));
+    })
+    .catch((error) => {
+      console.error('사용자 기능 제한 상태 변경 실패:', error);
+      alert('사용자 기능 제한 상태 변경에 실패했습니다.');
+    });
 }
 
 // 모든 제한 해제
@@ -248,47 +222,38 @@ function unbanAll() {
     .getElementById('userInfoSection')
     .getAttribute('data-user-id');
 
-  /* 
-      // API 호출: 사용자의 모든 제한 해제
-      api.unbanAllFeatures(userId)
-        .then(response => {
-          updateBanStatus('game', false);
-          updateBanStatus('community', false);
-          
-          // 사용자 상태 배지 업데이트
-          const user = {
-            id: userId,
-            gameBanned: false,
-            communityBanned: false
-          };
-          updateUserStatusBadge(user);
-          
-          addAdminLog('제한 관리', `사용자 "${document.getElementById('userEmail').textContent}"의 모든 기능 제한을 해제했습니다.`);
-        })
-        .catch(error => {
-          console.error('사용자 기능 제한 해제 실패:', error);
-          alert('사용자 기능 제한 해제에 실패했습니다.');
-        });
-    */
+  // API 호출: 사용자의 모든 제한 해제
+  api.admin
+    .unbanAllFeatures(userId)
+    .then((response) => {
+      updateBanStatus('game', false);
+      updateBanStatus('community', false);
 
-  // 임시 처리 (API 연동 전)
-  setTimeout(() => {
-    updateBanStatus('game', false);
-    updateBanStatus('community', false);
+      // 사용자 상태 배지 업데이트
+      const user = {
+        id: userId,
+        gameBanned: false,
+        communityBanned: false,
+      };
+      updateUserStatusBadge(user);
 
-    // 사용자 상태 배지 업데이트
-    const user = {
-      id: userId,
-      gameBanned: false,
-      communityBanned: false,
-    };
-    updateUserStatusBadge(user);
+      addAdminLog(
+        '제한 관리',
+        `사용자 "${document.getElementById('userEmail').textContent}"의 모든 기능 제한을 해제했습니다.`,
+      );
 
-    addAdminLog(
-      '제한 관리',
-      `사용자 "${document.getElementById('userEmail').textContent}"의 모든 기능 제한을 해제했습니다.`,
-    );
-  }, 500);
+      // 관리자 로그 API 호출
+      api.admin
+        .addAdminLog(
+          '제한 관리',
+          `사용자 "${document.getElementById('userEmail').textContent}"의 모든 기능 제한을 해제했습니다.`,
+        )
+        .catch((e) => console.error('관리자 로그 기록 실패:', e));
+    })
+    .catch((error) => {
+      console.error('사용자 기능 제한 해제 실패:', error);
+      alert('사용자 기능 제한 해제에 실패했습니다.');
+    });
 }
 
 // 탭 전환
@@ -317,58 +282,43 @@ function fetchUserPosts(page) {
   const userId = document
     .getElementById('userInfoSection')
     .getAttribute('data-user-id');
+  console.log(userId);
 
-  /* 
-      // API 호출: 사용자 게시글 목록 가져오기
-      api.getUserPosts(userId, page)
-        .then(response => {
-          renderUserPosts(response.posts, response.totalPages, page);
-        })
-        .catch(error => {
-          console.error('게시글을 가져오는데 실패했습니다:', error);
-          showEmptyPosts();
-        });
-    */
+  // API 호출: 사용자 게시글 목록 가져오기
+  api.admin
+    .getUserPosts(userId)
+    .then((response) => {
+      // response.posts 배열 추출
+      const postsData = response.posts; // 또는 response.data.posts 등 실제 응답 구조에 맞게
+      const pageSize = 10;
+      const totalPosts = postsData.length;
+      const totalPages = Math.ceil(totalPosts / pageSize);
 
-  // 임시 데이터 (API 연동 전)
-  setTimeout(() => {
-    const dummyPosts = [
-      {
-        id: 1,
-        title: '첫 번째 게시글입니다',
-        createdAt: '2023-05-10',
-        viewCount: 42,
-      },
-      {
-        id: 2,
-        title: '두 번째 게시글입니다',
-        createdAt: '2023-05-15',
-        viewCount: 28,
-      },
-      {
-        id: 3,
-        title: '세 번째 게시글입니다',
-        createdAt: '2023-05-20',
-        viewCount: 35,
-      },
-    ];
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const postsForPage = postsData.slice(startIndex, endIndex);
 
-    renderUserPosts(dummyPosts, 3, page);
-  }, 500);
+      renderUserPosts(postsForPage, totalPages, page);
+    })
+    .catch((error) => {
+      console.error('게시글을 가져오는데 실패했습니다:', error);
+      showEmptyPosts();
+    });
 }
 
 // 사용자 게시글 렌더링
 function renderUserPosts(posts, totalPages, currentPage) {
   const postsListElement = document.getElementById('userPostsList');
   const emptyMessage = document.getElementById('emptyPostsMessage');
+  if (emptyMessage) {
+    emptyMessage.style.display = 'none';
+  }
   const deleteButton = document.getElementById('deleteSelectedPostsBtn');
 
   if (!posts || posts.length === 0) {
     showEmptyPosts();
     return;
   }
-
-  emptyMessage.style.display = 'none';
   postsListElement.innerHTML = '';
   deleteButton.disabled = true;
 
@@ -378,8 +328,8 @@ function renderUserPosts(posts, totalPages, currentPage) {
     postElement.innerHTML = `
         <input type="checkbox" class="content-checkbox" data-id="${post.id}">
         <div class="content-details">
-          <div class="content-title"><a href="../board/post.html?id=${post.id}" target="_blank">${post.title}</a></div>
-          <div class="content-meta">작성일: ${new Date(post.createdAt).toLocaleDateString()} · 조회수: ${post.viewCount}</div>
+          <div class="content-title"><a href="../post/post.html?postId=${post.id}" target="_blank">${post.title}</a></div>
+          <div class="content-meta">작성일: ${new Date(post.createdAt).toLocaleDateString()} · 조회수: ${post.viewCount || 0}</div>
         </div>
         <div class="content-actions">
           <button class="content-action-button view" data-id="${post.id}">보기</button>
@@ -400,7 +350,7 @@ function renderUserPosts(posts, totalPages, currentPage) {
     .forEach((button) => {
       button.addEventListener('click', function () {
         const postId = this.getAttribute('data-id');
-        window.open(`../board/post.html?id=${postId}`, '_blank');
+        window.open(`../post/post.html?postId=${postId}`, '_blank');
       });
     });
 
@@ -426,52 +376,37 @@ function fetchUserComments(page) {
     .getElementById('userInfoSection')
     .getAttribute('data-user-id');
 
-  /* 
-      // API 호출: 사용자 댓글 목록 가져오기
-      api.getUserComments(userId, page)
-        .then(response => {
-          renderUserComments(response.comments, response.totalPages, page);
-        })
-        .catch(error => {
-          console.error('댓글을 가져오는데 실패했습니다:', error);
-          showEmptyComments();
-        });
-    */
+  // API 호출: 사용자 댓글 목록 가져오기
+  api.admin
+    .getUserComments(userId)
+    .then((response) => {
+      console.log(response);
+      // response.comments 배열 추출
+      const commentsData = response.comments;
+      const pageSize = 10;
+      const totalComments = commentsData.length;
+      const totalPages = Math.ceil(totalComments / pageSize);
 
-  // 임시 데이터 (API 연동 전)
-  setTimeout(() => {
-    const dummyComments = [
-      {
-        id: 1,
-        content: '좋은 글이네요!',
-        postId: 101,
-        postTitle: '자바스크립트 기초',
-        createdAt: '2023-06-05',
-      },
-      {
-        id: 2,
-        content: '저도 같은 생각입니다.',
-        postId: 102,
-        postTitle: 'CSS 레이아웃 팁',
-        createdAt: '2023-06-10',
-      },
-      {
-        id: 3,
-        content: '감사합니다. 많은 도움이 되었어요.',
-        postId: 103,
-        postTitle: 'HTML 구조화',
-        createdAt: '2023-06-15',
-      },
-    ];
+      // 현재 페이지에 해당하는 댓글만 필터링
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const commentsForPage = commentsData.slice(startIndex, endIndex);
 
-    renderUserComments(dummyComments, 2, page);
-  }, 500);
+      renderUserComments(commentsForPage, totalPages, page);
+    })
+    .catch((error) => {
+      console.error('댓글을 가져오는데 실패했습니다:', error);
+      showEmptyComments();
+    });
 }
 
 // 사용자 댓글 렌더링
 function renderUserComments(comments, totalPages, currentPage) {
   const commentsListElement = document.getElementById('userCommentsList');
   const emptyMessage = document.getElementById('emptyCommentsMessage');
+  if (emptyMessage) {
+    emptyMessage.style.display = 'none';
+  }
   const deleteButton = document.getElementById('deleteSelectedCommentsBtn');
 
   if (!comments || comments.length === 0) {
@@ -479,7 +414,6 @@ function renderUserComments(comments, totalPages, currentPage) {
     return;
   }
 
-  emptyMessage.style.display = 'none';
   commentsListElement.innerHTML = '';
   deleteButton.disabled = true;
 
@@ -489,8 +423,8 @@ function renderUserComments(comments, totalPages, currentPage) {
     commentElement.innerHTML = `
         <input type="checkbox" class="content-checkbox" data-id="${comment.id}">
         <div class="content-details">
-          <div class="content-title"><a href="../board/post.html?id=${comment.postId}" target="_blank">${comment.content}</a></div>
-          <div class="content-meta">게시글: ${comment.postTitle} · 작성일: ${new Date(comment.createdAt).toLocaleDateString()}</div>
+          <div class="content-title"><a href="../post/post.html?postId=${comment.post.id}" target="_blank">${comment.content}</a></div>
+          <div class="content-meta">게시글: ${comment.postTitle || '알 수 없음'} · 작성일: ${new Date(comment.createdAt).toLocaleDateString()}</div>
         </div>
         <div class="content-actions">
           <button class="content-action-button view" data-id="${comment.id}" data-post-id="${comment.postId}">보기</button>
@@ -515,7 +449,7 @@ function renderUserComments(comments, totalPages, currentPage) {
         const postId = this.getAttribute('data-post-id');
         const commentId = this.getAttribute('data-id');
         window.open(
-          `../board/post.html?id=${postId}&commentId=${commentId}`,
+          `../post/post.html?postId=${postId}&commentId=${commentId}`,
           '_blank',
         );
       });
@@ -566,26 +500,30 @@ function deleteSelectedPosts() {
   if (
     confirm(`선택한 ${selectedPosts.length}개의 게시글을 삭제하시겠습니까?`)
   ) {
-    /* 
-        // API 호출: 선택한 게시글 삭제
-        api.deleteMultiplePosts(selectedPosts)
-          .then(response => {
-            alert('선택한 게시글이 삭제되었습니다.');
-            fetchUserPosts(1);
-            addAdminLog('삭제', `${selectedPosts.length}개의 게시글을 삭제했습니다.`);
-          })
-          .catch(error => {
-            console.error('게시글 삭제 실패:', error);
-            alert('게시글 삭제에 실패했습니다.');
-          });
-      */
+    // API 호출: 선택한 게시글 삭제
+    api.admin
+      .deleteMultiplePosts(selectedPosts)
+      .then((response) => {
+        alert('선택한 게시글이 삭제되었습니다.');
+        fetchUserPosts(1);
 
-    // 임시 처리 (API 연동 전)
-    setTimeout(() => {
-      alert('선택한 게시글이 삭제되었습니다.');
-      fetchUserPosts(1);
-      addAdminLog('삭제', `${selectedPosts.length}개의 게시글을 삭제했습니다.`);
-    }, 500);
+        addAdminLog(
+          '삭제',
+          `${selectedPosts.length}개의 게시글을 삭제했습니다.`,
+        );
+
+        // 관리자 로그 API 호출
+        api.admin
+          .addAdminLog(
+            '삭제',
+            `${selectedPosts.length}개의 게시글을 삭제했습니다.`,
+          )
+          .catch((e) => console.error('관리자 로그 기록 실패:', e));
+      })
+      .catch((error) => {
+        console.error('게시글 삭제 실패:', error);
+        alert('게시글 삭제에 실패했습니다.');
+      });
   }
 }
 
@@ -600,78 +538,75 @@ function deleteSelectedComments() {
   if (
     confirm(`선택한 ${selectedComments.length}개의 댓글을 삭제하시겠습니까?`)
   ) {
-    /* 
-        // API 호출: 선택한 댓글 삭제
-        api.deleteMultipleComments(selectedComments)
-          .then(response => {
-            alert('선택한 댓글이 삭제되었습니다.');
-            fetchUserComments(1);
-            addAdminLog('삭제', `${selectedComments.length}개의 댓글을 삭제했습니다.`);
-          })
-          .catch(error => {
-            console.error('댓글 삭제 실패:', error);
-            alert('댓글 삭제에 실패했습니다.');
-          });
-      */
+    // API 호출: 선택한 댓글 삭제
+    api.admin
+      .deleteMultipleComments(selectedComments)
+      .then((response) => {
+        alert('선택한 댓글이 삭제되었습니다.');
+        fetchUserComments(1);
 
-    // 임시 처리 (API 연동 전)
-    setTimeout(() => {
-      alert('선택한 댓글이 삭제되었습니다.');
-      fetchUserComments(1);
-      addAdminLog(
-        '삭제',
-        `${selectedComments.length}개의 댓글을 삭제했습니다.`,
-      );
-    }, 500);
+        addAdminLog(
+          '삭제',
+          `${selectedComments.length}개의 댓글을 삭제했습니다.`,
+        );
+
+        // 관리자 로그 API 호출
+        api.admin
+          .addAdminLog(
+            '삭제',
+            `${selectedComments.length}개의 댓글을 삭제했습니다.`,
+          )
+          .catch((e) => console.error('관리자 로그 기록 실패:', e));
+      })
+      .catch((error) => {
+        console.error('댓글 삭제 실패:', error);
+        alert('댓글 삭제에 실패했습니다.');
+      });
   }
 }
 
 // 게시글 삭제
 function deletePost(postId) {
-  /* 
-      // API 호출: 게시글 삭제
-      api.deletePost(postId)
-        .then(response => {
-          alert('게시글이 삭제되었습니다.');
-          fetchUserPosts(1);
-          addAdminLog('삭제', `게시글 ID: ${postId}를 삭제했습니다.`);
-        })
-        .catch(error => {
-          console.error('게시글 삭제 실패:', error);
-          alert('게시글 삭제에 실패했습니다.');
-        });
-    */
+  // API 호출: 게시글 삭제
+  api
+    .deletePost(postId)
+    .then((response) => {
+      alert('게시글이 삭제되었습니다.');
+      fetchUserPosts(1);
 
-  // 임시 처리 (API 연동 전)
-  setTimeout(() => {
-    alert('게시글이 삭제되었습니다.');
-    fetchUserPosts(1);
-    addAdminLog('삭제', `게시글 ID: ${postId}를 삭제했습니다.`);
-  }, 500);
+      addAdminLog('삭제', `게시글 ID: ${postId}를 삭제했습니다.`);
+
+      // 관리자 로그 API 호출
+      api.admin
+        .addAdminLog('삭제', `게시글 ID: ${postId}를 삭제했습니다.`)
+        .catch((e) => console.error('관리자 로그 기록 실패:', e));
+    })
+    .catch((error) => {
+      console.error('게시글 삭제 실패:', error);
+      alert('게시글 삭제에 실패했습니다.');
+    });
 }
 
 // 댓글 삭제
 function deleteComment(commentId) {
-  /* 
-      // API 호출: 댓글 삭제
-      api.deleteComment(commentId)
-        .then(response => {
-          alert('댓글이 삭제되었습니다.');
-          fetchUserComments(1);
-          addAdminLog('삭제', `댓글 ID: ${commentId}를 삭제했습니다.`);
-        })
-        .catch(error => {
-          console.error('댓글 삭제 실패:', error);
-          alert('댓글 삭제에 실패했습니다.');
-        });
-    */
+  // API 호출: 댓글 삭제
+  api
+    .deleteComment(commentId)
+    .then((response) => {
+      alert('댓글이 삭제되었습니다.');
+      fetchUserComments(1);
 
-  // 임시 처리 (API 연동 전)
-  setTimeout(() => {
-    alert('댓글이 삭제되었습니다.');
-    fetchUserComments(1);
-    addAdminLog('삭제', `댓글 ID: ${commentId}를 삭제했습니다.`);
-  }, 500);
+      addAdminLog('삭제', `댓글 ID: ${commentId}를 삭제했습니다.`);
+
+      // 관리자 로그 API 호출
+      api.admin
+        .addAdminLog('삭제', `댓글 ID: ${commentId}를 삭제했습니다.`)
+        .catch((e) => console.error('관리자 로그 기록 실패:', e));
+    })
+    .catch((error) => {
+      console.error('댓글 삭제 실패:', error);
+      alert('댓글 삭제에 실패했습니다.');
+    });
 }
 
 // 빈 게시글 메시지 표시
@@ -725,7 +660,7 @@ function createPagination(elementId, totalPages, currentPage, callback) {
   }
 }
 
-// 관리자 로그 추가
+// 관리자 로그 추가 (UI에만 표시)
 function addAdminLog(action, message) {
   const logContainer = document.getElementById('adminLogContainer');
   const logEntry = document.createElement('div');

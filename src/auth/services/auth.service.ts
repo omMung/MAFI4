@@ -72,6 +72,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       nickName: user.nickName,
+      isAdmin: user.isAdmin,
     };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('ACCESS_SECRET_KEY'),
@@ -96,6 +97,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         nickName: user.nickName,
+        isAdmin: user.isAdmin,
       },
     };
   }

@@ -36,7 +36,10 @@ export class User {
   isAdmin: boolean;
   // 제재 기간 (banDueDate): null이면 제재 없음, 값이 있으면 해당 날짜까지 제재
   @Column({ type: 'timestamp', nullable: true })
-  banDueDate?: Date;
+  gameBanDate?: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  CommunityBanDate?: Date;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

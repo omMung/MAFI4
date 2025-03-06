@@ -153,7 +153,7 @@ function renderPostsList(posts) {
       postElement.innerHTML = `
         <div class="post-content">
           <div class="post-title">
-            <a href="../post/post.html?id=${post.id}">${post.title}</a>
+            <a href="../post/post.html?postId=${post.id}">${post.title}</a>
           </div>
           <div class="post-meta">
             작성일: ${new Date(post.createdAt).toLocaleDateString()}

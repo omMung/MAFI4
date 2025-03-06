@@ -20,6 +20,7 @@ import { S3UploaderModule } from './s3uploader/s3uploader.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AdminModule } from './admin/admin.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -87,6 +88,7 @@ const typeOrmModuleOptions = {
     RoomsModule,
     LikesModule,
     S3UploaderModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
