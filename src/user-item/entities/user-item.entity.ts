@@ -17,6 +17,9 @@ export class UserItem {
   @JoinColumn({ name: 'item_id' })
   item: Item;
 
+  @Column({ type: 'int', default: 1 })
+  quantity: number;
+
   @Column({ type: 'boolean' })
   mount: boolean;
 

@@ -10,24 +10,43 @@ export class UserItemRepository {
     private readonly userItemRepository: Repository<UserItem>,
   ) {}
 
-  async createUserItem(itemId: number, userId: number, mount: boolean) {
+  async createUserItem(itemId: number, userId: number, quantity: number) {
     const buyItem = this.userItemRepository.create({
       item: { id: itemId },
       user: { id: userId },
-      mount,
+      quantity,
     });
-    await this.userItemRepository.save(buyItem);
-    return { message: '아이탬을 구매하였습니다.', data: buyItem };
+    return await this.userItemRepository.save(buyItem);
   }
 
-  async findMyItem(userId: number) {
-    const myItems = this.userItemRepository.find();
-    return myItems;
+  async findMyItems(userId: number): Promise<UserItem[]> {
+    return await this.userItemRepository.find({
+      where: { user: { id: userId } },
+      relations: ['item'],
+    });
   }
 
-  async updateUserItem(userId: number, itemId: number) {
-    const mountItem = await this.userItemRepository.findOne({
+  async updateUserItemQuantity(
+    userId: number,
+    itemId: number,
+    quantity: number,
+  ) {
+    const userItem = await this.userItemRepository.findOne({
       where: { user: { id: userId }, item: { id: itemId } },
     });
+    if (!userItem) return null;
+
+    userItem.quantity = quantity;
+    return await this.userItemRepository.save(userItem);
+  }
+
+  async deleteUserItem(userId: number, itemId: number) {
+    const userItem = await this.userItemRepository.findOne({
+      where: { user: { id: userId }, item: { id: itemId } },
+    });
+    if (!userItem) return null;
+
+    await this.userItemRepository.remove(userItem);
+    return userItem;
   }
 }

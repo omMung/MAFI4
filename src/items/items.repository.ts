@@ -1,52 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Item } from './entities/item.entity';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { Item } from './entities/item.entity';
 
 @Injectable()
 export class ItemsRepository {
   constructor(
     @InjectRepository(Item)
-    private itemsRepository: Repository<Item>,
+    private readonly itemRepository: Repository<Item>,
   ) {}
 
-  async createItem(name: string, price: number) {
-    const item = this.itemsRepository.create({
-      name,
-      price,
-    });
-    await this.itemsRepository.save(item);
-    return { message: '아이탬이 생성되었습니다.', data: item };
+  async createItem(name: string, price: number): Promise<Item> {
+    const newItem = this.itemRepository.create({ name, price });
+    return await this.itemRepository.save(newItem);
   }
 
-  async findAllItems() {
-    const items = await this.itemsRepository.find();
-    return { message: '전체아이탬을 조회했습니다.', data: items };
+  async findAllItems(): Promise<Item[]> {
+    return await this.itemRepository.find();
   }
 
-  async findOneItem(itemId: number) {
-    const itemDate = await this.itemsRepository.findOneBy({ id: itemId });
-    return { message: '아이탬을 상세조회했습니다.', data: itemDate };
+  async findOneItem(id: number): Promise<Item | null> {
+    return await this.itemRepository.findOneBy({ id });
   }
 
-  async findItemPrice(itemId: number) {
-    const itemDate = await this.itemsRepository.findOne({
+  async findItemPrice(itemId: number): Promise<{ price: number } | null> {
+    const item = await this.itemRepository.findOne({
       where: { id: itemId },
       select: ['price'],
     });
-    return itemDate;
+    return item ? { price: item.price } : null;
   }
 
-  async updateItem(itemId: number, name: string, price: number) {
-    const itemDate = await this.itemsRepository.update(
-      { id: itemId },
-      { name, price },
-    );
-    return { message: '아이탬이 수정 되었습니다.', data: itemDate };
+  async updateItem(item: Item): Promise<Item> {
+    return await this.itemRepository.save(item);
   }
 
-  async deleteItem(itemId: number) {
-    const itemDate = await this.itemsRepository.delete({ id: itemId });
-    return { message: '아이탬이 삭제 되었습니다.' };
+  async deleteItem(item: Item): Promise<void> {
+    await this.itemRepository.remove(item);
   }
 }

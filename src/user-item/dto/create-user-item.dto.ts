@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional } from 'class-validator';
 
 export class CreateUserItemDto {
   @IsNumber()
@@ -8,6 +8,6 @@ export class CreateUserItemDto {
   userId: number;
 
   @IsOptional()
-  @IsBoolean()
-  mount: boolean = false;
+  @IsNumber()
+  quantity: number = 1;
 }

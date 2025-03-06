@@ -1,7 +1,4 @@
-import { IsBoolean, IsNotEmpty } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateUserItemDto } from './create-user-item.dto';
 
-export class UpdateUserItemDto {
-  @IsBoolean()
-  @IsNotEmpty({ message: '장착여부를 입력해 주세요' })
-  mount: boolean;
-}
+export class UpdateUserItemDto extends PartialType(CreateUserItemDto) {}

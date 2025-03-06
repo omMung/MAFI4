@@ -3,6 +3,7 @@ import { UserItemRepository } from './user-item.repository';
 import { UsersRepository } from 'src/users/users.repository';
 import { ItemsRepository } from 'src/items/items.repository';
 import { UserNoMoneyException } from 'src/common/exceptions/users.exception';
+import { ItemNotFoundException } from 'src/common/exceptions/item.exception';
 
 @Injectable()
 export class UserItemService {
@@ -12,34 +13,47 @@ export class UserItemService {
     private readonly itemsRepository: ItemsRepository,
   ) {}
 
-  async createUserItem(itemId: number, userId: number, mount: boolean) {
-    const buyItem = await this.userItemRepository.createUserItem(
-      itemId,
-      userId,
-      mount,
-    );
-    const myMoney = await this.usersRepository.findUserMoney(userId);
+  async createUserItem(itemId: number, userId: number, quantity: number) {
     const itemPrice = await this.itemsRepository.findItemPrice(itemId);
+    if (!itemPrice) throw new ItemNotFoundException();
 
-    if (myMoney.money < itemPrice.price) {
+    const userMoney = await this.usersRepository.findUserMoney(userId);
+    if (userMoney.money < itemPrice.price * quantity) {
       throw new UserNoMoneyException();
     }
-    const remainingMoney = myMoney.money - itemPrice.price;
+
+    const remainingMoney = userMoney.money - itemPrice.price * quantity;
     await this.usersRepository.updateUserMoney(userId, remainingMoney);
-    return;
+    return await this.userItemRepository.createUserItem(
+      itemId,
+      userId,
+      quantity,
+    );
   }
 
-  async findMyItem(userId: number) {
-    const myitems = await this.userItemRepository.findMyItem(userId);
-    return `This action returns all userItem`;
+  async findMyItems(userId: number) {
+    return await this.userItemRepository.findMyItems(userId);
   }
 
-  async update(userId: number, itemId: number) {
-    const itemMount = await this.userItemRepository.updateUserItem(
+  async updateUserItemQuantity(
+    userId: number,
+    itemId: number,
+    quantity: number,
+  ) {
+    const userItem = await this.userItemRepository.findMyItems(userId);
+    if (!userItem) throw new ItemNotFoundException();
+
+    return await this.userItemRepository.updateUserItemQuantity(
       userId,
       itemId,
-      // mount,
+      quantity,
     );
-    return;
+  }
+
+  async deleteUserItem(userId: number, itemId: number) {
+    const userItem = await this.userItemRepository.findMyItems(userId);
+    if (!userItem) throw new ItemNotFoundException();
+
+    return await this.userItemRepository.deleteUserItem(userId, itemId);
   }
 }

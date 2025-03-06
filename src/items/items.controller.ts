@@ -1,12 +1,11 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Request,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -17,32 +16,40 @@ export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
   @Post()
-  createItem(@Body() createItemDto: CreateItemDto) {
+  async createItem(@Body() createItemDto: CreateItemDto) {
     const { name, price } = createItemDto;
-    return this.itemsService.createItem(name, price);
+    const item = await this.itemsService.createItem(name, price);
+    return { data: item };
   }
 
   @Get()
-  findAllItems() {
-    return this.itemsService.findAllItems();
+  async findAllItems() {
+    const items = await this.itemsService.findAllItems();
+    return { data: items };
   }
 
   @Get(':id')
-  findOneItem(@Param('id') id: string) {
-    const itemId = Number(id);
-    return this.itemsService.findOneItem(itemId);
+  async findOneItem(@Param('id') id: number) {
+    const item = await this.itemsService.findOneItem(id);
+    return { data: item };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateItemDto: UpdateItemDto) {
-    const itemId = Number(id);
-    const { name, price } = updateItemDto;
-    return this.itemsService.updateItem(itemId, name, price);
+  async updateItem(
+    @Param('id') id: number,
+    @Body() updateItemDto: UpdateItemDto,
+  ) {
+    const updatedItem = await this.itemsService.updateItem(
+      id,
+      updateItemDto.name,
+      updateItemDto.price,
+    );
+    return { data: updatedItem };
   }
 
   @Delete(':id')
-  deleteItem(@Param('id') id: string) {
-    const itemId = Number(id);
-    return this.itemsService.deleteItem(itemId);
+  async deleteItem(@Param('id') id: number) {
+    await this.itemsService.deleteItem(id);
+    return { message: '아이템이 삭제되었습니다.' };
   }
 }
