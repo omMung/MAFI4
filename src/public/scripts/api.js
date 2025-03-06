@@ -147,7 +147,6 @@ const api = {
       ),
 
     // 사용자 기능 제한 상태 변경
-
     updateUserBanStatus: (userId, data) =>
       fetchAPI(
         `/admin/users/${userId}/ban`,
@@ -159,8 +158,18 @@ const api = {
       ),
 
     // 사용자 전체 제한 해제
-    unbanAllFeatures: (userId) =>
-      fetchAPI(`/admin/users/${userId}/unban-all`, { method: 'PATCH' }),
+    unbanAllFeatures: (userId, type) => {
+      let endpoint = `/admin/users/${userId}/unban-all`;
+      if (type && (type === 'game' || type === 'community')) {
+        endpoint += `?type=${encodeURIComponent(type)}`;
+      }
+      return fetchAPI(endpoint, { method: 'PATCH' });
+    },
+
+    // 사용자 벤 상태 조회
+    // 관리자 전용 API들 (api.admin 내부)
+    getUserBanStatus: (userId) =>
+      fetchAPI(`/admin/users/${userId}/ban-status`, { method: 'GET' }),
 
     // 사용자 게시글 전체 조회 (페이지네이션은 클라이언트 처리)
     getUserPosts: (userId) =>

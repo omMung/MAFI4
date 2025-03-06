@@ -111,12 +111,18 @@ function displayUserInfo(user) {
   // 사용자 상태 배지 업데이트
   updateUserStatusBadge(user);
 
-  // 기능 제한 상태 업데이트
-  updateBanStatus('game', user.gameBanned || user.banStatus?.game);
-  updateBanStatus(
-    'community',
-    user.communityBanned || user.banStatus?.community,
-  );
+  // 기존 기능 제한 상태 업데이트 코드가 있다면 제거하고, getUserBanStatus API 호출
+  const userId = user.data.id;
+  api.admin
+    .getUserBanStatus(userId)
+    .then((response) => {
+      // response.data가 { gameBan: Date | null, communityBan: Date | null } 형태라고 가정
+      updateBanStatus('game', response.data.gameBan);
+      updateBanStatus('community', response.data.communityBan);
+    })
+    .catch((error) => {
+      console.error('사용자 제재 상태 조회 실패:', error);
+    });
 
   // 현재 사용자 ID를 데이터 속성에 저장
   document
@@ -146,17 +152,20 @@ function updateUserStatusBadge(user) {
 }
 
 // 기능 제한 상태 업데이트
-function updateBanStatus(type, isBanned) {
+function updateBanStatus(type, banDate) {
   const statusElement = document.getElementById(`${type}BanStatus`);
+  if (!statusElement) return; // 해당 요소가 없으면 종료
   const statusValue = statusElement.querySelector('.status-value');
 
-  if (isBanned) {
+  if (banDate) {
+    // banDate가 존재하면 제재 상태임
     statusValue.textContent = '제한됨';
     statusValue.className = 'status-value banned';
     document.getElementById(
       `ban${type.charAt(0).toUpperCase() + type.slice(1)}Btn`,
     ).textContent = `${type === 'game' ? '게임' : '커뮤니티'} 기능 제한 해제`;
   } else {
+    // banDate가 null이면 활성 상태임
     statusValue.textContent = '활성';
     statusValue.className = 'status-value active';
     document.getElementById(
@@ -170,63 +179,72 @@ function applyBanStatus(type) {
   const userId = document
     .getElementById('userInfoSection')
     .getAttribute('data-user-id');
-
-  // 제재 기간을 입력받음 (예: 1, 3, 7, 30일 중 하나)
-  const durationInput = prompt(
-    `"${type === 'game' ? '게임' : '커뮤니티'}" 제재 기간(일)을 입력하세요 (1, 3, 7, 30 중 하나):`,
+  const banBtn = document.getElementById(
+    `ban${type.charAt(0).toUpperCase() + type.slice(1)}Btn`,
   );
-  const duration = parseInt(durationInput, 10);
-  const allowedDurations = [1, 3, 7, 30];
-  if (!duration || !allowedDurations.includes(duration)) {
-    alert('제재 기간은 1, 3, 7, 30일 중 하나여야 합니다.');
-    return;
-  }
+  const currentBtnText = banBtn.textContent.trim();
 
-  // API 호출: 서버에 userId, type, duration 전달 (ban은 적용 상태로 고정)
-  api.admin
-    .updateUserBanStatus(userId, { type: type, duration: duration })
-    .then((response) => {
-      // UI 업데이트: 해당 기능의 제재 상태를 '제한됨'으로 표시
-      updateBanStatus(type, true);
+  // 버튼 텍스트가 "기능 제한 해제"이면, 해제 동작 실행
+  if (currentBtnText.includes('해제')) {
+    // 해제 API 호출: type에 따라 해당 제한만 해제
+    api.admin
+      .unbanAllFeatures(userId, type)
+      .then((response) => {
+        // UI 업데이트: 해당 기능의 제재 상태를 활성으로 표시
+        updateBanStatus(type, null);
+        // 업데이트 후 추가 UI 갱신(예: 사용자 상태 배지)
+        const user = { id: userId, gameBanned: false, communityBanned: false };
+        updateUserStatusBadge(user);
+        addAdminLog(
+          '제한 관리',
+          `사용자 "${document.getElementById('userEmail').textContent}"의 ${type === 'game' ? '게임' : '커뮤니티'} 제한이 해제되었습니다.`,
+        );
+      })
+      .catch((error) => {
+        console.error('사용자 기능 제한 해제 실패:', error);
+        alert('사용자 기능 제한 해제에 실패했습니다.');
+      });
+  } else {
+    // 그렇지 않으면 제재 적용: 제재 기간을 입력받음
+    const durationInput = prompt(
+      `"${type === 'game' ? '게임' : '커뮤니티'}" 제재 기간(일)을 입력하세요 (1, 3, 7, 30 중 하나):`,
+    );
+    const duration = parseInt(durationInput, 10);
+    const allowedDurations = [1, 3, 7, 30];
+    if (!duration || !allowedDurations.includes(duration)) {
+      alert('제재 기간은 1, 3, 7, 30일 중 하나여야 합니다.');
+      return;
+    }
 
-      // 사용자 상태 배지 업데이트
-      const user = {
-        id: userId,
-        gameBanned:
-          type === 'game'
-            ? true
-            : document
-                .getElementById('gameBanStatus')
-                .querySelector('.status-value').textContent === '제한됨',
-        communityBanned:
-          type === 'community'
-            ? true
-            : document
-                .getElementById('communityBanStatus')
-                .querySelector('.status-value').textContent === '제한됨',
-      };
-      updateUserStatusBadge(user);
+    // API 호출: 사용자 기능 제한 적용 (제재 기간 전달)
+    api.admin
+      .updateUserBanStatus(userId, { type: type, duration: duration })
+      .then((response) => {
+        // UI 업데이트: 해당 기능의 제재 상태를 '제한됨'으로 표시
+        updateBanStatus(type, true); // 여기서 true 대신 banDate가 존재하는 것으로 간주
+        const user = {
+          id: userId,
+          gameBanned: type === 'game',
+          communityBanned: type === 'community',
+        };
+        updateUserStatusBadge(user);
 
-      // 관리 로그 UI 업데이트 및 API 로그 기록
-      addAdminLog(
-        '제재 적용',
-        `사용자 "${document.getElementById('userEmail').textContent}"의 ${
-          type === 'game' ? '게임' : '커뮤니티'
-        } 제재를 ${duration}일 적용했습니다.`,
-      );
-      api.admin
-        .addAdminLog(
+        addAdminLog(
           '제재 적용',
-          `사용자 "${document.getElementById('userEmail').textContent}"의 ${
-            type === 'game' ? '게임' : '커뮤니티'
-          } 제재를 ${duration}일 적용했습니다.`,
-        )
-        .catch((e) => console.error('관리자 로그 기록 실패:', e));
-    })
-    .catch((error) => {
-      console.error('사용자 제재 상태 변경 실패:', error);
-      alert('사용자 제재 상태 변경에 실패했습니다.');
-    });
+          `사용자 "${document.getElementById('userEmail').textContent}"의 ${type === 'game' ? '게임' : '커뮤니티'} 제한이 ${duration}일 적용되었습니다.`,
+        );
+        api.admin
+          .addAdminLog(
+            '제재 적용',
+            `사용자 "${document.getElementById('userEmail').textContent}"의 ${type === 'game' ? '게임' : '커뮤니티'} 제한이 ${duration}일 적용되었습니다.`,
+          )
+          .catch((e) => console.error('관리자 로그 기록 실패:', e));
+      })
+      .catch((error) => {
+        console.error('사용자 제재 상태 변경 실패:', error);
+        alert('사용자 제재 상태 변경에 실패했습니다.');
+      });
+  }
 }
 
 // 모든 제한 해제
@@ -239,8 +257,9 @@ function unbanAll() {
   api.admin
     .unbanAllFeatures(userId)
     .then((response) => {
-      updateBanStatus('game', false);
-      updateBanStatus('community', false);
+      // 업데이트된 제재 상태를 null로 전달하여 활성 상태를 표시
+      updateBanStatus('game', null);
+      updateBanStatus('community', null);
 
       // 사용자 상태 배지 업데이트
       const user = {

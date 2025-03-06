@@ -12,7 +12,7 @@ export class BanExpirationService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async handleBanExpiration() {
     const now = new Date();
     console.log(`Checking for expired bans at ${now.toISOString()}`);

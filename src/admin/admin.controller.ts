@@ -52,11 +52,18 @@ export class AdminController {
     return { message: '사용자 제재 상태가 변경되었습니다.' };
   }
 
-  // 사용자 전체 제한 해제 API
+  // 사용자 제재 상태 해제 API - 쿼리 파라미터 type에 따라 해제 범위를 결정
   @Patch('users/:userId/unban-all')
-  async unbanAllFeatures(@Param('userId') userId: number) {
-    await this.adminService.unbanAllFeatures(userId);
-    return { message: '모든 기능 제한이 해제되었습니다.' };
+  async unbanAllFeatures(
+    @Param('userId') userId: number,
+    @Query('type') type?: string, // 'game', 'community', 또는 생략 시 전체 해제
+  ) {
+    await this.adminService.unbanAllFeatures(userId, type);
+    const message =
+      type && (type === 'game' || type === 'community')
+        ? `${type === 'game' ? '게임' : '커뮤니티'} 제한이 해제되었습니다.`
+        : '모든 기능 제한이 해제되었습니다.';
+    return { message };
   }
 
   // 사용자 게시글 전체 조회 API
@@ -93,5 +100,12 @@ export class AdminController {
   async addAdminLog(@Body() logDto: { action: string; message: string }) {
     await this.adminService.addAdminLog(logDto.action, logDto.message);
     return { message: '관리자 로그가 기록되었습니다.' };
+  }
+
+  // 사용자 제재 상태 조회 API
+  @Get('users/:userId/ban-status')
+  async getUserBanStatus(@Param('userId') userId: number) {
+    const banStatus = await this.adminService.getUserBanStatus(userId);
+    return { data: banStatus };
   }
 }

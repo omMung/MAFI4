@@ -26,7 +26,11 @@ export class AdminRepository {
   // 사용자 검색 (닉네임 기준)
   async findUserByNickname(nickName: string): Promise<User> {
     return this.userRepository.findOne({ where: { nickName: nickName } });
-    console.log(nickName);
+  }
+
+  // 사용자 ID로 조회하는 메서드 추가
+  async findUserById(userId: number): Promise<User> {
+    return this.userRepository.findOne({ where: { id: userId } });
   }
 
   // 사용자 기능 제한 상태 업데이트

@@ -48,12 +48,27 @@ export class AdminService {
   }
 
   // (4) 사용자 전체 제한 해제
-  async unbanAllFeatures(userId: number): Promise<void> {
-    await this.adminRepository.updateUserBanStatus(userId, {
-      gameBanned: false,
-      communityBanned: false,
-    });
-    const logMessage = AdminLogMessages.unbanAllFeatures(userId);
+  async unbanAllFeatures(userId: number, type?: string): Promise<void> {
+    if (type === 'game') {
+      await this.adminRepository.updateUserBanStatus(userId, {
+        gameBanDate: null,
+      });
+    } else if (type === 'community') {
+      await this.adminRepository.updateUserBanStatus(userId, {
+        CommunityBanDate: null,
+      });
+    } else {
+      // type이 없거나 'all'인 경우
+      await this.adminRepository.updateUserBanStatus(userId, {
+        gameBanDate: null,
+        CommunityBanDate: null,
+      });
+    }
+
+    const logMessage =
+      type && (type === 'game' || type === 'community')
+        ? `사용자 ID ${userId}의 ${type} 제한이 해제되었습니다.`
+        : `사용자 ID ${userId}의 모든 기능 제한이 해제되었습니다.`;
     await this.addAdminLog('전체 제한 해제', logMessage);
   }
 
@@ -86,5 +101,19 @@ export class AdminService {
   // (9) 관리자 로그 기록 (내부 호출용)
   async addAdminLog(action: string, message: string): Promise<void> {
     await this.adminRepository.saveAdminLog(action, message);
+  }
+
+  // (10)사용자 제재 상태 조회: gameBanDate, CommunityBanDate 여부 확인
+  async getUserBanStatus(
+    userId: number,
+  ): Promise<{ gameBan: Date | null; communityBan: Date | null }> {
+    const user = await this.adminRepository.findUserById(userId);
+    if (!user) {
+      throw new NotFoundException(`사용자 ID ${userId}를 찾을 수 없습니다.`);
+    }
+    return {
+      gameBan: user.gameBanDate || null,
+      communityBan: user.CommunityBanDate || null,
+    };
   }
 }
