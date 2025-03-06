@@ -25,8 +25,8 @@ export class UserItemRepository {
     return myItems;
   }
 
-  async updateUserItem(userId: number, itemId: number) {
-    const mountItem = await this.userItemRepository.findOne({
+  async updateUserItem(userId: number, itemId: number, mount: boolean) {
+    const mountItem = await this.userItemRepository.find({
       where: { user: { id: userId }, item: { id: itemId } },
     });
   }
