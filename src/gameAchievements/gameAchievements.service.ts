@@ -3,16 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GameAchievement } from './entities/gameAchievements.entity';
 
-interface PlayerStats {
-  role: string;
-  kills: number;
-  abilitiesUsed: number;
-  survived: string;
-}
-
 interface GameAchievementsDto {
   gameId: string;
-  playerAchievements: Record<string, PlayerStats>;
+  playerAchievements: Record<string, Record<string, string>>;
 }
 
 @Injectable()
@@ -35,28 +28,30 @@ export class GameAchievementsService {
       return;
     }
 
-    const achievements = Object.entries(gameAchievements.playerAchievements)
-      .map(([userId, stats]) => {
-        if (!stats || typeof stats !== 'object') {
-          console.warn(
-            `플레이어 데이터 없음 (userId: ${userId}, gameId: ${gameAchievements.gameId})`,
-          );
-          return null;
-        }
+    const achievements = [];
 
-        return {
+    for (const [userId, stats] of Object.entries(
+      gameAchievements.playerAchievements,
+    )) {
+      if (!stats || typeof stats !== 'object') {
+        console.warn(
+          `플레이어 데이터 없음 (userId: ${userId}, gameId: ${gameAchievements.gameId})`,
+        );
+        continue;
+      }
+
+      for (const [achievementType, value] of Object.entries(stats)) {
+        if (!value) continue; // 값이 없는 경우 저장하지 않음
+
+        achievements.push({
           gameId: gameAchievements.gameId,
           userId: Number(userId),
-          role: stats.role || 'unknown',
-          kills: isNaN(Number(stats.kills)) ? 0 : Number(stats.kills),
-          abilitiesUsed: isNaN(Number(stats.abilitiesUsed))
-            ? 0
-            : Number(stats.abilitiesUsed),
-          survived: stats.survived === 'true',
+          achievementType, // 업적 종류 (ex. mafia_kills, detective_checks, heal_used)
+          value: isNaN(Number(value)) ? 0 : Number(value),
           timestamp: new Date(),
-        };
-      })
-      .filter(Boolean);
+        });
+      }
+    }
 
     if (achievements.length === 0) {
       console.warn(

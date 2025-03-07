@@ -17,16 +17,10 @@ export class GameAchievement {
   userId: number; // 플레이어 ID
 
   @Column()
-  role: string; // 역할 (마피아, 시민 등)
+  achievementType: string; // 업적 종류 (mafia_kills, detective_checks, heal_used 등)
 
   @Column({ default: 0 })
-  kills: number; // 킬 수 (마피아가 시민을 죽인 횟수)
-
-  @Column({ default: 0 })
-  abilitiesUsed: number; // 능력 사용 횟수
-
-  @Column({ default: false })
-  survived: boolean; // 생존 여부 (true/false)
+  value: number; // 업적 값 (ex. 몇 번 수행했는지)
 
   @CreateDateColumn()
   timestamp: Date; // 생성 시간
