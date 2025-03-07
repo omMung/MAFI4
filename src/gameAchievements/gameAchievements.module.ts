@@ -2,7 +2,6 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GameAchievementsController } from './gameAchievements.controller';
 import { GameAchievementsService } from './gameAchievements.service';
-import { GameResultsSubscriber } from 'src/gameResults/gameResults.subscriber';
 import { GameAchievement } from './entities/gameAchievements.entity';
 import { GameResultsModule } from 'src/gameResults/gameResults.module';
 import { AchievementsModule } from 'src/achievements/achievements.module';
@@ -17,11 +16,7 @@ import { UserAchievementsModule } from 'src/user-achievements/users-achievements
     forwardRef(() => UserAchievementsModule),
   ],
   controllers: [GameAchievementsController],
-  providers: [
-    GameAchievementsService,
-    GameResultsSubscriber,
-    AchievementsService,
-  ],
+  providers: [GameAchievementsService, AchievementsService],
   exports: [GameAchievementsService],
 })
 export class GameAchievementsModule {}
