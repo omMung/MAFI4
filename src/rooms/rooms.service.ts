@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   passwordException,
   roomModeException,
@@ -8,28 +8,47 @@ import {
 import { UserNotFoundException } from 'src/common/exceptions/users.exception';
 import { isNil } from 'lodash';
 import { RoomsRepository } from './rooms.repository';
+import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RoomsService {
-  constructor(private readonly roomsRepository: RoomsRepository) {}
+  private readonly logger = new Logger(RoomsService.name);
+  constructor(
+    private configService: ConfigService,
+    private readonly roomsRepository: RoomsRepository,
+  ) {}
+
+  // 방 생성 시 로드밸런서를 통해 연결된 게임서버 주소 조회
+  async getLowestLoadGameServer(): Promise<string> {
+    try {
+      const albUrl = this.configService.get('ALB_URL');
+      const response = await axios.get(`${albUrl}/get-server-info`);
+      return response.data.publicIp;
+    } catch (error) {
+      this.logger.error('게임 서버 선택 중 에러 발생:', error);
+      throw new Error('게임 서버 선택 중 에러 발생');
+    }
+  }
 
   async createRoom({ userId, userNickName, roomName, mode, locked, password }) {
     console.log('roomName', roomName);
     const roomIdNumber = await this.roomsRepository.getRedis().incr('room:id');
     const roomId = `room:${roomIdNumber}`;
+    const selectedServer = await this.getLowestLoadGameServer();
     const roomInfo = {
       hostId: userId,
       roomName: roomName,
       status: '대기 중', // 기본값: 대기 중
       mode: mode,
-      playerCount: 1, // 기본값: 1명
       locked: locked,
       password: password,
       createdAt: new Date().toISOString(),
       players: JSON.stringify([]),
+      gameServer: selectedServer,
     };
 
-    const roomData = await this.roomsRepository.createRoom(roomId, roomInfo);
+    await this.roomsRepository.createRoom(roomId, roomInfo);
 
     // if (roomName === '') {
     //   roomName = `${userNickName}님의 방`;
@@ -61,6 +80,7 @@ export class RoomsService {
       // playerCount: parseInt(roomData.playerCount, 10),
       mode: roomData.mode,
       locked: roomData.locked === 'true',
+      gameServer: roomData.gameServer,
     };
   }
 

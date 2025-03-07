@@ -288,7 +288,7 @@
 
       // 로그인 및 룸 입장
 
-      window.onload = function () {
+      window.onload = async function () {
         const userId = localStorage.getItem('userId');
 
         if (!userId) {
@@ -299,7 +299,33 @@
 
         currentUserId = userId;
 
-        socket = io(`${CONFIG.GAME_BASE_URL}/room`, {
+        // ✅ accessToken 가져오기 (예제: 로컬스토리지에서 가져오는 방식)
+        const accessToken = localStorage.getItem('accessToken'); // 또는 쿠키에서 가져올 수도 있음
+
+        try {
+          // 2️⃣ 서버에서 게임 서버 IP 조회 (fetch 사용)
+          const response = await fetch(
+            `${CONFIG.API_BASE_URL}/api/rooms/${roomId}`,
+            {
+              method: 'GET',
+              headers: {
+                Authorization: accessToken, // 인증 토큰 추가
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include', // 쿠키 포함 (필요 시)
+            },
+          );
+
+          const data = await response.json();
+          console.log('game', data.gameServer);
+          if (!data || !data.gameServer) {
+            throw new Error('방 정보를 가져올 수 없습니다.');
+          }
+        } catch (error) {
+          console.error('방 입장 중 오류:', error);
+        }
+
+        socket = io(`http://${data.gameServer}:3001/room`, {
           auth: { roomId: roomId, userId: currentUserId },
         });
 

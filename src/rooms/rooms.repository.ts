@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
 @Injectable()
@@ -6,12 +7,10 @@ export class RoomsRepository {
   private redis: Redis;
 
   // DataSource => 타입orm 에서 기본적으로 주는 기능인데 db랑 연결할때 사용
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.redis = new Redis({
-      host: '172.31.37.169', // 🔹 Redis가 실행된 EC2의 프라이빗 IP
-      port: 6379, // 🔹 Redis 기본 포트
-      password: undefined, // 🔹 자체 Redis는 기본적으로 비밀번호 없음 (설정한 경우만 추가)
-      tls: undefined, // 🔹 자체 Redis는 TLS 사용 안 함 (제거)
+      host: this.configService.get('REDIS_HOST'),
+      port: this.configService.get('REDIS_PORT'),
     });
   }
   async createRoom(roomId: string, roomInfo: any) {

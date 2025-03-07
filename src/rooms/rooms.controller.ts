@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { Response } from 'express';
 import { join } from 'path';
+import axios from 'axios';
 
 // upstash 에서 값 가져오기위한 임포트
 
@@ -87,6 +88,7 @@ export class RoomsController {
       status: room.status,
       mode: room.mode,
       locked: room.locked,
+      gameServer: room.gameServer,
     };
   }
 }
