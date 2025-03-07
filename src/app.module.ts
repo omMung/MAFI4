@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AchievementsModule } from './achievements/achievements.module';
-import { UsersAchievementsModule } from './user-achievements/users-achievements.module';
+import { UserAchievementsModule } from './user-achievements/users-achievements.module';
 import { GamesModule } from './games/games.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
@@ -82,7 +82,7 @@ const typeOrmModuleOptions = {
     AchievementsModule,
     GamesModule,
     StatisticsModule,
-    UsersAchievementsModule,
+    UserAchievementsModule,
     RoomsModule,
     LikesModule,
     GameResultsModule,
