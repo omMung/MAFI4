@@ -29,7 +29,7 @@ export class AdminService {
         currentDate.getTime() + duration * 24 * 60 * 60 * 1000,
       );
     } else if (type === 'community') {
-      updateData['CommunityBanDate'] = new Date(
+      updateData['communityBanDate'] = new Date(
         currentDate.getTime() + duration * 24 * 60 * 60 * 1000,
       );
     } else {
@@ -55,13 +55,13 @@ export class AdminService {
       });
     } else if (type === 'community') {
       await this.adminRepository.updateUserBanStatus(userId, {
-        CommunityBanDate: null,
+        communityBanDate: null,
       });
     } else {
       // type이 없거나 'all'인 경우
       await this.adminRepository.updateUserBanStatus(userId, {
         gameBanDate: null,
-        CommunityBanDate: null,
+        communityBanDate: null,
       });
     }
 
@@ -103,7 +103,7 @@ export class AdminService {
     await this.adminRepository.saveAdminLog(action, message);
   }
 
-  // (10)사용자 제재 상태 조회: gameBanDate, CommunityBanDate 여부 확인
+  // (10)사용자 제재 상태 조회: gameBanDate, communityBanDate 여부 확인
   async getUserBanStatus(
     userId: number,
   ): Promise<{ gameBan: Date | null; communityBan: Date | null }> {
@@ -113,7 +113,7 @@ export class AdminService {
     }
     return {
       gameBan: user.gameBanDate || null,
-      communityBan: user.CommunityBanDate || null,
+      communityBan: user.communityBanDate || null,
     };
   }
 }

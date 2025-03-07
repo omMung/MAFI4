@@ -42,7 +42,7 @@ export class User {
   gameBanDate?: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  CommunityBanDate?: Date;
+  communityBanDate?: Date;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

@@ -85,6 +85,8 @@ export class AuthService {
         email: user.email,
         nickName: user.nickName,
         isAdmin: user.isAdmin,
+        gameBanDate: user.gameBanDate,
+        communityBanDate: user.communityBanDate,
       },
     };
   }
