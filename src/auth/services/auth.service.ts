@@ -19,7 +19,8 @@ import {
   AuthRefreshTokenMissingException,
   AuthUserNotFoundException,
 } from 'src/common/exceptions/auth.exception';
-import nodemailer from 'nodemailer';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class AuthService {
@@ -28,31 +29,17 @@ export class AuthService {
     private redisService: RedisService,
     private configService: ConfigService,
     private readonly authRepository: AuthRepository,
+    @InjectQueue('email-queue') private emailQueue: Queue,
   ) {}
 
   async sendVerificationEmail(email: string, verifyCode: string) {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: this.configService.get<string>('EMAIL_USER'), // .env에서 설정
-        pass: this.configService.get<string>('EMAIL_PASS'),
-      },
+    await this.emailQueue.add('sendEmail', {
+      email,
+      verifyCode,
     });
-
-    const mailOptions = {
-      from: this.configService.get<string>('EMAIL_USER'),
-      to: email,
-      subject: '이메일 인증 코드',
-      text: `인증 코드: ${verifyCode}`,
-    };
-
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log('이메일 발송 성공:', info.response); // 발송 성공 로그
-    } catch (error) {
-      console.error('이메일 발송 실패:', error); // 발송 실패 로그
-    }
+    console.log(`이메일 전송 요청 추가: ${email}`);
   }
+
   async validateUser(email: string, password: string) {
     const user = await this.authRepository.findUserByEmail(email);
     if (!user) throw new AuthInvalidCredentialsException();
