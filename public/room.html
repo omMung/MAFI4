@@ -300,10 +300,10 @@
       }
 
       var roomId = getRoomIdFromUrl(); // roomId 추출
-      if (!roomId) {
-        alert('올바른 방 ID가 없습니다.');
-        window.location.href = `${CONFIG.API_BASE_URL}/game.html`; //  방 ID 없으면 로비로 이동
-      }
+      // if (!roomId) {
+      //   alert('올바른 방 ID가 없습니다.');
+      //   window.location.href = `${CONFIG.API_BASE_URL}/game.html`; //  방 ID 없으면 로비로 이동
+      // }
 
       document.getElementById('roomTitle').textContent =
         '채팅룸 (룸 ' + roomId + ')';
@@ -356,7 +356,7 @@
         // UI 표시
         document.getElementById('mainContainer').style.display = 'flex';
         //document.getElementById('gameSection').style.display = 'block';
-        //document.getElementById('firstVoteContainer').style.display = 'block';
+        document.getElementById('firstVoteContainer').style.display = 'block';
 
         socket.emit('joinRoom', { roomId: roomId, userId: currentUserId });
         socket.emit('requestRoomInfo', { roomId: roomId });
