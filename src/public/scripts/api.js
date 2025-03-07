@@ -16,11 +16,20 @@ async function fetchAPI(endpoint, options = {}) {
     headers,
     credentials: 'include',
   });
+
+  // 중앙에서 HTTP 상태 코드 체크
   if (!response.ok) {
+    if (response.status === 403) {
+      // 403 에러인 경우 alert를 띄우고 에러 던지기
+      const errorData = await response.json().catch(() => ({}));
+      const errorMsg = errorData.message || '접근 권한이 없습니다.';
+      alert(errorMsg);
+    }
     throw new Error(`API error: ${response.status}`);
   }
   return response.json();
 }
+
 async function fetchAPIWithHeaders(endpoint, options = {}) {
   const url = `${API_URL}${endpoint}`;
   const response = await fetch(url, {
