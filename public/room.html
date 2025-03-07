@@ -317,7 +317,8 @@
           );
 
           const data = await response.json();
-          console.log('game', data.gameServer);
+          var gameServer = data.gameServer;
+          console.log('game', gameServer);
           if (!data || !data.gameServer) {
             throw new Error('방 정보를 가져올 수 없습니다.');
           }
@@ -325,7 +326,7 @@
           console.error('방 입장 중 오류:', error);
         }
 
-        socket = io(`http://${data.gameServer}:3001/room`, {
+        socket = io(`http://${gameServer}:3001/room`, {
           auth: { roomId: roomId, userId: currentUserId },
         });
 

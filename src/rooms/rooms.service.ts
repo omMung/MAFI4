@@ -90,7 +90,6 @@ export class RoomsService {
     let cursor = '0';
 
     do {
-      console.log('scan');
       // `SCAN`을 사용하여 `room:*` 패턴의 키를 부분적으로 가져옴
       const [newCursor, roomKeys] = await this.roomsRepository
         .getRedis()
