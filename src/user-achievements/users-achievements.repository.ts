@@ -28,7 +28,9 @@ export class UserAchievementsRepository {
 
   /** 특정 유저의 업적 조회 */
   async findUserAchievements(userId: number): Promise<UserAchievements[]> {
-    return await this.userAchievementsRepository.find({ where: { userId } });
+    return await this.userAchievementsRepository.find({
+      where: { user: { id: userId } },
+    });
   }
 
   /** 특정 유저의 특정 업적 조회 */
@@ -38,7 +40,7 @@ export class UserAchievementsRepository {
   ): Promise<UserAchievements | null> {
     return await this.userAchievementsRepository.findOne({
       where: {
-        userId,
+        user: { id: userId },
         achieve: { id: achieveId }, // ✅ 업적 ID를 직접 참조하지 않고 객체 관계로 조회
       },
       relations: ['achieve'], // ✅ 업적 관계를 명시적으로 로드

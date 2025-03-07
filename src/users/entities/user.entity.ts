@@ -12,6 +12,8 @@ import { Game } from '../../games/entities/game.entity';
 //   import { Ranking } from '../../ranking/ranking.entity';
 import { UserAchievements } from '../../user-achievements/entities/users-achievement.entity';
 import { Like } from 'src/likes/entities/like.entity';
+import { GameResult } from 'src/gameResults/entities/gameResults.entity';
+import { GameAchievement } from 'src/gameAchievements/entities/gameAchievements.entity';
 
 @Entity()
 export class User {
@@ -38,8 +40,12 @@ export class User {
   posts: Post[];
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
-  @OneToMany(() => Game, (game) => game.user)
-  games: Game[];
+  // @OneToMany(() => Game, (game) => game.user)
+  // games: Game[];
+  @OneToMany(() => GameResult, (gameResult) => gameResult.user)
+  gameResults: GameResult[];
+  @OneToMany(() => GameAchievement, (gameAchievements) => gameAchievements.user)
+  gameAchievements: GameAchievement[];
   // @OneToMany(() => Ranking, (ranking) => ranking.user)
   // rankings: Ranking[];
   @OneToMany(

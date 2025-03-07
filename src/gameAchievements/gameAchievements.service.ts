@@ -45,7 +45,7 @@ export class GameAchievementsService {
 
         achievements.push({
           gameId: gameAchievements.gameId,
-          userId: Number(userId),
+          user: { id: Number(userId) },
           achievementType, // 업적 종류 (ex. mafia_kills, detective_checks, heal_used)
           value: isNaN(Number(value)) ? 0 : Number(value),
           timestamp: new Date(),

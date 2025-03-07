@@ -20,11 +20,11 @@ export class AchievementsService {
   /** 새로운 업적 생성 (중복 확인 후 저장) */
   async createAchieve(achieveData: Partial<Achieve>): Promise<Achieve> {
     const exists = await this.achieveRepository.existsByCondition(
-      achieveData.condition,
+      achieveData.title,
     );
     if (exists) {
       throw new BadRequestException(
-        `이미 존재하는 업적입니다: ${achieveData.condition}`,
+        `이미 존재하는 업적입니다: ${achieveData.title}`,
       );
     }
     return await this.achieveRepository.createAchieve(achieveData);

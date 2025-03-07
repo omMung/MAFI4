@@ -14,8 +14,8 @@ export class UserAchievements {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  userId: number; // 사용자 ID
+  // @Column()
+  // userId: number; // 사용자 ID
 
   @ManyToOne(() => User, (user) => user.userAchievements, {
     onDelete: 'CASCADE',

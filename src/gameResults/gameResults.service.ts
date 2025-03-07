@@ -26,7 +26,7 @@ export class GameResultsService {
 
       return {
         gameId,
-        userId: player.userId,
+        user: { id: player.userId },
         role: player.role,
         alive: player.alive ? 'alive' : 'dead',
         winningTeam, // 올바르게 전달
