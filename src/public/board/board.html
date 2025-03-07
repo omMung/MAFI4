@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFI4 - 게시판</title>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="board.css">
+    <script src="/scripts/api.js" defer></script>
+    <script src="/components/header/header.js" defer></script>
+    <script src="/scripts/common.js" defer></script>
+    <script src="board.js" defer></script>
+</head>
+
+<body>
+    <div id="header-container"></div>
+    <main>
+        <div class="board-container">
+            <h1>게시판</h1>
+            <button id="createPostBtn" class="btn btn-primary">새 글 작성</button>
+            <table id="postsTable">
+                <thead>
+                    <tr>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>작성일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Posts will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+</body>
+
+</html>

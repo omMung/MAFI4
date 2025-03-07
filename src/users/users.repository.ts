@@ -37,7 +37,7 @@ export class UsersRepository {
   async findOneUserId(userId: number) {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      select: ['id', 'email', 'nickName', 'isVerified', 'createdAt'], // 비밀번호 제외
+      select: ['id', 'email', 'nickName', 'isVerified', 'createdAt', 'file'], // 비밀번호 제외
     });
     return user;
   }

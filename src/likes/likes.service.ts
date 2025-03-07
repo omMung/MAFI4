@@ -49,4 +49,23 @@ export class LikesService {
       await queryRunner.release();
     }
   }
+
+  // 좋아요 개수를 반환하는 메서드
+  async getLikeCount(postId: number, userId: number) {
+    try {
+      // status가 true인 좋아요 개수 조회
+      const count = await this.likeRepository.getLikeCount(postId);
+      // 해당 사용자의 좋아요 상태 확인 (존재하고 status가 true면 true)
+      const userLikes = await this.likeRepository.checkLike(userId, postId);
+      const isLiked = userLikes.length > 0 && userLikes[0].status === true;
+      return {
+        message: '좋아요 개수를 조회하였습니다.',
+        data: { count, isLiked },
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        '좋아요 개수를 조회하는데 실패했습니다.',
+      );
+    }
+  }
 }

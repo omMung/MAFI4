@@ -16,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LikesModule } from './likes/likes.module';
 import { S3UploaderModule } from './s3uploader/s3uploader.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+// import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { RoomsModule } from './rooms/rooms.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -24,6 +24,9 @@ import { GameResultsModule } from './gameResults/gameResults.module';
 import { GameAchievementsModule } from './gameAchievements/gameAchievements.module';
 import { ItemsModule } from './items/items.module';
 import { UserItemModule } from './user-item/user-item.module';
+import { AdminModule } from './admin/admin.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ScheduleModule as CustomScheduleModule } from './schedule/schedule.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -45,10 +48,7 @@ const typeOrmModuleOptions = {
 @Global()
 @Module({
   imports: [
-    // html 서빙
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
+    ScheduleModule.forRoot(), // bandate 만료 시 자동 null 처리를 위해 추가
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -74,16 +74,17 @@ const typeOrmModuleOptions = {
         },
       }),
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'dist', 'public'),
-    //   serveRoot: '/', //  루트 URL에서 정적 파일 제공
-    // }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'src', 'public'),
+      serveRoot: '/',
+    }),
     // ThrottlerModule.forRoot([
-    //   {
+    //   {s
     //     ttl: 60, // 제한 시간 (초 단위) - 60초 동안
     //     limit: 10, // 요청 가능 횟수 - 10번까지만 허용
     //   },
     // ]),
+    CustomScheduleModule, // BanExpirationService가 포함된 스케줄 모듈
     UsersModule,
     PostsModule,
     CommentsModule,
@@ -99,6 +100,7 @@ const typeOrmModuleOptions = {
     GameAchievementsModule,
     ItemsModule,
     UserItemModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFI4 - 로그인</title>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="login.css">
+    <script src="/scripts/api.js" defer></script>
+    <script src="/components/header/header.js" defer></script>
+    <script src="/scripts/common.js" defer></script>
+    <script src="login.js" defer></script>
+</head>
+
+<body>
+    <div id="header-container"></div>
+    <main>
+        <div class="login-container">
+            <h1>로그인</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">로그인</button>
+            </form>
+            <p>계정이 없으신가요? <a href="/signup/signup.html">회원가입</a></p>
+        </div>
+    </main>
+    <div id="footer-container"></div>
+</body>
+
+</html>

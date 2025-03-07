@@ -19,12 +19,13 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CommunityBanGuard } from '../auth/guards/community-ban.guard';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CommunityBanGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file')) //파일 가로채기
   async create(
@@ -65,12 +66,19 @@ export class PostsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('me') // 게시글 조회
+  findAllByUser(@Request() req) {
+    const user = req.user;
+    return this.postsService.findAllByUser(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id') // 게시글 상세 조회
   findOne(@Param('id') id: string) {
     return this.postsService.findOne(+id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CommunityBanGuard)
   @Patch(':id') // 게시글 수정
   update(
     @Request() req,
@@ -82,7 +90,7 @@ export class PostsController {
     return this.postsService.update(+id, title, content, user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CommunityBanGuard)
   @Delete(':id') // 게시글 삭제
   remove(@Request() req, @Param('id') id: string) {
     const user = req.user;

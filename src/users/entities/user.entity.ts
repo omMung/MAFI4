@@ -34,6 +34,16 @@ export class User {
   file?: string;
   @Column({ type: 'int', default: 0 })
   money: number;
+  // 관리자인지 여부 (기본 false)
+  @Column({ type: 'boolean', default: false })
+  isAdmin: boolean;
+  // 제재 기간 (banDueDate): null이면 제재 없음, 값이 있으면 해당 날짜까지 제재
+  @Column({ type: 'timestamp', nullable: true })
+  gameBanDate?: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  CommunityBanDate?: Date;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })

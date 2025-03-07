@@ -7,6 +7,7 @@ import {
   Res,
   UsePipes,
   ValidationPipe,
+  Get,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from '../services/auth.service';

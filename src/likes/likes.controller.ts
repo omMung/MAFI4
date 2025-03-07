@@ -23,4 +23,11 @@ export class LikesController {
     const user = req.user;
     return await this.likesService.toggleLike(postId, user.id);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':postId')
+  async getLikeCount(@Request() req, @Param('postId') postId: number) {
+    const user = req.user;
+    return await this.likesService.getLikeCount(postId, user.id);
+  }
 }
