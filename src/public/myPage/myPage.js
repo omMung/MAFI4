@@ -93,13 +93,62 @@ function loadUserProfile() {
   api
     .getProfile()
     .then((user) => {
+      console.log(user);
       document.getElementById('currentNickname').textContent = user.nickName;
+      // 상태 컨테이너 생성
+      const statusContainer = document.createElement('div');
+      statusContainer.classList.add('status-container');
+
+      // 커뮤니티 상태
+      const communityStatus = document.createElement('div');
+      if (user.communityBanDate) {
+        const banDate = new Date(user.communityBanDate);
+        communityStatus.classList.add('status-item', 'restricted');
+
+        // 날짜 형식 개선
+        const formattedDate = `${banDate.getFullYear()}년 ${banDate.getMonth() + 1}월 ${banDate.getDate()}일 ${String(banDate.getHours()).padStart(2, '0')}시 ${String(banDate.getMinutes()).padStart(2, '0')}분`;
+
+        communityStatus.innerHTML = `<span>커뮤니티: ${formattedDate}까지 제한</span>`;
+      } else {
+        communityStatus.classList.add('status-item', 'active');
+        communityStatus.innerHTML = `<span>커뮤니티: 활성</span>`;
+      }
+      statusContainer.appendChild(communityStatus);
+
+      // 게임 상태
+      const gameStatus = document.createElement('div');
+      if (user.gameBanDate) {
+        const banDate = new Date(user.gameBanDate);
+        gameStatus.classList.add('status-item', 'restricted');
+
+        // 날짜 형식 개선
+        const formattedDate = `${banDate.getFullYear()}년 ${banDate.getMonth() + 1}월 ${banDate.getDate()}일 ${String(banDate.getHours()).padStart(2, '0')}시 ${String(banDate.getMinutes()).padStart(2, '0')}분`;
+
+        gameStatus.innerHTML = `<span>게임: ${formattedDate}까지 제한</span>`;
+      } else {
+        gameStatus.classList.add('status-item', 'active');
+        gameStatus.innerHTML = `<span>게임: 활성</span>`;
+      }
+      statusContainer.appendChild(gameStatus);
+
+      // 닉네임 컨테이너에 상태 추가
+      const nicknameDisplay = document.getElementById('nicknameDisplay');
+      const existingStatus = nicknameDisplay.querySelector('.status-container');
+      if (existingStatus) {
+        existingStatus.remove();
+      }
+      nicknameDisplay.appendChild(statusContainer);
+
       document.getElementById('joinDate').textContent = new Date(
         user.createdAt,
       ).toLocaleDateString();
       document.getElementById('userEmail').textContent = user.email;
       if (user.file) {
         document.getElementById('profileImage').src = user.file;
+      } else {
+        // 기본 프로필 이미지 설정
+        document.getElementById('profileImage').src =
+          '/images/default-profile.png';
       }
     })
     .catch((error) => {

@@ -35,17 +35,22 @@
                     </div>
 
                     <div class="profile-info">
-                        <div class="nickname-container">
-                            <h3>닉네임</h3>
-                            <div class="nickname-display" id="nicknameDisplay">
-                                <span id="currentNickname">사용자</span>
-                                <button id="editNicknameBtn" class="btn-icon">✏️</button>
-                            </div>
-                            <div class="nickname-edit" id="nicknameEdit" style="display: none;">
-                                <input type="text" id="newNickname" placeholder="새 닉네임">
-                                <div class="edit-actions">
-                                    <button id="saveNicknameBtn" class="btn btn-primary btn-sm">저장</button>
-                                    <button id="cancelNicknameBtn" class="btn btn-secondary btn-sm">취소</button>
+                        <div class="profile-info-header">
+                            <div class="nickname-container">
+                                <h3>닉네임</h3>
+                                <div class="nickname-display" id="nicknameDisplay">
+                                    <div class="nickname-wrapper">
+                                        <span id="currentNickname">사용자</span>
+                                        <button id="editNicknameBtn" class="btn-icon">✏️</button>
+                                    </div>
+                                    <!-- 상태 컨테이너는 JavaScript에서 추가됩니다 -->
+                                </div>
+                                <div class="nickname-edit" id="nicknameEdit" style="display: none;">
+                                    <input type="text" id="newNickname" placeholder="새 닉네임">
+                                    <div class="edit-actions">
+                                        <button id="saveNicknameBtn" class="btn btn-primary btn-sm">저장</button>
+                                        <button id="cancelNicknameBtn" class="btn btn-secondary btn-sm">취소</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -57,14 +62,13 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">이메일</span>
-                                <span class="info-value" id="userEmail">user@example.com</span>
+                                <span class="info-value" id="userEmail">example@email.com</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- my-stats-section과 my-posts-section 사이에 추가할 코드 -->
             <section class="game-stats-section card">
                 <h2>게임 전적</h2>
                 <div class="overall-stats">
@@ -203,6 +207,7 @@
     </main>
 
     <div id="footer-container"></div>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 </body>
 
 </html>
