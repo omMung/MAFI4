@@ -7,6 +7,8 @@ import {
   Body,
   Param,
   ParseIntPipe,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { AchievementsService } from './achievements.service';
 import { Achieve } from './entities/achievement.entity';
@@ -18,7 +20,11 @@ export class AchievementsController {
   /** 새로운 업적 생성 (중복 확인 후 저장) */
   @Post()
   async create(@Body() achieveData: Partial<Achieve>): Promise<Achieve> {
-    return this.achievementsService.createAchieve(achieveData);
+    try {
+      return await this.achievementsService.createAchieve(achieveData);
+    } catch (error) {
+      throw new BadRequestException(`업적 생성 실패: ${error.message}`);
+    }
   }
 
   /** 모든 업적 조회 */
@@ -32,7 +38,11 @@ export class AchievementsController {
   async findOne(
     @Param('achieveId', ParseIntPipe) achieveId: number,
   ): Promise<Achieve> {
-    return this.achievementsService.getAchievementById(achieveId);
+    try {
+      return await this.achievementsService.getAchievementById(achieveId);
+    } catch (error) {
+      throw new NotFoundException(`업적 조회 실패: ${error.message}`);
+    }
   }
 
   /** 업적 업데이트 */
@@ -41,7 +51,14 @@ export class AchievementsController {
     @Param('achieveId', ParseIntPipe) achieveId: number,
     @Body() updateData: Partial<Achieve>,
   ): Promise<Achieve> {
-    return this.achievementsService.updateAchievement(achieveId, updateData);
+    try {
+      return await this.achievementsService.updateAchievement(
+        achieveId,
+        updateData,
+      );
+    } catch (error) {
+      throw new BadRequestException(`업적 업데이트 실패: ${error.message}`);
+    }
   }
 
   /** 업적 삭제 */
@@ -51,16 +68,20 @@ export class AchievementsController {
   ): Promise<{ message: string }> {
     try {
       await this.achievementsService.deleteAchievement(achieveId);
-      return { message: `업적 ID ${achieveId}가 삭제되었습니다.` };
+      return { message: `✅ 업적(ID: ${achieveId})이 삭제되었습니다.` };
     } catch (error) {
-      throw new Error(`업적 삭제 실패: ${error.message}`);
+      throw new NotFoundException(`업적 삭제 실패: ${error.message}`);
     }
   }
 
   /** JSON 파일에서 업적을 불러와 DB에 저장 (중복 방지) */
   @Post('load')
   async loadAchievements(): Promise<{ message: string }> {
-    await this.achievementsService.loadAchievementsFromJson();
-    return { message: '업적 데이터가 성공적으로 로드되었습니다.' };
+    try {
+      await this.achievementsService.loadAchievementsFromJson();
+      return { message: '✅ 업적 데이터가 성공적으로 로드되었습니다.' };
+    } catch (error) {
+      throw new BadRequestException(`업적 데이터 로드 실패: ${error.message}`);
+    }
   }
 }
