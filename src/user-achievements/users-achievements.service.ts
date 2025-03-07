@@ -1,26 +1,37 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUsersAchievementDto } from './dto/create-users-achievement.dto';
-import { UpdateUsersAchievementDto } from './dto/update-users-achievement.dto';
+import { UserAchievements } from './entities/users-achievement.entity';
+import { UserAchievementsRepository } from './users-achievements.repository';
 
 @Injectable()
-export class UsersAchievementsService {
-  create(createUsersAchievementDto: CreateUsersAchievementDto) {
-    return 'This action adds a new usersAchievement';
+export class UserAchievementsService {
+  constructor(
+    private readonly userAchievementsRepository: UserAchievementsRepository, // ✅ 레포지토리 주입
+  ) {}
+
+  /** 특정 유저의 업적 조회 */
+  async getUserAchievements(userId: number): Promise<UserAchievements[]> {
+    return await this.userAchievementsRepository.findUserAchievements(userId);
   }
 
-  findAll() {
-    return `This action returns all usersAchievements`;
+  /** 새로운 유저 업적 저장 */
+  async createUserAchievement(
+    userAchievementData: Partial<UserAchievements>,
+  ): Promise<UserAchievements> {
+    return await this.userAchievementsRepository.createUserAchievement(
+      userAchievementData,
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} usersAchievement`;
-  }
-
-  update(id: number, updateUsersAchievementDto: UpdateUsersAchievementDto) {
-    return `This action updates a #${id} usersAchievement`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} usersAchievement`;
+  /** 기존 유저 업적 업데이트 */
+  async updateUserAchievement(
+    userId: number,
+    achieveId: number,
+    value: number,
+  ): Promise<UserAchievements> {
+    return await this.userAchievementsRepository.updateUserAchievement(
+      userId,
+      achieveId,
+      value,
+    );
   }
 }

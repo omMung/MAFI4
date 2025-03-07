@@ -1,0 +1,227 @@
+.home-container {
+  max-width: 800px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+.home-container h1 {
+  font-size: 2.5rem;
+  color: #1a2e4a;
+  margin-bottom: 1rem;
+}
+
+.home-container p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.button-container .btn {
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+}
+
+.character-container {
+  display: flex; /* 가로 정렬을 위해 flex 컨테이너로 지정 */
+  gap: 1rem; /* 섹션 간 간격 */
+  justify-content: center; /* 가로 정렬(중앙) */
+  align-items: center; /* 세로 정렬(중앙) */
+  margin: 2rem 0 1rem 0; /* 상하 여백 (선택) */
+}
+
+/* 메인 컨테이너 스타일 */
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* 히어로 섹션 */
+.hero-section {
+  position: relative;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #f5e6d3 0%, #d2bba0 100%);
+  border-radius: 20px;
+  margin-bottom: 7rem;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/MAFI4%20%EB%8C%80%ED%91%9C%EC%9D%B4%EB%AF%B8%EC%A7%80-MkJ1nBivWfvXV7VelhKQKfljdF3WDC.png')
+    center / contain no-repeat;
+  opacity: 0.15;
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeInDown 1s ease-out;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: #34495e;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1s ease-out 0.3s backwards;
+}
+
+/* 캐릭터 섹션 */
+.characters-section {
+  position: relative;
+  margin: 0.1rem 0;
+  padding: 0.1rem;
+}
+
+.character-image {
+  width: 300px;
+  height: auto;
+  /* 기존 코드 */
+  margin: 0.1rem auto;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+  animation: float 6s ease-in-out infinite;
+
+  /* 새로 추가 */
+  border-radius: 15px; /* 모서리를 15px만큼 둥글게 */
+  margin: 1.53rem; /* 이미지 간 간격(여백) 조정 */
+}
+
+/* 게임 특징 섹션 */
+.features-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 0.5rem 0;
+  padding: 0.5srem;
+}
+
+.feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #e74c3c;
+}
+
+.feature-title {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.feature-description {
+  color: #7f8c8d;
+  line-height: 1.6;
+}
+
+/* 시작하기 버튼 */
+.cta-button {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  background: #e74c3c;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  text-decoration: none;
+  margin-top: 2rem;
+  animation: fadeInUp 1s ease-out 0.6s backwards;
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+}
+
+/* 애니메이션 키프레임 */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .character-image {
+    width: 250px;
+  }
+
+  .features-section {
+    grid-template-columns: 1fr;
+  }
+}

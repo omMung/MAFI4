@@ -5,9 +5,21 @@ import {
 } from '@nestjs/common';
 
 // 댓글을 찾을 수 없을 때 발생하는 예외
+export class InfoBadRequestException extends BadRequestException {
+  constructor() {
+    super('필수 사항을 입력해주세요.');
+  }
+}
+
 export class UserNotFoundException extends NotFoundException {
   constructor() {
     super('유저를 찾을 수 없습니다.');
+  }
+}
+
+export class UserNoMoneyException extends NotFoundException {
+  constructor() {
+    super('잔액부족.');
   }
 }
 

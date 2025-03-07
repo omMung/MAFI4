@@ -37,7 +37,15 @@ export class UsersRepository {
   async findOneUserId(userId: number) {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      select: ['id', 'email', 'nickName', 'isVerified', 'createdAt'], // 비밀번호 제외
+      select: ['id', 'email', 'nickName', 'isVerified', 'createdAt', 'file'], // 비밀번호 제외
+    });
+    return user;
+  }
+  //id검색 돈만 검색
+  async findUserMoney(userId: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      select: ['money'],
     });
     return user;
   }
@@ -46,6 +54,10 @@ export class UsersRepository {
   async updateUserInfo(userId: number, updatedData: Partial<User>) {
     await this.usersRepository.update(userId, updatedData);
     return this.usersRepository.findOne({ where: { id: userId } });
+  }
+
+  async updateUserMoney(userId: number, remainingMoney: number) {
+    await this.usersRepository.update(userId, { money: remainingMoney });
   }
 
   async deleteUser(userId: number) {

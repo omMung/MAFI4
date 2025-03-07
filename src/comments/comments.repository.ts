@@ -24,6 +24,14 @@ export class CommentsRepository {
     return await this.commentRepository.save(newComment);
   }
 
+  async findAllByUserId(userId: number) {
+    const comments = await this.commentRepository.find({
+      where: { user: { id: userId } },
+      relations: ['post'],
+    });
+    return comments;
+  }
+
   async findByPostId(postId: number): Promise<Comment[]> {
     return await this.commentRepository.find({
       where: { post: { id: postId } },

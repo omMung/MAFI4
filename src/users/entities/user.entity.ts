@@ -12,6 +12,7 @@ import { Game } from '../../games/entities/game.entity';
 //   import { Ranking } from '../../ranking/ranking.entity';
 import { UserAchievements } from '../../user-achievements/entities/users-achievement.entity';
 import { Like } from 'src/likes/entities/like.entity';
+import { UserItem } from 'src/user-item/entities/user-item.entity';
 
 @Entity()
 export class User {
@@ -29,6 +30,20 @@ export class User {
   verifyCode: string;
   @Column({ type: 'varchar', length: 255 })
   title: string;
+  @Column({ type: 'varchar', length: 255 })
+  file?: string;
+  @Column({ type: 'int', default: 0 })
+  money: number;
+  // 관리자인지 여부 (기본 false)
+  @Column({ type: 'boolean', default: false })
+  isAdmin: boolean;
+  // 제재 기간 (banDueDate): null이면 제재 없음, 값이 있으면 해당 날짜까지 제재
+  @Column({ type: 'timestamp', nullable: true })
+  gameBanDate?: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  CommunityBanDate?: Date;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })
@@ -49,4 +64,8 @@ export class User {
   userAchievements: UserAchievements[];
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
+  @OneToMany(() => UserItem, (userItem) => userItem.user, {
+    onDelete: 'CASCADE',
+  })
+  userItems: UserItem[];
 }

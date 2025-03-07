@@ -40,4 +40,10 @@ export class LikeRepository {
       { status: false },
     );
   }
+
+  async getLikeCount(postId: number): Promise<number> {
+    return await this.likeRepository.count({
+      where: { post: { id: postId }, status: true },
+    });
+  }
 }

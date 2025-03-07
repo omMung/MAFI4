@@ -19,7 +19,8 @@ import {
   AuthRefreshTokenMissingException,
   AuthUserNotFoundException,
 } from 'src/common/exceptions/auth.exception';
-import nodemailer from 'nodemailer';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class AuthService {
@@ -28,31 +29,17 @@ export class AuthService {
     private redisService: RedisService,
     private configService: ConfigService,
     private readonly authRepository: AuthRepository,
+    @InjectQueue('email-queue') private emailQueue: Queue,
   ) {}
 
   async sendVerificationEmail(email: string, verifyCode: string) {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // .env에서 설정
-        pass: process.env.EMAIL_PASS,
-      },
+    await this.emailQueue.add('sendEmail', {
+      email,
+      verifyCode,
     });
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: '이메일 인증 코드',
-      text: `인증 코드: ${verifyCode}`,
-    };
-
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log('이메일 발송 성공:', info.response); // 발송 성공 로그
-    } catch (error) {
-      console.error('이메일 발송 실패:', error); // 발송 실패 로그
-    }
+    console.log(`이메일 전송 요청 추가: ${email}`);
   }
+
   async validateUser(email: string, password: string) {
     const user = await this.authRepository.findUserByEmail(email);
     if (!user) throw new AuthInvalidCredentialsException();
@@ -67,8 +54,13 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.email, loginDto.password);
-
-    const payload = { sub: user.id, email: user.email };
+    // 페이로드에 닉네임 추가
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      nickName: user.nickName,
+      isAdmin: user.isAdmin,
+    };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('ACCESS_SECRET_KEY'),
       expiresIn: this.configService.get<string>('ACCESS_EXPIRES_IN', '1m'),
@@ -92,6 +84,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         nickName: user.nickName,
+        isAdmin: user.isAdmin,
       },
     };
   }
