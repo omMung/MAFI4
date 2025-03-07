@@ -9,6 +9,7 @@ import {
 @Injectable()
 export class CommunityBanGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log(`커뮤니티 밴 가드 실행`);
     const request = context.switchToHttp().getRequest();
     const user = request.user;
     console.log(`커뮤니티 밴 가드 : ${user}`);
