@@ -83,6 +83,11 @@
         color: white;
       }
 
+      .occupant-btn.dead {
+        background-color: #e74c3c;
+        color: white;
+      }
+
       input[type='text'],
       input[type='number'] {
         width: 100%;
@@ -248,39 +253,44 @@
         >
           <span id="phaseTimer" style="font-size: 16px; color: gray"></span>
         </div>
+        <!-- 투표 확정 버튼 컨테이너 (기본적으로 숨김) -->
+        <div id="firstVoteContainer" style="display: none; margin-top: 10px">
+          <button id="voteBtn" class="btn btn-success">투표 확정</button>
+          <p id="voteStatus"></p>
+        </div>
+        <!-- 2차 투표 버튼 컨테이너 -->
+        <div id="secondVoteContainer" style="display: none">
+          <button id="executeBtn" class="btn btn-danger">사살</button>
+          <button id="survivalBtn" class="btn btn-info">생존</button>
+        </div>
+
+        <!-- 역할별 능력 버튼 컨테이너 -->
+        <div id="roleActionContainer" style="display: none; margin-top: 10px">
+          <button
+            id="mafiaActionBtn"
+            class="btn btn-danger"
+            style="display: none"
+          >
+            제거할 대상 선택
+          </button>
+          <button
+            id="policeActionBtn"
+            class="btn btn-primary"
+            style="display: none"
+          >
+            조사할 대상 선택
+          </button>
+          <button
+            id="doctorActionBtn"
+            class="btn btn-success"
+            style="display: none"
+          >
+            보호할 대상 선택
+          </button>
+        </div>
       </div>
     </div>
-    <!-- 투표 확정 버튼 컨테이너 (기본적으로 숨김) -->
-    <div id="firstVoteContainer" style="display: none; margin-top: 10px">
-      <button id="voteBtn" class="btn btn-success">투표 확정</button>
-      <p id="voteStatus"></p>
-    </div>
-    <!-- 2차 투표 버튼 컨테이너 -->
-    <div id="secondVoteContainer" style="display: none">
-      <button id="executeBtn" class="btn btn-danger">사살</button>
-      <button id="survivalBtn" class="btn btn-info">생존</button>
-    </div>
 
-    <!-- 역할별 능력 버튼 컨테이너 -->
-    <div id="roleActionContainer" style="display: none; margin-top: 10px">
-      <button id="mafiaActionBtn" class="btn btn-danger" style="display: none">
-        제거할 대상 선택
-      </button>
-      <button
-        id="policeActionBtn"
-        class="btn btn-primary"
-        style="display: none"
-      >
-        조사할 대상 선택
-      </button>
-      <button
-        id="doctorActionBtn"
-        class="btn btn-success"
-        style="display: none"
-      >
-        보호할 대상 선택
-      </button>
-    </div>
     <script src="./js/config.js"></script>
     <script>
       // 방 ID 추출 (예: http://localhost:3000/room/1)
@@ -536,6 +546,8 @@
             targetBtn.classList.remove('blink'); // 깜빡임 제거
             targetBtn.classList.remove('btn-outline-primary');
             targetBtn.classList.add('btn-secondary');
+            targetBtn.classList.add('dead'); // dead 클래스 추가
+            targetBtn.textContent += '💀';
             targetBtn.disabled = true;
           }
           document.getElementById('secondVoteContainer').style.display = 'none';
@@ -578,6 +590,7 @@
         });
 
         // 밤 결과를 받는 함수.
+        socket.off('ROOM:NIGHT_RESULT');
         socket.on('ROOM:NIGHT_RESULT', function (data) {
           console.log('🌙 ROOM:NIGHT_RESULT 이벤트 수신:', data);
 
@@ -591,9 +604,12 @@
               `.occupant-btn[data-userid="${killedUserId}"]`,
             );
             if (killedUserBtn) {
-              killedUserBtn.style.backgroundColor = 'red';
+              killedUserBtn.style.backgroundColor = '#e74c3c';
               killedUserBtn.style.color = 'white';
-              killedUserBtn.textContent += ' (사망)';
+              killedUserBtn.classList.add('btn-secondary');
+              killedUserBtn.textContent += '💀';
+              killedUserBtn.style.opacity = '0.5'; // opacity 0.5 설정
+              killedUserBtn.disabled = true;
             }
             appendChatMessage(
               `[SYSTEM] 플레이어 ${killedUserId}가 밤에 사망했습니다.`,
@@ -654,7 +670,7 @@
             var voteBtn = document.getElementById('voteBtn');
             voteBtn.disabled = true;
             voteBtn.classList.add('disabled-btn');
-
+            socket.off('VOTE:FIRST');
             socket.emit(
               'VOTE:FIRST',
               {
@@ -911,6 +927,7 @@
             alert('대상을 선택하세요.');
             return;
           }
+          socket.off('ACTION:MAFIA_TARGET');
           socket.emit(
             'ACTION:MAFIA_TARGET',
             {
@@ -940,6 +957,7 @@
             alert('대상을 선택하세요.');
             return;
           }
+          socket.off('ACTION:POLICE_TARGET');
           socket.emit(
             'ACTION:POLICE_TARGET',
             {
@@ -969,6 +987,7 @@
             alert('대상을 선택하세요.');
             return;
           }
+          socket.off('ACTION:DOCTOR_TARGET');
           socket.emit(
             'ACTION:DOCTOR_TARGET',
             {
@@ -1046,6 +1065,7 @@
         // 밤 액션 체크 함수 -> 실행이 안됨.
         function checkNightActionsCompleted() {
           console.log('checkNightActionsCompleted');
+          socket.off('CHECK:NIGHT_ACTIONS');
           socket.emit(
             'CHECK:NIGHT_ACTIONS',
             { roomId: roomId },
