@@ -22,7 +22,7 @@ import { EmailProcessor } from './processors/email.processor'; // 이메일 처�
     BullModule.registerQueue({
       name: 'email-queue', // 이메일 전송을 위한 Bull Queue 등록
       redis: {
-        host: 'localhost', // 로컬 Redis 사용
+        host: '43.200.181.46', // 로컬 Redis 사용
         port: 6379,
       },
     }),
