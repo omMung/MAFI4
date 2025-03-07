@@ -5,8 +5,9 @@ import { GameAchievement } from './entities/gameAchievements.entity';
 
 interface PlayerStats {
   role: string;
-  kills: number;
-  abilitiesUsed: number;
+  mafia_kills: number;
+  detective_checks: number;
+  heal_used: number;
   survived: string;
 }
 
@@ -48,10 +49,15 @@ export class GameAchievementsService {
           gameId: gameAchievements.gameId,
           userId: Number(userId),
           role: stats.role || 'unknown',
-          kills: isNaN(Number(stats.kills)) ? 0 : Number(stats.kills),
-          abilitiesUsed: isNaN(Number(stats.abilitiesUsed))
+          kills: isNaN(Number(stats.mafia_kills))
             ? 0
-            : Number(stats.abilitiesUsed),
+            : Number(stats.mafia_kills),
+          abilitiesUsed:
+            isNaN(Number(stats.heal_used)) || Number(stats.heal_used) === 0
+              ? isNaN(Number(stats.detective_checks))
+                ? 0
+                : Number(stats.detective_checks)
+              : Number(stats.heal_used),
           survived: stats.survived === 'true',
           timestamp: new Date(),
         };

@@ -1,0 +1,60 @@
+{
+  "achievements": [
+    {
+      "id": 1,
+      "title": "첫 걸음",
+      "description": "MAFI4에 오신 걸 환영합니다.",
+      "condition": "beginner",
+      "conditionCount": 1,
+      "badge": "beginner"
+    },
+    {
+      "id": 2,
+      "title": "이 녀석이 진범이다.",
+      "description": "투표로 마피아를 1회 잡아내세요.",
+      "condition": "citizen_execute_mafia",
+      "conditionCount": 1,
+      "badge": "detective"
+    },
+    {
+      "id": 3,
+      "title": "저는 결백합니다.",
+      "description": "심판대에 오른 뒤 최후 변론으로 처형을 1회 면하세요.",
+      "condition": "player_vote_survive",
+      "conditionCount": 1,
+      "badge": "speaker"
+    },
+    {
+      "id": 4,
+      "title": "닭 잡는데 소 잡는 칼은 필요없지.",
+      "description": "마피아로서 선동해서 투표로 시민을 1회 쟙으세요.",
+      "condition": "mafia_incite",
+      "conditionCount": 1,
+      "badge": "schemer"
+    },
+    {
+      "id": 5,
+      "title": "늦기 전에 도착해서 다행입니다.",
+      "description": "의사로서 마피아로부터 공격을 1회 보호하세요.",
+      "condition": "doctor_protect",
+      "conditionCount": 1,
+      "badge": "doctor_master"
+    },
+    {
+      "id": 6,
+      "title": "시시한 목숨이었군.",
+      "description": "마피아로서 시민을 1회 총살하세요.",
+      "condition": "mafia_hunt",
+      "conditionCount": 1,
+      "badge": "mafia_master"
+    },
+    {
+      "id": 7,
+      "title": "반드시 진실을 밝혀내겠어.",
+      "description": "경찰로서 마피아를 1회 조사하세요.",
+      "condition": "police_find",
+      "conditionCount": 1,
+      "badge": "police_master"
+    }
+  ]
+}
