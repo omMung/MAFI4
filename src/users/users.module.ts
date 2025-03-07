@@ -21,6 +21,6 @@ import { BullModule } from '@nestjs/bull';
   ],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository, AuthService, AuthRepository],
-  exports: [UsersService, BullModule],
+  exports: [UsersService, UsersRepository, BullModule],
 })
 export class UsersModule {}

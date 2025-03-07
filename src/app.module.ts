@@ -22,6 +22,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { GameResultsModule } from './gameResults/gameResults.module';
 import { GameAchievementsModule } from './gameAchievements/gameAchievements.module';
+import { ItemsModule } from './items/items.module';
+import { UserItemModule } from './user-item/user-item.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -95,6 +97,8 @@ const typeOrmModuleOptions = {
     S3UploaderModule,
     GameResultsModule,
     GameAchievementsModule,
+    ItemsModule,
+    UserItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],

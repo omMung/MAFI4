@@ -17,6 +17,12 @@ export class UserNotFoundException extends NotFoundException {
   }
 }
 
+export class UserNoMoneyException extends NotFoundException {
+  constructor() {
+    super('잔액부족.');
+  }
+}
+
 export class EmailConflictException extends ConflictException {
   constructor() {
     super('이미 존재하는 이메일 입니다.');
