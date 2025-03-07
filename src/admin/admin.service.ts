@@ -38,7 +38,7 @@ export class AdminService {
 
     await this.adminRepository.updateUserBanStatus(userId, updateData);
 
-    // 로그 메시지 생성 (여기서는 ban은 항상 적용됨)
+    // 로그 메시지 생성 (메시지 중앙 관리)
     const logMessage = AdminLogMessages.updateUserBanStatus(
       userId,
       type,
@@ -58,7 +58,6 @@ export class AdminService {
         communityBanDate: null,
       });
     } else {
-      // type이 없거나 'all'인 경우
       await this.adminRepository.updateUserBanStatus(userId, {
         gameBanDate: null,
         communityBanDate: null,
@@ -71,7 +70,6 @@ export class AdminService {
         : `사용자 ID ${userId}의 모든 기능 제한이 해제되었습니다.`;
     await this.addAdminLog('전체 제한 해제', logMessage);
   }
-
   // (5) 사용자 게시글 전체 조회
   async getUserPosts(userId: number): Promise<{ posts: Post[] }> {
     const posts = await this.adminRepository.getUserPosts(userId);

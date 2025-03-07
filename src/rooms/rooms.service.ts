@@ -83,7 +83,7 @@ export class RoomsService {
         if (roomId.includes(':currentGameId')) continue;
 
         const roomInfo = await this.roomsRepository.getRedis().hgetall(roomId);
-
+        console.log(roomInfo);
         if (roomInfo) {
           rooms.push({
             roomId: parseInt(roomId.replace('room:', '')),

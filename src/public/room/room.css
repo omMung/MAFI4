@@ -1,0 +1,22 @@
+/* room.css */
+/* 예시로 기본적인 레이아웃 스타일을 추가합니다. 필요에 따라 수정하세요. */
+
+.container-custom {
+  margin: 20px auto;
+  max-width: 1200px;
+}
+
+.chat-container,
+.occupant-container {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  background-color: #ffffff;
+}
+
+.occupant-btn {
+  margin: 5px;
+}
+
+/* 추가적인 커스텀 스타일을 여기에 작성합니다. */

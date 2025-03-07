@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFI4 - 홈</title>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="roomList.css">
+    <script src="/scripts/api.js" defer></script>
+    <script src="/components/header/header.js" defer></script>
+    <script src="/scripts/common.js" defer></script>
+    <script src="roomList.js" defer></script>
+</head>
+
+<body>
+    <div id="header-container"></div>
+
+    <main>
+        <div class="container">
+            <h2>게임 로비</h2>
+            <input type="text" id="searchRoom" placeholder="방 이름 검색..." oninput="searchRooms()" />
+
+            <button onclick="openModal()">방 생성</button>
+            <button onclick="loadRooms()">새로고침</button>
+            <button onclick="logout()">로그아웃</button>
+            <!-- ✅ 방 생성 모달 -->
+            <div id="roomModal" class="modal">
+                <div class="modal-content">
+                    <h2>방 생성</h2>
+                    <label>방 이름</label>
+                    <input type="text" id="roomName" placeholder="방 이름 입력" />
+
+                    <label>모드 선택</label>
+                    <select id="roomMode">
+                        <option value="6인용 모드">6인용 모드</option>
+                        <option value="8인용 모드">8인용 모드</option>
+                    </select>
+                    <div class="checkbox-container">
+                        <label for="isPrivate">비밀방</label>
+                        <input type="checkbox" id="isPrivate" />
+                    </div>
+                    <input type="password" id="roomPassword" placeholder="비밀번호 입력 (선택)" disabled />
+
+                    <button class="create-btn" onclick="createRoom()">방 생성</button>
+                    <button class="close-btn" onclick="closeModal()">닫기</button>
+                </div>
+            </div>
+            <div class="room-list" id="roomList"></div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+</body>
+
+</html>

@@ -213,4 +213,38 @@ const api = {
         body: JSON.stringify({ action, message }),
       }),
   },
+
+  refreshToken: () => fetchAPI('/auth/refresh', { method: 'POST' }),
+
+  // 룸 전용 API들
+  rooms: {
+    // 방 생성: POST /rooms (JWT 필요)
+    createRoom: (data) =>
+      fetchAPI('/rooms', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+
+    // 모든 방 조회: GET /rooms
+    getRooms: () =>
+      fetchAPI(
+        '/rooms',
+        {
+          method: 'GET',
+        },
+        console.log(`getRooms API 호출`),
+      ),
+
+    // 방 검색: GET /rooms/search?roomName=...
+    searchRooms: (roomName) =>
+      fetchAPI(`/rooms/search?roomName=${encodeURIComponent(roomName)}`, {
+        method: 'GET',
+      }),
+
+    // 방 단일 조회 (방 입장 시 정보 조회): GET /rooms/:roomId
+    getRoom: (roomId) =>
+      fetchAPI(`/rooms/${roomId}`, {
+        method: 'GET',
+      }),
+  },
 };

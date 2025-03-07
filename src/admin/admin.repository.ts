@@ -65,7 +65,7 @@ export class AdminRepository {
     await this.commentRepository.delete(ids);
   }
 
-  // 관리자 로그 기록
+  // 관리자 로그 저장 메서드
   async saveAdminLog(action: string, message: string): Promise<AdminLog> {
     const log = this.adminLogRepository.create({ action, message });
     return this.adminLogRepository.save(log);

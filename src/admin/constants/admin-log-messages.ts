@@ -5,7 +5,7 @@ export const AdminLogMessages = {
     type: string,
     duration?: number,
   ): string =>
-    `사용자 ID ${userId}의 ${type} 제재를 ${`적용 (기간: ${duration}일)`} 했습니다.`,
+    `사용자 ID ${userId}의 ${type === 'game' ? '게임' : '커뮤니티'} 제한을 적용 (기간: ${duration}일) 했습니다.`,
 
   unbanAllFeatures: (userId: number): string =>
     `사용자 ID ${userId}의 모든 기능 제한을 해제했습니다.`,
@@ -16,5 +16,5 @@ export const AdminLogMessages = {
   deleteMultipleComments: (ids: number[]): string =>
     `댓글 ID ${ids.join(', ')}를 삭제했습니다.`,
 
-  // 추가 메시지가 필요하면 여기에 정의
+  // 필요시 추가 메시지 함수들을 정의
 };

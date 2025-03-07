@@ -29,7 +29,7 @@ export class UsersService {
     await queryRunner.startTransaction();
 
     try {
-      // 이메일 중복 검사
+      // 이메일 중복 t검사
       const existingUser = await this.usersRepository.findOneEmail(email);
       if (existingUser) {
         throw new EmailConflictException();
