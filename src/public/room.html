@@ -356,7 +356,7 @@
         // UI 표시
         document.getElementById('mainContainer').style.display = 'flex';
         //document.getElementById('gameSection').style.display = 'block';
-        document.getElementById('firstVoteContainer').style.display = 'block';
+        document.getElementById('firstVoteContainer').style.display = 'none';
 
         socket.emit('joinRoom', { roomId: roomId, userId: currentUserId });
         socket.emit('requestRoomInfo', { roomId: roomId });
