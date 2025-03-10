@@ -67,15 +67,6 @@ export class RoomsController {
     return roomData;
   }
 
-  // 랜덤방 입장
-  @UseGuards(JwtAuthGuard)
-  @Patch('randomRoom')
-  async randomRoomPick(@Request() req) {
-    const userId = req.user.id;
-    const roomData = await this.roomsService.randomRoomPick(userId);
-    return roomData;
-  }
-
   // ✅ 모든 방 조회
   @Get()
   async getRooms() {
