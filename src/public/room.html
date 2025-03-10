@@ -482,7 +482,7 @@
             roomId: roomId,
             userId: currentUserId,
           });
-          socket.on('myInfo', function (data) {
+          socket.on('MY:INFO', function (data) {
             sender = data.sender;
             console.log(sender);
           });
@@ -523,7 +523,7 @@
             roomId: roomId,
             userId: currentUserId,
           });
-          socket.on('myInfo', function (data) {
+          socket.on('MY:INFO', function (data) {
             sender = data.sender;
             console.log(sender);
           });
