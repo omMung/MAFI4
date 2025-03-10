@@ -6,30 +6,20 @@ import Redis from 'ioredis';
 export class RoomsRepository {
   private redis: Redis;
 
+  // DataSource => 타입orm 에서 기본적으로 주는 기능인데 db랑 연결할때 사용
   constructor(private configService: ConfigService) {
     this.redis = new Redis({
       host: this.configService.get('REDIS_HOST'),
       port: this.configService.get('REDIS_PORT'),
     });
   }
-
-  // Redis에서 방 정보 저장
   async createRoom(roomId: string, roomInfo: any) {
-    await this.redis.hmset(`room:${roomId}`, roomInfo);
+    // Redis에 방 정보 저장
+    await this.redis.hmset(roomId, roomInfo);
+
     return { message: '방 생성 완료', roomId, roomInfo };
   }
 
-  // Redis에서 방 정보 가져오기
-  async getRoom(roomId: string) {
-    return await this.redis.hgetall(`room:${roomId}`);
-  }
-
-  // Redis에서 방 정보 삭제
-  async deleteRoom(roomId: string) {
-    await this.redis.del(`room:${roomId}`);
-  }
-
-  // Redis 인스턴스 반환
   getRedis(): Redis {
     return this.redis;
   }

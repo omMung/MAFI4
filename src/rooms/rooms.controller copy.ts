@@ -12,22 +12,22 @@ import {
   Res,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
+import passport from 'passport';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { Response } from 'express';
+import { join } from 'path';
+import axios from 'axios';
 
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
-
-  // ✅ 방 생성 (인증 필요)
   @UseGuards(JwtAuthGuard)
   @Post()
   async createRoom(@Request() req, @Body() createRoomDto: CreateRoomDto) {
     const userId = req.user.id;
     const userNickName = req.user.nickName;
     const { roomName, mode, locked, password } = createRoomDto;
-
     const roomId = await this.roomsService.createRoom({
       userId,
       userNickName,
@@ -40,13 +40,13 @@ export class RoomsController {
     return { userId, roomId };
   }
 
-  // ✅ 모든 방 조회
+  // 모든 방 조회
   @Get()
   async getRooms() {
     return await this.roomsService.getRoomList();
   }
 
-  // ✅ 방 검색 조회
+  // 방 검색 조회
   @Get('search')
   async searchRooms(@Query('roomName') query: string) {
     if (!query || query.trim() === '') {
@@ -55,43 +55,26 @@ export class RoomsController {
 
     return this.roomsService.searchRooms(query);
   }
-
-  // ✅ 특정 방 조회 + 게임 서버 주소 응답 (입장 시)
+  // 방 입장할 때, userId, room정보 응답, 웹소켓 연결할 게임서버 주소 응답
   @UseGuards(JwtAuthGuard)
   @Get(':roomId')
-  async getRoom(@Param('roomId') roomId: number, @Request() req) {
+  async getRoom(@Param('roomId') roomId: string, @Request() req) {
     const userId = req.user.id;
 
     // 방 정보 조회
-    const newGameServerIp =
-      await this.roomsService.getGameServerForRoom(+roomId);
-    if (!newGameServerIp) {
+    const room = await this.roomsService.findRoomById(roomId);
+    if (!room) {
       return { message: `Room ${roomId} not found` };
     }
 
     return {
       userId: userId,
-      gameServer: newGameServerIp,
+      roomId: room.id,
+      roomName: room.roomName,
+      status: room.status,
+      mode: room.mode,
+      locked: room.locked,
+      gameServer: room.gameServer,
     };
   }
-
-  // 클라이언트가 WebSocket 연결 실패 시 새로운 게임 서버 요청
-  // @UseGuards(JwtAuthGuard)
-  // @Post('/reconnect')
-  // async reconnectToGameServer(@Body() body) {
-  //   const { roomId } = body;
-
-  //   if (!roomId) {
-  //     throw new BadRequestException('roomId is required');
-  //   }
-
-  //   // 새로운 게임 서버 찾기
-  //   const newGameServer = await this.roomsService.getGameServerForRoom(roomId);
-
-  //   if (!newGameServer) {
-  //     throw new BadRequestException('No available game servers');
-  //   }
-
-  //   return { gameServer: newGameServer };
-  // }
 }
