@@ -333,22 +333,101 @@
         phaseTimerElement.style.display = 'inline'; // 혹시 숨겨져 있을 경우 보이도록 설정
       }
 
+      // 리플레시 함수
+      function refreshAccessToken() {
+        return fetch(`${CONFIG.API_BASE_URL}/api/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include', // ✅ 쿠키 포함하여 요청
+        })
+          .then((response) => {
+            console.log('✅ response:', response); // 🔍 디버깅 로그 추가
+            if (!response.ok) throw new Error('리프레시 토큰 만료');
+            return response.json();
+          })
+          .then((data) => {
+            console.log('✅ 받은 데이터:', data); // 🔍 리턴된 데이터 확인
+
+            if (!data.accessToken) {
+              throw new Error('새로운 액세스 토큰을 받지 못했습니다.');
+            }
+
+            console.log('✅ 새로운 accessToken:', data.accessToken);
+            localStorage.setItem('accessToken', data.accessToken); // 🚀 새로운 액세스 토큰 저장
+
+            return data.accessToken; // 🚀 반환하여 즉시 사용
+          })
+          .catch((error) => {
+            console.error('❌ 리프레시 토큰 만료:', error);
+            alert('세션이 만료되었습니다. 로그인 페이지로 이동합니다.');
+            logout();
+          });
+      }
+
+      function logout() {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = `${CONFIG.API_BASE_URL}/index.html`;
+      }
+
       // 로그인 및 룸 입장
 
-      window.onload = function () {
-        const userId = localStorage.getItem('userId');
+      window.onload = async function () {
+        // accessToken 가져오기 (예제: 로컬스토리지에서 가져오는 방식)
+        const accessToken = localStorage.getItem('accessToken'); // 또는 쿠키에서 가져올 수도 있음
 
-        if (!userId) {
-          alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
-          window.location.href = `${CONFIG.API_BASE_URL}/index.html`;
-          return; //
+        async function getGameServer() {
+          try {
+            const response = await fetch(
+              `${CONFIG.API_BASE_URL}/api/rooms/${roomId}`,
+              {
+                method: 'GET',
+                headers: {
+                  Authorization: accessToken,
+                  'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+              },
+            );
+
+            const data = await response.json();
+            currentUserId = data.userId;
+            let gameServer = data.gameServer;
+
+            console.log('🎮 연결할 게임 서버:', gameServer);
+            return gameServer;
+          } catch (error) {
+            console.error('🚨 방 입장 중 오류:', error);
+          }
         }
 
-        currentUserId = userId;
+        // WebSocket 연결 함수 (on.emit 없이 단순 유지)
+        async function connectToWebSocket() {
+          const gameServer = await getGameServer();
 
-        socket = io(`${CONFIG.GAME_BASE_URL}/room`, {
-          auth: { roomId: roomId, userId: currentUserId },
-        });
+          if (!gameServer) {
+            console.error('❌ 게임 서버를 찾을 수 없습니다.');
+            return;
+          }
+
+          console.log(`✅ WebSocket 연결 시도: http://${gameServer}:3001/room`);
+          socket = io(`http://${gameServer}:3001/room`, {
+            auth: { roomId: roomId, userId: currentUserId },
+          });
+
+          // 연결 실패 시 자동으로 새로운 서버 요청 후 재연결
+          socket.on('connect_error', async () => {
+            console.warn('⚠️ WebSocket 연결 실패, 새로운 서버 요청 중...');
+            await connectToWebSocket(); // 자동 재연결
+          });
+
+          socket.on('disconnect', async () => {
+            console.warn('⚠️ WebSocket 연결 끊김! 새로운 서버로 재연결 중...');
+            await connectToWebSocket(); // 자동 재연결
+          });
+        }
+
+        // 초기 실행
+        await connectToWebSocket();
 
         sender.role = 'player';
         sender.isAlive = true;

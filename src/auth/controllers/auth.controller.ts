@@ -67,7 +67,6 @@ export class AuthController {
   // 리프레시 토큰 API
   @Post('refresh')
   async refreshToken(@Req() req: Request, @Res() res: Response) {
-    console.log('리플레쉬');
     const data = await this.authService.refreshToken(req);
     const { accessToken, refreshToken } = data;
     res.setHeader('Authorization', `Bearer ${accessToken}`);
