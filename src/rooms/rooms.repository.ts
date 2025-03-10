@@ -29,6 +29,11 @@ export class RoomsRepository {
     await this.redis.del(`room:${roomId}`);
   }
 
+  // Redis에서 방에 유저 입장
+  async updateRooms(roomId: number) {
+    // await this.redis.rpush(roomId:)
+  }
+
   // Redis 인스턴스 반환
   getRedis(): Redis {
     return this.redis;

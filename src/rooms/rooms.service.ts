@@ -229,6 +229,8 @@ export class RoomsService {
 
     const randomNumber = Math.floor(Math.random() * (rooms.length - 1));
 
+    await this.roomsRepository.updateRooms(rooms[randomNumber].roomId);
+
     return rooms[randomNumber];
   }
 }

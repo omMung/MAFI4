@@ -237,10 +237,10 @@
           const roomElement = document.createElement('div');
           roomElement.className = 'room-item';
           roomElement.innerHTML = `
-      <span>${room.roomName}</span>
-      <div class="room-info">${room.status} | 인원 ${room.playerCount}/8</div>
-      <button onclick="joinRoom(${room.roomId})">입장</button>
-    `;
+        <span>${room.roomName}</span>
+        <div class="room-info">${room.status} | 인원 ${room.playerCount}/8</div>
+        <button onclick="joinRoom(${room.roomId})">입장</button>
+      `;
           roomList.appendChild(roomElement);
         });
       }
@@ -343,7 +343,14 @@
       }
 
       function randomOpenModal() {
-        fetch(`${CONFIG.API_BASE_URL}/api/randomRooms`)
+        let token = localStorage.getItem('accessToken');
+        fetch(`${CONFIG.API_BASE_URL}/api/rooms/randomRoom`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: token,
+            'Content-Type': 'application/json',
+          },
+        })
           .then((response) => {
             if (!response.ok) {
               throw new Error('네트워크 연결을 확인해 주세요.');
@@ -352,6 +359,7 @@
           })
           .then((data) => {
             console.log(data); // API 응답 처리
+            window.location.href = `${CONFIG.API_BASE_URL}/room.html?roomId=${data.roomId}`;
           })
           .catch((error) => {
             console.error('랜덤방 입장 오류:', error);
