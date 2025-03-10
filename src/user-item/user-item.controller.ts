@@ -8,15 +8,20 @@ import {
   Delete,
   UseGuards,
   Request,
+  Req,
 } from '@nestjs/common';
 import { UserItemService } from './user-item.service';
 import { CreateUserItemDto } from './dto/create-user-item.dto';
 import { UpdateUserItemDto } from './dto/update-user-item.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('user-item')
 export class UserItemController {
-  constructor(private readonly userItemService: UserItemService) {}
+  constructor(
+    private readonly userItemService: UserItemService,
+    private readonly userService: UsersService,
+  ) {}
 
   // 아이템 구매
   @UseGuards(JwtAuthGuard)
@@ -63,5 +68,17 @@ export class UserItemController {
   async deleteUserItem(@Request() req, @Param('itemId') itemId: number) {
     const userId = req.user.id;
     return await this.userItemService.deleteUserItem(userId, itemId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('use/nickname')
+  async useNicknameChangeTicket(
+    @Req() req,
+    @Body('newNickname') newNickname: string,
+  ) {
+    return this.userItemService.useNicknameChangeTicket(
+      req.user.id,
+      newNickname,
+    );
   }
 }

@@ -49,4 +49,30 @@ export class UserItemRepository {
     await this.userItemRepository.remove(userItem);
     return userItem;
   }
+
+  async findUserItem(
+    userId: number,
+    itemName: string,
+  ): Promise<UserItem | null> {
+    return this.userItemRepository
+      .createQueryBuilder('userItem')
+      .innerJoinAndSelect('userItem.item', 'item')
+      .where('userItem.userId = :userId', { userId })
+      .andWhere('item.name = :itemName', { itemName })
+      .getOne();
+  }
+
+  async decreaseItemQuantity(userItemId: number) {
+    const userItem = await this.userItemRepository.findOne({
+      where: { id: userItemId },
+    });
+    if (!userItem) return;
+
+    if (userItem.quantity > 1) {
+      userItem.quantity -= 1;
+      await this.userItemRepository.save(userItem);
+    } else {
+      await this.userItemRepository.delete(userItemId);
+    }
+  }
 }

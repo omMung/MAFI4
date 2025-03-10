@@ -48,6 +48,7 @@ export class User {
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
   // 관계 설정
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
