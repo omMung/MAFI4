@@ -9,7 +9,7 @@ import { AllExceptionFilter } from './exception.filter';
 async function bootstrap() {
   // Sentry 초기화
   Sentry.init({
-    dsn: "https://7093f1075ffe2a3854e91d0c6818ddc7@o4508924635185152.ingest.us.sentry.io/4508924637151232" ,
+    dsn: process.env.dsn ,
     tracesSampleRate: 1.0,
   });
   const app = await NestFactory.create(AppModule);
