@@ -148,6 +148,7 @@
       />
 
       <button onclick="openModal()">방 생성</button>
+      <button onclick="randomOpenModal()">랜덤방 생성</button>
       <button onclick="fetchRooms()">새로고침</button>
       <button onclick="logout()">로그아웃</button>
       <!-- ✅ 방 생성 모달 -->
@@ -182,8 +183,8 @@
     <script src="./js/config.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        checkTokenExpiration();
-        fetchRooms();
+        // checkTokenExpiration();
+        // fetchRooms();
       });
 
       function checkTokenExpiration() {
@@ -340,6 +341,22 @@
       }
       function openModal() {
         document.getElementById('roomModal').style.display = 'flex';
+      }
+
+      function randomOpenModal() {
+        fetch(`${CONFIG.API_BASE_URL}/api/randomRooms`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('네트워크 연결을 확인해 주세요.');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data); // API 응답 처리
+          })
+          .catch((error) => {
+            console.error('랜덤방 입장 오류:', error);
+          });
       }
 
       function closeModal() {

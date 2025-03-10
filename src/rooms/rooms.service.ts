@@ -146,4 +146,46 @@ export class RoomsService {
 
     return { rooms };
   }
+
+  // 랜덤방 입장
+
+  async randomRoomPick(userId: number) {
+    const rooms = [];
+    let cursor = '0';
+
+    do {
+      console.log('scan');
+      // `SCAN`을 사용하여 `room:*` 패턴의 키를 부분적으로 가져옴
+      const [newCursor, roomKeys] = await this.roomsRepository
+        .getRedis()
+        .scan(cursor, 'MATCH', 'room:*', 'COUNT', 10);
+      cursor = newCursor;
+
+      for (const roomId of roomKeys) {
+        if (roomId === 'room:id') continue;
+        if (roomId.includes(':game')) continue;
+        if (roomId.includes(':currentGameId')) continue;
+
+        const roomInfo = await this.roomsRepository.getRedis().hgetall(roomId);
+
+        if (roomInfo) {
+          rooms.push({
+            roomId: parseInt(roomId.replace('room:', '')),
+            roomName: roomInfo.roomName,
+            status: roomInfo.status,
+            playerCount: JSON.parse(roomInfo.players).length,
+            mode: roomInfo.mode,
+            locked: roomInfo.locked === 'true',
+          });
+        }
+      }
+    } while (cursor !== '0'); // SCAN이 끝날 때까지 반복
+
+    // 방 id 기준 내림차 순
+    rooms.sort((a, b) => b.roomId - a.roomId);
+
+    const randomNumber = Math.floor(Math.random() * (rooms.length - 1));
+
+    return rooms[randomNumber];
+  }
 }

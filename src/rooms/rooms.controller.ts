@@ -10,6 +10,7 @@ import {
   Request,
   BadRequestException,
   Res,
+  Patch,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import passport from 'passport';
@@ -17,6 +18,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { Response } from 'express';
 import { join } from 'path';
+import { lastValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
 
 // upstash 에서 값 가져오기위한 임포트
 
@@ -51,6 +54,15 @@ export class RoomsController {
     });
 
     return { userId, roomId };
+  }
+
+  // 랜덤방 입장
+  @UseGuards(JwtAuthGuard)
+  @Patch('randomRoom')
+  async randomRoomPick(@Request() req) {
+    const userId = req.user.id;
+    const roomData = await this.roomsService.randomRoomPick(userId);
+    return roomData;
   }
 
   // 모든 방 조회
