@@ -247,4 +247,45 @@ const api = {
         method: 'GET',
       }),
   },
+  userItem: {
+    // 아이템 구매 (사용자 아이템 생성)
+    purchase: (data) =>
+      fetchAPI(
+        '/user-item',
+        {
+          method: 'POST',
+          body: JSON.stringify(data),
+        },
+        console.log(`api.js - purchase 호출`),
+      ),
+    // 내 아이템 조회
+    findMyItems: () =>
+      fetchAPI(
+        '/user-item',
+        {
+          method: 'GET',
+        },
+        console.log(`api.js - findMyItems 호출`),
+      ),
+    // 아이템 개수 업데이트 (사용 또는 추가 구매)
+    updateQuantity: (itemId, quantity) =>
+      fetchAPI(`/user-item/${itemId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ quantity }),
+      }),
+    // 아이템 삭제
+    delete: (itemId) =>
+      fetchAPI(`/user-item/${itemId}`, {
+        method: 'DELETE',
+      }),
+  },
+  items: {
+    findAll: () => fetchAPI('/items', { method: 'GET' }),
+    findOne: (id) => fetchAPI(`/items/${id}`, { method: 'GET' }),
+    create: (data) =>
+      fetchAPI('/items', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data) =>
+      fetchAPI(`/items/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    delete: (id) => fetchAPI(`/items/${id}`, { method: 'DELETE' }),
+  },
 };

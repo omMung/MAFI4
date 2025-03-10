@@ -8,7 +8,212 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
   <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
   <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f4f8;
+      margin: 20px;
+      color: #333;
+      line-height: 1.6;
+      transition: background-color 4s ease;
+    }
 
+    h1,
+    h2 {
+      color: #2c3e50;
+    }
+
+    .container-custom {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .chat-container,
+    .occupant-container,
+    .login-container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: background-color 4s ease;
+    }
+
+    .chat-container {
+      flex: 7;
+    }
+
+    .occupant-container {
+      flex: 3;
+    }
+
+    #chatMessages {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #e0e0e0;
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      margin-bottom: 10px;
+      scroll-behavior: smooth;
+    }
+
+    #occupantList {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .occupant-btn {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #ecf0f1;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .occupant-btn:hover {
+      background-color: #d5dbdb;
+    }
+
+    .occupant-btn.selected {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .occupant-btn.dead {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    input[type='text'],
+    input[type='number'] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    button:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+
+    .system-message {
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    .role-message {
+      color: #2980b9;
+      font-weight: bold;
+    }
+
+    .red-message {
+      color: red;
+    }
+
+    .purple-message {
+      color: purple;
+    }
+
+    #voteBtn,
+    #executeBtn,
+    #survivalBtn {
+      margin-top: 10px;
+      margin-right: 10px;
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    @media (max-width: 768px) {
+      .container-custom {
+        flex-direction: column;
+      }
+
+      .chat-container,
+      .occupant-container {
+        width: 100%;
+      }
+    }
+
+    #roleActionContainer {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    #roleActionContainer button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition:
+        background-color 0.3s ease,
+        transform 0.3s ease;
+    }
+
+    #roleActionContainer button.btn-danger {
+      background-color: #e74c3c;
+      color: #fff;
+    }
+
+    #roleActionContainer button.btn-danger:hover {
+      background-color: #c0392b;
+      transform: scale(1.05);
+    }
+
+    #roleActionContainer button.btn-primary {
+      background-color: #3498db;
+      color: #fff;
+    }
+
+    #roleActionContainer button.btn-primary:hover {
+      background-color: #2980b9;
+      transform: scale(1.05);
+    }
+
+    #roleActionContainer button.btn-success {
+      background-color: #2ecc71;
+      color: #fff;
+    }
+
+    #roleActionContainer button.btn-success:hover {
+      background-color: #27ae60;
+      transform: scale(1.05);
+    }
   </style>
 </head>
 
@@ -112,7 +317,7 @@
 
     // 로그인 및 룸 입장
 
-    window.onload = function () {
+    window.onload = async function () {
       const userId = localStorage.getItem('userId');
 
       if (!userId) {
@@ -123,7 +328,34 @@
 
       currentUserId = userId;
 
-      socket = io(`${CONFIG.GAME_BASE_URL}/room`, {
+      // ✅ accessToken 가져오기 (예제: 로컬스토리지에서 가져오는 방식)
+      const accessToken = localStorage.getItem('accessToken'); // 또는 쿠키에서 가져올 수도 있음
+
+      try {
+        // 2️⃣ 서버에서 게임 서버 IP 조회 (fetch 사용)
+        const response = await fetch(
+          `${CONFIG.API_BASE_URL}/api/rooms/${roomId}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: accessToken, // 인증 토큰 추가
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include', // 쿠키 포함 (필요 시)
+          },
+        );
+
+        const data = await response.json();
+        var gameServer = data.gameServer;
+        console.log('game', gameServer);
+        if (!data || !data.gameServer) {
+          throw new Error('방 정보를 가져올 수 없습니다.');
+        }
+      } catch (error) {
+        console.error('방 입장 중 오류:', error);
+      }
+
+      socket = io(`http://${gameServer}:3001/room`, {
         auth: { roomId: roomId, userId: currentUserId },
       });
 

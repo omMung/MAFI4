@@ -10,8 +10,18 @@ export class ItemsRepository {
     private readonly itemRepository: Repository<Item>,
   ) {}
 
-  async createItem(name: string, price: number): Promise<Item> {
-    const newItem = this.itemRepository.create({ name, price });
+  async createItem(
+    name: string,
+    price: number,
+    description: string,
+    category: string,
+  ): Promise<Item> {
+    const newItem = this.itemRepository.create({
+      name,
+      price,
+      description,
+      category,
+    });
     return await this.itemRepository.save(newItem);
   }
 

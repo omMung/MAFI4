@@ -44,6 +44,7 @@ export class UsersRepository {
         'isVerified',
         'createdAt',
         'file',
+        'money',
         'gameBanDate',
         'communityBanDate',
       ], // 비밀번호 제외

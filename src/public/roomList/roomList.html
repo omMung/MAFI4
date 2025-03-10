@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAFI4 - 홈</title>
+    <title>MAFI4 - 게임 로비</title>
     <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="roomList.css">
     <script src="/scripts/api.js" defer></script>
@@ -17,36 +17,76 @@
     <div id="header-container"></div>
 
     <main>
-        <div class="container">
-            <h2>게임 로비</h2>
-            <input type="text" id="searchRoom" placeholder="방 이름 검색..." oninput="searchRooms()" />
+        <div class="lobby-container">
+            <div class="lobby-header">
+                <h1 class="lobby-title">게임 로비</h1>
+                <p class="lobby-subtitle">원하는 게임방에 참여하거나 새로운 방을 만들어보세요</p>
+            </div>
 
-            <button onclick="openModal()">방 생성</button>
-            <button onclick="loadRooms()">새로고침</button>
-            <button onclick="logout()">로그아웃</button>
-            <!-- ✅ 방 생성 모달 -->
-            <div id="roomModal" class="modal">
-                <div class="modal-content">
-                    <h2>방 생성</h2>
-                    <label>방 이름</label>
-                    <input type="text" id="roomName" placeholder="방 이름 입력" />
+            <div class="lobby-actions">
+                <div class="search-container">
+                    <input type="text" id="searchRoom" placeholder="방 이름 검색..." oninput="searchRooms()">
+                    <button class="icon-button refresh-button" onclick="loadRooms()" title="새로고침">
+                        <span class="refresh-icon">↻</span>
+                    </button>
+                </div>
+                <button class="create-room-button" onclick="openModal()">
+                    <span class="plus-icon">+</span> 방 만들기
+                </button>
+            </div>
 
-                    <label>모드 선택</label>
-                    <select id="roomMode">
-                        <option value="6인용 모드">6인용 모드</option>
-                        <option value="8인용 모드">8인용 모드</option>
-                    </select>
-                    <div class="checkbox-container">
-                        <label for="isPrivate">비밀방</label>
-                        <input type="checkbox" id="isPrivate" />
-                    </div>
-                    <input type="password" id="roomPassword" placeholder="비밀번호 입력 (선택)" disabled />
-
-                    <button class="create-btn" onclick="createRoom()">방 생성</button>
-                    <button class="close-btn" onclick="closeModal()">닫기</button>
+            <div class="room-list-container">
+                <div class="room-list-header">
+                    <div class="room-name-header">방 이름</div>
+                    <div class="room-status-header">상태</div>
+                    <div class="room-players-header">인원</div>
+                    <div class="room-action-header"></div>
+                </div>
+                <div class="room-list" id="roomList">
+                    <!-- 방 목록이 여기에 동적으로 추가됩니다 -->
                 </div>
             </div>
-            <div class="room-list" id="roomList"></div>
+
+            <!-- 방 생성 모달 -->
+            <div id="roomModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>새로운 게임방 만들기</h2>
+                        <button class="close-icon" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="roomName">방 이름</label>
+                            <input type="text" id="roomName" placeholder="게임방 이름을 입력하세요">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="roomMode">게임 모드</label>
+                            <select id="roomMode">
+                                <option value="6인용 모드">6인용 모드</option>
+                                <option value="8인용 모드">8인용 모드</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group checkbox-container">
+                            <label for="isPrivate">비밀방으로 설정</label>
+                            <label class="switch">
+                                <input type="checkbox" id="isPrivate">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-group password-group" id="passwordGroup">
+                            <label for="roomPassword">비밀번호</label>
+                            <input type="password" id="roomPassword" placeholder="비밀번호를 입력하세요" disabled>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="cancel-btn" onclick="closeModal()">취소</button>
+                        <button class="create-btn" onclick="createRoom()">방 만들기</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 

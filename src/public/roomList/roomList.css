@@ -1,57 +1,218 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+/* 로비 컨테이너 */
+.lobby-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 로비 헤더 */
+.lobby-header {
   text-align: center;
+  margin-bottom: 2rem;
 }
-.container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+
+.lobby-title {
+  font-size: 2.2rem;
+  color: var(--primary-color, #333);
+  margin-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
 }
-.room-list {
-  margin-top: 20px;
+
+.lobby-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: var(--accent-color, #ff6b6b);
+  border-radius: 2px;
 }
-.room-item {
+
+.lobby-subtitle {
+  color: var(--text-light, #666);
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+/* 로비 액션 영역 */
+.lobby-actions {
   display: flex;
-  flex-direction: column; /* ✅ 방 정보를 세로 정렬 */
-  align-items: flex-start; /* ✅ 왼쪽 정렬 */
-  padding: 10px;
-  border: 1px solid #ddd;
-  margin-bottom: 5px;
-  background: #f9f9f9;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
 }
 
-.room-item span {
+.search-container {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+#searchRoom {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+#searchRoom:focus {
+  border-color: var(--primary-color, #4a90e2);
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
+  outline: none;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--text-light, #666);
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  margin-left: 0.5rem;
+}
+
+.icon-button:hover {
+  color: var(--primary-color, #4a90e2);
+  background-color: rgba(74, 144, 226, 0.1);
+}
+
+.refresh-icon {
+  font-size: 1.4rem;
   font-weight: bold;
-  margin-bottom: 5px; /* ✅ 방 이름과 상태 정보 간격 조절 */
 }
 
-.room-item .room-info {
-  font-size: 14px;
-  color: #555;
-}
-
-.room-item button {
-  align-self: flex-end; /* ✅ 버튼을 오른쪽 정렬 */
-  background-color: #28a745;
+.create-room-button {
+  background-color: var(--primary-color, #4a90e2);
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 5px; /* ✅ 버튼과 텍스트 간격 조절 */
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
 }
 
-.room-item button:hover {
-  background-color: #218838;
+.create-room-button:hover {
+  background-color: var(--primary-dark, #3a7bc8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
 }
 
-/* ✅ 모달 스타일 */
+.plus-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* 방 목록 컨테이너 */
+.room-list-container {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.room-list-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  padding: 1rem 1.5rem;
+  background-color: #f0f0f0;
+  font-weight: 600;
+  color: var(--text-color, #333);
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.room-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* 방 아이템 */
+.room-item {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eaeaea;
+  transition: all 0.2s;
+  background-color: white;
+}
+
+.room-item:last-child {
+  border-bottom: none;
+}
+
+.room-item:hover {
+  background-color: #f5f9ff;
+}
+
+.room-name {
+  font-weight: 600;
+  color: var(--primary-color, #333);
+  text-align: left;
+}
+
+.room-status {
+  color: var(--text-light, #666);
+  font-size: 0.9rem;
+}
+
+.room-status.waiting {
+  color: #2e7d32;
+}
+
+.room-status.playing {
+  color: #c62828;
+}
+
+.room-players {
+  color: var(--text-light, #666);
+  font-size: 0.9rem;
+}
+
+.join-button {
+  background-color: var(--accent-color, #28a745);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  justify-self: end;
+}
+
+.join-button:hover {
+  background-color: var(--accent-dark, #218838);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(33, 136, 56, 0.3);
+}
+
+/* 모달 스타일 */
 .modal {
   display: none;
   position: fixed;
-  z-index: 10;
+  z-index: 100;
   left: 0;
   top: 0;
   width: 100%;
@@ -59,73 +220,236 @@ body {
   background-color: rgba(0, 0, 0, 0.5);
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(3px);
 }
 
 .modal-content {
   background: white;
-  padding: 20px;
-  width: 300px;
-  border-radius: 8px;
-  text-align: left;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 450px;
+  max-width: 90%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s;
 }
 
-.modal-content h2 {
-  margin-bottom: 10px;
-  text-align: center;
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.modal-content input,
-.modal-content select {
+.modal-header {
+  background-color: var(--primary-color, #4a90e2);
+  color: white;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.close-icon {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-color, #333);
+}
+
+.form-group input,
+.form-group select {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 0.8rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s;
 }
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary-color, #4a90e2);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  outline: none;
+}
+
 .checkbox-container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: space-between; /* 비밀방 왼쪽, 체크박스 오른쪽 */
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 5px 0; /* 간격 조절 */
 }
 
-.checkbox-container label {
-  font-size: 16px;
-  font-weight: bold;
-  white-space: nowrap; /* ✅ 두 줄로 안 나뉘게 설정 */
+/* 토글 스위치 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
 }
 
-.checkbox-container input {
-  transform: scale(1.2); /* 체크박스 크기 조절 */
-  margin-left: 10px; /* 간격 조정 */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
-.modal-content button {
-  width: 100%;
-  padding: 10px;
-  border: none;
+.slider {
+  position: absolute;
   cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
 }
 
-.close-btn {
-  background: red;
-  color: white;
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color, #4a90e2);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--primary-color, #4a90e2);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.password-group {
+  display: none;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  border-top: 1px solid #eaeaea;
+}
+
+.cancel-btn,
+.create-btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-btn {
+  background-color: #f0f0f0;
+  color: var(--text-color, #333);
+  border: 1px solid #e0e0e0;
+}
+
+.cancel-btn:hover {
+  background-color: #e0e0e0;
 }
 
 .create-btn {
-  background: #007bff;
+  background-color: var(--primary-color, #4a90e2);
   color: white;
+  border: none;
 }
 
 .create-btn:hover {
-  background: #0056b3;
+  background-color: var(--primary-dark, #3a7bc8);
 }
 
-.close-btn:hover {
-  background: darkred;
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .lobby-container {
+    padding: 1.5rem;
+  }
+
+  .lobby-actions {
+    flex-direction: column;
+  }
+
+  .search-container {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .create-room-button {
+    width: 100%;
+  }
+
+  .room-list-header,
+  .room-item {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .room-status-header,
+  .room-status {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .room-list-header,
+  .room-item {
+    grid-template-columns: 2fr 1fr;
+    padding: 0.8rem 1rem;
+  }
+
+  .room-players-header,
+  .room-players {
+    display: none;
+  }
+
+  .join-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
 }

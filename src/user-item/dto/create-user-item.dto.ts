@@ -4,8 +4,8 @@ export class CreateUserItemDto {
   @IsNumber()
   itemId: number;
 
-  @IsNumber()
-  userId: number;
+  // @IsNumber()
+  // userId: number;
 
   @IsOptional()
   @IsNumber()

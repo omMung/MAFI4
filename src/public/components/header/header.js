@@ -11,7 +11,11 @@ function updateAuthDisplay() {
       .then((user) => {
         authButtons.innerHTML = `
           <div class="auth-container">
-            <span class="user-info">안녕하세요, ${user.nickName}님</span>
+            <span class="user-info">
+      안녕하세요,<br>
+      ${user.nickName}님
+    </span>
+            <span class="user-money">내 머니: ${user.money || '0'}</span>
             <a href="/myPage/myPage.html" id="mypageBtn" class="btn btn-secondary">마이페이지</a>
             <a id="logoutBtn" class="btn btn-secondary">로그아웃</a>
           </div>
