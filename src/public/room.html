@@ -746,11 +746,6 @@
               alert('현재 투표가 진행되지 않는 시기입니다.');
               return;
             }
-
-            if (!selectedTargetId) {
-              alert('투표할 대상을 선택하세요.');
-              return;
-            }
             var executeBtn = document.getElementById('executeBtn');
             var survivalBtn = document.getElementById('survivalBtn');
             executeBtn.disabled = true;
