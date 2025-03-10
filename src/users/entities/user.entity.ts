@@ -34,6 +34,8 @@ export class User {
   file?: string;
   @Column({ type: 'int', default: 0 })
   money: number;
+  @Column({ type: 'int', default: 1000 })
+  score: number;
   // 관리자인지 여부 (기본 false)
   @Column({ type: 'boolean', default: false })
   isAdmin: boolean;
