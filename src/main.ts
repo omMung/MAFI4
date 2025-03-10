@@ -3,10 +3,19 @@ import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import * as Sentry from '@sentry/node';
+import { AllExceptionFilter } from './exception.filter';
 
 async function bootstrap() {
+  // Sentry 초기화
+  Sentry.init({
+    dsn: "https://7093f1075ffe2a3854e91d0c6818ddc7@o4508924635185152.ingest.us.sentry.io/4508924637151232" ,
+    tracesSampleRate: 1.0,
+  });
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new AllExceptionFilter());
+  
   app.setGlobalPrefix('api');
   app.use(cookieParser());
   app.useGlobalPipes(
@@ -23,6 +32,7 @@ async function bootstrap() {
     }),
   );
 
+  throw new Error("일부로 던지 마지막 111에러 테스트")
   await app.listen(process.env.PORT ?? 3000);
   console.log('🚀 서버 실행 중: http://localhost:3000');
 }
