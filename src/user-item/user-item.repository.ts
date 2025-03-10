@@ -54,12 +54,13 @@ export class UserItemRepository {
     userId: number,
     itemName: string,
   ): Promise<UserItem | null> {
-    return this.userItemRepository
-      .createQueryBuilder('userItem')
-      .innerJoinAndSelect('userItem.item', 'item')
-      .where('userItem.userId = :userId', { userId })
-      .andWhere('item.name = :itemName', { itemName })
-      .getOne();
+    return this.userItemRepository.findOne({
+      where: {
+        user: { id: userId }, //  userId 필터링
+        item: { name: itemName }, //  itemName 필터링
+      },
+      relations: ['item'], //  item 조인
+    });
   }
 
   async decreaseItemQuantity(userItemId: number) {

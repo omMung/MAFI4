@@ -70,12 +70,15 @@ export class UserItemController {
     return await this.userItemService.deleteUserItem(userId, itemId);
   }
 
+  // 아이템 사용 - 닉네임 변경권
   @UseGuards(JwtAuthGuard)
-  @Patch('use/nickname')
+  @Patch('nickname')
   async useNicknameChangeTicket(
     @Req() req,
     @Body('newNickname') newNickname: string,
   ) {
+    console.log('@@@@@@@@@@@@@@@@@@@@');
+
     return this.userItemService.useNicknameChangeTicket(
       req.user.id,
       newNickname,
