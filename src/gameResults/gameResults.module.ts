@@ -5,14 +5,19 @@ import { GameResult } from './entities/gameResults.entity';
 import { GameResultsService } from './gameResults.service';
 import { GameResultsSubscriber } from './gameResults.subscriber';
 import { GameAchievementsModule } from 'src/gameAchievements/gameAchievements.module';
+import { AchievementsModule } from 'src/achievements/achievements.module';
+import { AchievementsService } from 'src/achievements/achievements.service';
+import { UserAchievementsModule } from 'src/user-achievements/users-achievements.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([GameResult]),
     forwardRef(() => GameAchievementsModule),
+    forwardRef(() => AchievementsModule),
+    forwardRef(() => UserAchievementsModule),
   ],
   controllers: [GameResultsController],
-  providers: [GameResultsService, GameResultsSubscriber],
+  providers: [GameResultsService, GameResultsSubscriber, AchievementsService],
   exports: [GameResultsService, GameResultsSubscriber],
 })
 export class GameResultsModule {}

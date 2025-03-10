@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, forwardRef, Inject } from '@nestjs/common';
 import { GameResultsService } from './gameResults.service';
 import Redis from 'ioredis';
 import { GameAchievementsService } from 'src/gameAchievements/gameAchievements.service';
+import { AchievementsService } from 'src/achievements/achievements.service';
 
 @Injectable()
 export class GameResultsSubscriber implements OnModuleInit {
@@ -12,6 +13,8 @@ export class GameResultsSubscriber implements OnModuleInit {
     private readonly gameResultsService: GameResultsService,
     @Inject(forwardRef(() => GameAchievementsService))
     private readonly gameAchievementsService: GameAchievementsService, // ✅ 업적 서비스 추가
+    @Inject(forwardRef(() => AchievementsService)) // ✅ 일반 업적 서비스 추가
+    private readonly achievementsService: AchievementsService,
   ) {
     // 일반 Redis 클라이언트 (데이터 조회 용)
     this.redisClient = new Redis({
@@ -78,7 +81,17 @@ export class GameResultsSubscriber implements OnModuleInit {
   private async processGameAchievements(message: string) {
     console.log(`게임 업적 수신: ${message}`);
     const gameAchievements = JSON.parse(message);
-    const gameId = gameAchievements.gameId;
+
+    const gameId = gameAchievements?.gameId;
+    const playerAchievements = gameAchievements?.playerAchievements || {};
+
+    if (!gameId || Object.keys(playerAchievements).length === 0) {
+      console.warn(
+        `잘못된 게임 업적 데이터: gameId 또는 playerAchievements가 없음.`,
+      );
+      return;
+    }
+
     const gameAchievementsKey = `gameAchievements:${gameId}`;
 
     // 중복 방지: 이미 저장된 업적 데이터인지 확인
@@ -90,9 +103,16 @@ export class GameResultsSubscriber implements OnModuleInit {
       return;
     }
 
-    //  게임 업적 RDS 저장
+    // 게임 업적 RDS 저장
     await this.gameAchievementsService.saveGameAchievements(gameAchievements);
-    console.log(` 게임 업적이 RDS에 저장됨 (gameId: ${gameId}).`);
+    console.log(`게임 업적이 RDS에 저장됨 (gameId: ${gameId}).`);
+
+    // 일반 업적 시스템과 연동하여 유저 업적(UserAchievements)로 저장
+    await this.achievementsService.processGameAchievements(
+      gameId,
+      playerAchievements,
+    );
+    console.log(`일반 업적 저장 완료 (gameId: ${gameId}).`);
 
     // RDS에 저장 완료 후, Redis에서 해당 게임 업적 삭제 (필요 시)
     // await this.redisClient.del(gameAchievementsKey);

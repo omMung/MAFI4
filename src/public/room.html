@@ -227,13 +227,21 @@
       <div class="chat-container" id="chatRoom">
         <h2 id="roomTitle"></h2>
         <div id="chatMessages"></div>
-        <input
-          type="text"
-          id="messageInput"
-          class="form-control"
-          placeholder="메시지를 입력하세요"
-        />
-        <button id="sendBtn" class="btn btn-secondary mt-2">전송</button>
+        <!-- 메시지 입력 및 전송 버튼을 한 줄로 배치 -->
+        <div class="input-group mt-2">
+          <input
+            type="text"
+            id="messageInput"
+            class="form-control"
+            placeholder="메시지를 입력하세요"
+          />
+          <div class="input-group-append">
+            <button id="sendBtn" class="btn btn-secondary">전송</button>
+          </div>
+        </div>
+        <button id="startGameBtn" class="btn btn-primary mt-2">
+          게임 시작
+        </button>
       </div>
       <!-- 접속 인원 영역 -->
       <div class="occupant-container" id="roomOccupants">
@@ -435,7 +443,7 @@
         // UI 표시
         document.getElementById('mainContainer').style.display = 'flex';
         //document.getElementById('gameSection').style.display = 'block';
-        document.getElementById('firstVoteContainer').style.display = 'block';
+        document.getElementById('firstVoteContainer').style.display = 'none';
 
         socket.emit('joinRoom', { roomId: roomId, userId: currentUserId });
         socket.emit('requestRoomInfo', { roomId: roomId });
@@ -475,12 +483,12 @@
           updatePhaseTimer(data.phase, data.timerTime);
         });
 
-        socket.on('voteSuccess', function (data) {
+        socket.on('VOTE:SUCCESS', function (data) {
           appendChatMessage(
             '[' + data.voterId + '] ' + data.message,
-            'voteSucess',
+            'VOTE:SUCCESS',
           );
-          socket.off('voteSuccess');
+          socket.off('VOTE:SUCCESS');
         });
 
         socket.on('system_message', function (data) {
@@ -553,7 +561,7 @@
             roomId: roomId,
             userId: currentUserId,
           });
-          socket.on('myInfo', function (data) {
+          socket.on('MY:INFO', function (data) {
             sender = data.sender;
             console.log(sender);
           });
@@ -570,7 +578,7 @@
         });
 
         // 추가된 부분: gameEnd 이벤트 핸들러 등록
-        socket.on('gameEnd', function (data) {
+        socket.on('GAME:END', function (data) {
           // 게임 종료 이벤트 수신 시, 게임 상태 영역에 결과 메시지 표시
           appendChatMessage('게임 종료: ' + data.message);
           document.getElementById('gameStatus').textContent = data.message;
@@ -594,7 +602,7 @@
             roomId: roomId,
             userId: currentUserId,
           });
-          socket.on('myInfo', function (data) {
+          socket.on('MY:INFO', function (data) {
             sender = data.sender;
             console.log(sender);
           });
@@ -825,11 +833,6 @@
               alert('현재 투표가 진행되지 않는 시기입니다.');
               return;
             }
-
-            if (!selectedTargetId) {
-              alert('투표할 대상을 선택하세요.');
-              return;
-            }
             var executeBtn = document.getElementById('executeBtn');
             var survivalBtn = document.getElementById('survivalBtn');
             executeBtn.disabled = true;
@@ -872,6 +875,22 @@
           chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
         }
 
+        //엔터키 입력시 전송버튼 클릭
+        document
+          .getElementById('messageInput')
+          .addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+              event.preventDefault(); // 기본 동작(새 줄 입력) 방지
+              document.getElementById('sendBtn').click(); // 전송 버튼 클릭
+            }
+          });
+        //시작 버튼 이벤트
+        document
+          .getElementById('startGameBtn')
+          .addEventListener('click', function () {
+            socket.emit('startGame', { roomId: roomId, userId: currentUserId });
+          });
+
         // 채팅 메시지 전송 함수
         function sendChatMessage() {
           var messageInputElem = document.getElementById('messageInput');
@@ -900,11 +919,7 @@
             if (messageInputElem) {
               messageInputElem.value = '';
             }
-          } else if (
-            sender.role === 'citizen' ||
-            sender.role === 'doctor' ||
-            sender.role === 'police'
-          ) {
+          } else if (sender.role !== 'player') {
             console.log('시민 채팅');
             socket.emit('chatCitizen', {
               roomId: roomId,
