@@ -611,3 +611,28 @@
 .purchase-failed .modal-footer {
   justify-content: center;
 }
+
+.item-quantity-input input[type='number'] {
+  width: 80px; /* 기존 60px보다 넓게 */
+  height: 30px; /* 높이 증가 */
+  padding: 0.1rem; /* 내부 여백 */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  text-align: center;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.item-quantity-input input[type='number']:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+  outline: none;
+}
+
+.item-quantity-input {
+  margin: 1rem 0; /* 위아래 여백 추가 */
+  font-size: 1rem;
+  color: var(--primary-color);
+}

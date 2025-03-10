@@ -465,19 +465,34 @@ function showItemModal(item) {
   const modalItemImage = document.getElementById('modalItemImage');
   const modalItemDescription = document.getElementById('modalItemDescription');
   const modalItemPrice = document.getElementById('modalItemPrice');
+  const purchaseQuantityInput = document.getElementById('purchaseQuantity');
   const confirmPurchase = document.getElementById('confirmPurchase');
 
-  // 모달 내용 설정
+  // 모달 제목 및 기본 가격 설정
   modalItemName.textContent = item.name || '이름 없는 아이템';
+  const basePrice = item.price || 0;
+  modalItemPrice.textContent = `${basePrice.toLocaleString()} 포인트`;
 
-  // 이미지 URL이 없는 경우 기본 이미지 사용
+  // 수량 입력 초기화
+  purchaseQuantityInput.value = 1;
+
+  // 이전에 등록된 이벤트 리스너를 덮어쓰기 위해 oninput 프로퍼티 사용
+  purchaseQuantityInput.oninput = function () {
+    let quantity = parseInt(this.value, 10);
+    if (isNaN(quantity) || quantity < 1) {
+      quantity = 1;
+      this.value = 1;
+    }
+    const totalPrice = basePrice * quantity;
+    modalItemPrice.textContent = `${totalPrice.toLocaleString()} 포인트`;
+  };
+
+  // 이미지 설정
   const imageUrl = item.imageUrl
-    ? `/imageFile/${encodeURIComponent(itemInfo.imageUrl)}`
+    ? `/imageFile/${encodeURIComponent(item.imageUrl)}`
     : `/imageFile/placeholder.svg?height=40&width=40&text=${encodeURIComponent(item.name || '아이템')}`;
   modalItemImage.src = imageUrl;
   modalItemImage.alt = item.name || '아이템 이미지';
-
-  // 이미지 로드 오류 시 "이미지 없음" 텍스트로 대체
   modalItemImage.onerror = function () {
     const noImageDiv = document.createElement('div');
     noImageDiv.className = 'no-image-text';
@@ -485,11 +500,9 @@ function showItemModal(item) {
     this.parentNode.replaceChild(noImageDiv, this);
   };
 
-  // 설명이 없는 경우 기본 텍스트 사용
+  // 설명 설정
   modalItemDescription.textContent =
     item.description || '이 아이템에 대한 설명이 없습니다.';
-  // 가격 표시 (가격이 없는 경우 0으로 표시)
-  modalItemPrice.textContent = `${(item.price || 0).toLocaleString()} 포인트`;
 
   // 구매 버튼에 아이템 ID 설정
   confirmPurchase.dataset.itemId = item.id;
@@ -503,20 +516,15 @@ async function purchaseItem(itemId) {
   const itemModal = document.getElementById('itemModal');
   const confirmPurchase = document.getElementById('confirmPurchase');
 
-  // 구매 버튼 비활성화 및 로딩 상태 표시
   confirmPurchase.disabled = true;
   confirmPurchase.textContent = '구매 중...';
 
-  // 수량 입력 필드의 값을 읽음
   const quantityInput = document.getElementById('purchaseQuantity');
   const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
 
   try {
-    // api.userItem.purchase 호출 시 수량 값을 함께 전달 (API가 이 값을 처리해야 함)
     const purchaseData = await api.userItem.purchase({ itemId, quantity });
 
-    console.log(itemId);
-    // 구매한 아이템 정보 가져오기 (선택 사항)
     let itemName = '구매한 아이템';
     try {
       const itemInfo = await api.items.findOne(itemId);
@@ -532,19 +540,16 @@ async function purchaseItem(itemId) {
       remainingPoints: purchaseData.remainingPoints || 0,
     };
 
-    // 구매 완료 모달 표시
     showPurchaseCompleteModal(displayData);
   } catch (error) {
     console.error('아이템 구매 오류:', error);
 
-    if (
-      error.errorType === 'NotFoundException' &&
-      error.message.includes('잔액부족')
-    ) {
-      showPurchaseFailedModal(error.message);
-    } else {
-      alert(error.message || '아이템 구매 중 오류가 발생했습니다.');
+    let errorMessage = '아이템 구매 중 오류가 발생했습니다.';
+    if (error.response && error.response.data && error.response.data.message) {
+      errorMessage = error.response.data.message;
     }
+
+    showPurchaseFailedModal(errorMessage);
   } finally {
     confirmPurchase.disabled = false;
     confirmPurchase.textContent = '구매하기';
