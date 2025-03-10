@@ -404,12 +404,12 @@
           updatePhaseTimer(data.phase, data.timerTime);
         });
 
-        socket.on('voteSuccess', function (data) {
+        socket.on('VOTE:SUCCESS', function (data) {
           appendChatMessage(
             '[' + data.voterId + '] ' + data.message,
-            'voteSucess',
+            'VOTE:SUCCESS',
           );
-          socket.off('voteSuccess');
+          socket.off('VOTE:SUCCESS');
         });
 
         socket.on('system_message', function (data) {
@@ -499,7 +499,7 @@
         });
 
         // 추가된 부분: gameEnd 이벤트 핸들러 등록
-        socket.on('gameEnd', function (data) {
+        socket.on('GAME:END', function (data) {
           // 게임 종료 이벤트 수신 시, 게임 상태 영역에 결과 메시지 표시
           appendChatMessage('게임 종료: ' + data.message);
           document.getElementById('gameStatus').textContent = data.message;
@@ -840,11 +840,7 @@
             if (messageInputElem) {
               messageInputElem.value = '';
             }
-          } else if (
-            sender.role === 'citizen' ||
-            sender.role === 'doctor' ||
-            sender.role === 'police'
-          ) {
+          } else if (sender.role !== 'player') {
             console.log('시민 채팅');
             socket.emit('chatCitizen', {
               roomId: roomId,
