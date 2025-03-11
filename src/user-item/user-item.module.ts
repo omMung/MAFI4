@@ -10,9 +10,15 @@ import { ItemsRepository } from 'src/items/items.repository';
 import { ItemsModule } from 'src/items/items.module';
 import { UsersModule } from 'src/users/users.module';
 import { UserItem } from './entities/user-item.entity';
+import { GameResultsModule } from 'src/gameResults/gameResults.module';
 
 @Module({
-  imports: [UsersModule, ItemsModule, TypeOrmModule.forFeature([UserItem])],
+  imports: [
+    GameResultsModule,
+    UsersModule,
+    ItemsModule,
+    TypeOrmModule.forFeature([UserItem]),
+  ],
   controllers: [UserItemController],
   providers: [UserItemService, UserItemRepository],
   exports: [UserItemRepository],

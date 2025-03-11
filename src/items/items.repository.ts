@@ -38,4 +38,8 @@ export class ItemsRepository {
   async deleteItem(item: Item): Promise<void> {
     await this.itemRepository.remove(item);
   }
+
+  async findById(itemId: number): Promise<Item | null> {
+    return this.itemRepository.findOne({ where: { id: itemId } });
+  }
 }

@@ -49,4 +49,31 @@ export class UserItemRepository {
     await this.userItemRepository.remove(userItem);
     return userItem;
   }
+
+  async findUserItem(
+    userId: number,
+    itemName: string,
+  ): Promise<UserItem | null> {
+    return this.userItemRepository.findOne({
+      where: {
+        user: { id: userId }, //  userId 필터링
+        item: { name: itemName }, //  itemName 필터링
+      },
+      relations: ['item'], //  item 조인
+    });
+  }
+
+  async decreaseItemQuantity(userItemId: number) {
+    const userItem = await this.userItemRepository.findOne({
+      where: { id: userItemId },
+    });
+    if (!userItem) return;
+
+    if (userItem.quantity > 1) {
+      userItem.quantity -= 1;
+      await this.userItemRepository.save(userItem);
+    } else {
+      await this.userItemRepository.delete(userItemId);
+    }
+  }
 }

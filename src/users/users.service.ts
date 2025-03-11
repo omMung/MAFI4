@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/services/auth.service';
@@ -164,5 +168,16 @@ export class UsersService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async updateNickname(userId: number, newNickname: string) {
+    // 닉네임 중복 체크 (옵션)
+    const existingUser = await this.usersRepository.findByNickname(newNickname);
+    if (existingUser) {
+      throw new BadRequestException('이미 사용 중인 닉네임입니다.');
+    }
+
+    // 닉네임 변경 실행
+    return this.usersRepository.updateNickname(userId, newNickname);
   }
 }

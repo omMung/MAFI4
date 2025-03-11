@@ -63,4 +63,13 @@ export class UsersRepository {
   async deleteUser(userId: number) {
     await this.usersRepository.delete(userId);
   }
+
+  async findByNickname(nickName: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { nickName } });
+  }
+
+  async updateNickname(userId: number, newNickname: string): Promise<User> {
+    await this.usersRepository.update(userId, { nickName: newNickname });
+    return this.findOneUserId(userId);
+  }
 }

@@ -8,15 +8,20 @@ import {
   Delete,
   UseGuards,
   Request,
+  Req,
 } from '@nestjs/common';
 import { UserItemService } from './user-item.service';
 import { CreateUserItemDto } from './dto/create-user-item.dto';
 import { UpdateUserItemDto } from './dto/update-user-item.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('user-item')
 export class UserItemController {
-  constructor(private readonly userItemService: UserItemService) {}
+  constructor(
+    private readonly userItemService: UserItemService,
+    private readonly userService: UsersService,
+  ) {}
 
   // 아이템 구매
   @UseGuards(JwtAuthGuard)
@@ -58,10 +63,30 @@ export class UserItemController {
   }
 
   // 아이템 삭제
-  @UseGuards(JwtAuthGuard)
+
   @Delete(':itemId')
   async deleteUserItem(@Request() req, @Param('itemId') itemId: number) {
     const userId = req.user.id;
     return await this.userItemService.deleteUserItem(userId, itemId);
+  }
+
+  // 아이템 사용 - 닉네임 변경권
+  @UseGuards(JwtAuthGuard)
+  @Post('use/nickname')
+  async useNicknameChangeTicket(
+    @Req() req,
+    @Body('newNickname') newNickname: string,
+  ) {
+    return this.userItemService.useNicknameChangeTicket(
+      req.user.id,
+      newNickname,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('use/reset-record')
+  async useResetRecordTicket(@Req() req) {
+    const userId = req.user.id;
+    return this.userItemService.useResetRecordTicket(userId);
   }
 }
