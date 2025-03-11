@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GameResult } from './entities/gameResults.entity';
@@ -49,5 +49,14 @@ export class GameResultsService {
       order: { timestamp: 'DESC' },
       take: 10,
     });
+  }
+
+  // 전적 삭제 아이템 사용
+  async deleteUserRecords(userId: number): Promise<void> {
+    const result = await this.gameResultRepository.delete({ userId });
+
+    if (result.affected === 0) {
+      throw new NotFoundException('삭제할 전적이 없습니다.');
+    }
   }
 }

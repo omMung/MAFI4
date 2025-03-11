@@ -63,7 +63,7 @@ export class UserItemController {
   }
 
   // 아이템 삭제
-  @UseGuards(JwtAuthGuard)
+
   @Delete(':itemId')
   async deleteUserItem(@Request() req, @Param('itemId') itemId: number) {
     const userId = req.user.id;
@@ -72,16 +72,21 @@ export class UserItemController {
 
   // 아이템 사용 - 닉네임 변경권
   @UseGuards(JwtAuthGuard)
-  @Patch('nickname')
+  @Post('use/nickname')
   async useNicknameChangeTicket(
     @Req() req,
     @Body('newNickname') newNickname: string,
   ) {
-    console.log('@@@@@@@@@@@@@@@@@@@@');
-
     return this.userItemService.useNicknameChangeTicket(
       req.user.id,
       newNickname,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('use/reset-record')
+  async useResetRecordTicket(@Req() req) {
+    const userId = req.user.id;
+    return this.userItemService.useResetRecordTicket(userId);
   }
 }
