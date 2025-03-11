@@ -84,6 +84,7 @@
             '이메일과 비밀번호를 입력하세요.';
           return;
         }
+        console.log('url= ', CONFIG.API_BASE_URL);
 
         fetch(`${CONFIG.API_BASE_URL}/api/auth/login`, {
           method: 'POST',

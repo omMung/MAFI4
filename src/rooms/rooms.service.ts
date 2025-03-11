@@ -227,9 +227,9 @@ export class RoomsService {
     // 방 id 기준 내림차 순
     rooms.sort((a, b) => b.roomId - a.roomId);
 
-    const randomNumber = Math.floor(Math.random() * (rooms.length - 1));
+    let randomNumber = Math.floor(Math.random() * (rooms.length - 1));
 
-    await this.roomsRepository.updateRooms(rooms[randomNumber].roomId);
+    // await this.roomsRepository.updateRooms(rooms[randomNumber].roomId);
 
     return rooms[randomNumber];
   }

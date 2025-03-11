@@ -182,19 +182,68 @@
     </div>
     <script src="./js/config.js"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('DOMContentLoaded', async () => {
         checkTokenExpiration();
         fetchRooms();
+        await connectToWebSocket();
       });
 
-      function checkTokenExpiration() {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-          alert('로그인이 필요합니다.');
-          window.location.href = 'index.html';
-          return;
+      async function getGameServer() {
+        try {
+          const response = await fetch(
+            `${CONFIG.API_BASE_URL}/api/rooms/${roomId}`,
+            {
+              method: 'GET',
+              headers: {
+                Authorization: accessToken,
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+            },
+          );
+
+          const data = await response.json();
+          currentUserId = data.userId;
+          let gameServer = data.gameServer;
+
+          console.log('🎮 연결할 게임 서버:', gameServer);
+          return gameServer;
+        } catch (error) {
+          console.error('🚨 방 입장 중 오류:', error);
         }
       }
+
+      // WebSocket 연결 함수 (on.emit 없이 단순 유지)
+      async function connectToWebSocket() {
+        const gameServer = await getGameServer();
+
+        if (!gameServer) {
+          console.error('❌ 게임 서버를 찾을 수 없습니다.');
+          return;
+        }
+
+        console.log(`✅ WebSocket 연결 시도: http://${gameServer}:3001/room`);
+        socket = io(`http://${gameServer}:3001/room`, {
+          auth: { roomId: roomId, userId: currentUserId },
+        });
+
+        // 연결 실패 시 자동으로 새로운 서버 요청 후 재연결
+        socket.on('connect_error', async () => {
+          console.warn('⚠️ WebSocket 연결 실패, 새로운 서버 요청 중...');
+          await connectToWebSocket(); // 자동 재연결
+        });
+
+        socket.on('disconnect', async () => {
+          console.warn('⚠️ WebSocket 연결 끊김! 새로운 서버로 재연결 중...');
+          await connectToWebSocket(); // 자동 재연결
+        });
+      }
+
+      socket.on('ROOM:UPDATED', function () {
+        console.log('GET:ROOM-LIST 이벤트 발생');
+        const rooms = getRoomList();
+        updateRoomList(rooms);
+      });
 
       function fetchRooms() {
         let token = localStorage.getItem('accessToken');
@@ -237,10 +286,10 @@
           const roomElement = document.createElement('div');
           roomElement.className = 'room-item';
           roomElement.innerHTML = `
-        <span>${room.roomName}</span>
-        <div class="room-info">${room.status} | 인원 ${room.playerCount}/8</div>
-        <button onclick="joinRoom(${room.roomId})">입장</button>
-      `;
+            <span>${room.roomName}</span>
+            <div class="room-info">${room.status} | 인원 ${room.playerCount}/8</div>
+            <button onclick="joinRoom(${room.roomId})">입장</button>
+          `;
           roomList.appendChild(roomElement);
         });
       }
@@ -409,6 +458,14 @@
             alert(error.message);
             console.error('방 생성 오류:', error);
           });
+      }
+
+      async function getRoomList() {
+        try {
+          const rooms = await this.roomService.getRoomList();
+        } catch (error) {
+          client.emit('error', { message: '밤 결과 처리 중 오류 발생.' });
+        }
       }
     </script>
   </body>
