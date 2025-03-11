@@ -440,6 +440,15 @@
         sender.role = 'player';
         sender.isAlive = true;
 
+        socket.emit('UPDATE:MY_INFO', {
+          roomId: roomId,
+          userId: currentUserId,
+        });
+        socket.on('MY:INFO', function (data) {
+          sender = data.sender;
+          console.log(sender);
+        });
+
         // UI 표시
         document.getElementById('mainContainer').style.display = 'flex';
         //document.getElementById('gameSection').style.display = 'block';
@@ -547,6 +556,7 @@
             roomId: roomId,
             userId: currentUserId,
           });
+          socket.off('MY:INFO');
           socket.on('MY:INFO', function (data) {
             sender = data.sender;
             console.log(sender);
@@ -584,11 +594,11 @@
           if (chatContainer) chatContainer.style.backgroundColor = '#e0e0e0';
           if (occupantContainer)
             occupantContainer.style.backgroundColor = '#e0e0e0';
-          //sender.isAlive 지정 필요
           socket.emit('UPDATE:MY_INFO', {
             roomId: roomId,
             userId: currentUserId,
           });
+          socket.off('MY:INFO');
           socket.on('MY:INFO', function (data) {
             sender = data.sender;
             console.log(sender);
