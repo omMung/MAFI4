@@ -75,7 +75,7 @@ const typeOrmModuleOptions = {
       }),
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
+      rootPath: join(__dirname, '..', 'src', 'public'),
       serveRoot: '/',
     }),
     // ThrottlerModule.forRoot([
