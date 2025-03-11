@@ -503,6 +503,7 @@
           // 게임 종료 이벤트 수신 시, 게임 상태 영역에 결과 메시지 표시
           appendChatMessage('게임 종료: ' + data.message);
           document.getElementById('gameStatus').textContent = data.message;
+          resetKilledUserButtons();
           console.log('게임 종료 데이터:', data);
         });
 
@@ -1094,6 +1095,20 @@
               }
             },
           );
+        }
+        //게임 종료시 버튼 초기화
+        function resetKilledUserButtons() {
+          var killedUserButtons =
+            document.querySelectorAll('.occupant-btn.dead');
+          killedUserButtons.forEach(function (button) {
+            button.style.backgroundColor = ''; // 배경색 초기화
+            button.style.color = ''; // 글자색 초기화
+            button.classList.remove('btn-secondary', 'dead'); // 클래스 제거
+            button.textContent = button.textContent.replace('💀', ''); // 💀 제거
+            button.style.opacity = ''; // 투명도 초기화
+            button.disabled = false; // 활성화
+            button.classList.add('btn-outline-primary'); //원래 클래스 추가
+          });
         }
       };
     </script>
