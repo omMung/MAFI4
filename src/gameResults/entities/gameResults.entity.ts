@@ -5,6 +5,13 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
+export enum Role {
+  MAFIA = 'mafia',
+  POLICE = 'police',
+  DOCTOR = 'doctor',
+  CITIZEN = 'citizen',
+}
+
 @Entity()
 export class GameResult {
   @PrimaryGeneratedColumn()
@@ -16,8 +23,11 @@ export class GameResult {
   @Column()
   userId: number; // 개별 플레이어 ID
 
-  @Column()
-  role: string; // 역할 (ex: 시민, 마피아, 의사 등)
+  @Column({
+    type: 'enum',
+    enum: Role,
+  })
+  role: Role;
 
   @Column()
   alive: string; // 'alive' 또는 'dead' (boolean 대신 문자열로 변경)

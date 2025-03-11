@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { Post } from '../../posts/entities/post.entity';
 import { Comment } from '../../comments/entities/comment.entity';
-import { Game } from '../../games/entities/game.entity';
 //   import { Ranking } from '../../ranking/ranking.entity';
 import { UserAchievements } from '../../user-achievements/entities/users-achievement.entity';
 import { Like } from 'src/likes/entities/like.entity';
@@ -34,6 +33,8 @@ export class User {
   file?: string;
   @Column({ type: 'int', default: 0 })
   money: number;
+  @Column({ type: 'int', default: 1000 })
+  score: number;
   // 관리자인지 여부 (기본 false)
   @Column({ type: 'boolean', default: false })
   isAdmin: boolean;
@@ -42,19 +43,19 @@ export class User {
   gameBanDate?: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  CommunityBanDate?: Date;
+  communityBanDate?: Date;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
   // 관계 설정
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
-  @OneToMany(() => Game, (game) => game.user)
-  games: Game[];
+
   // @OneToMany(() => Ranking, (ranking) => ranking.user)
   // rankings: Ranking[];
   @OneToMany(

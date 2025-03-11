@@ -227,13 +227,21 @@
       <div class="chat-container" id="chatRoom">
         <h2 id="roomTitle"></h2>
         <div id="chatMessages"></div>
-        <input
-          type="text"
-          id="messageInput"
-          class="form-control"
-          placeholder="메시지를 입력하세요"
-        />
-        <button id="sendBtn" class="btn btn-secondary mt-2">전송</button>
+        <!-- 메시지 입력 및 전송 버튼을 한 줄로 배치 -->
+        <div class="input-group mt-2">
+          <input
+            type="text"
+            id="messageInput"
+            class="form-control"
+            placeholder="메시지를 입력하세요"
+          />
+          <div class="input-group-append">
+            <button id="sendBtn" class="btn btn-secondary">전송</button>
+          </div>
+        </div>
+        <button id="startGameBtn" class="btn btn-primary mt-2">
+          게임 시작
+        </button>
       </div>
       <!-- 접속 인원 영역 -->
       <div class="occupant-container" id="roomOccupants">
@@ -435,7 +443,7 @@
         // UI 표시
         document.getElementById('mainContainer').style.display = 'flex';
         //document.getElementById('gameSection').style.display = 'block';
-        document.getElementById('firstVoteContainer').style.display = 'block';
+        document.getElementById('firstVoteContainer').style.display = 'none';
 
         socket.emit('joinRoom', { roomId: roomId, userId: currentUserId });
         socket.emit('requestRoomInfo', { roomId: roomId });
@@ -475,12 +483,12 @@
           updatePhaseTimer(data.phase, data.timerTime);
         });
 
-        socket.on('voteSuccess', function (data) {
+        socket.on('VOTE:SUCCESS', function (data) {
           appendChatMessage(
             '[' + data.voterId + '] ' + data.message,
-            'voteSucess',
+            'VOTE:SUCCESS',
           );
-          socket.off('voteSuccess');
+          socket.off('VOTE:SUCCESS');
         });
 
         socket.on('system_message', function (data) {
@@ -533,27 +541,13 @@
         });
 
         // 서버로부터 1차 투표 버튼 보이라는 이벤트 수신 시 처리
-        socket.on('VOTE:FIRST:ENABLE', function (data) {
-          isVotingPhase = true;
-          document.getElementById('firstVoteContainer').style.display = 'block';
-          voteBtn.disabled = false;
-          executeBtn.disabled = false;
-          survivalBtn.disabled = false;
-          voteBtn.classList.remove('disabled=btn');
-          survivalBtn.classList.remove('disabled-btn');
-          executeBtn.classList.remove('disabled-btn');
-          mafiaBtn.disabled = false;
-          policeBtn.disabled = false;
-          doctorBtn.disabled = false;
-          mafiaBtn.classList.remove('disabled-btn');
-          policeBtn.classList.remove('disabled-btn');
-          doctorBtn.classList.remove('disabled-btn');
-          console.log(mafiaBtn, policeBtn, doctorBtn);
+        socket.on('VOTE:FIRST:ENABLE', async function (data) {
+          await startDayBtn();
           socket.emit('UPDATE:MY_INFO', {
             roomId: roomId,
             userId: currentUserId,
           });
-          socket.on('myInfo', function (data) {
+          socket.on('MY:INFO', function (data) {
             sender = data.sender;
             console.log(sender);
           });
@@ -570,10 +564,11 @@
         });
 
         // 추가된 부분: gameEnd 이벤트 핸들러 등록
-        socket.on('gameEnd', function (data) {
+        socket.on('GAME:END', function (data) {
           // 게임 종료 이벤트 수신 시, 게임 상태 영역에 결과 메시지 표시
           appendChatMessage('게임 종료: ' + data.message);
           document.getElementById('gameStatus').textContent = data.message;
+          console.log(roomInfo);
           console.log('게임 종료 데이터:', data);
         });
 
@@ -594,7 +589,7 @@
             roomId: roomId,
             userId: currentUserId,
           });
-          socket.on('myInfo', function (data) {
+          socket.on('MY:INFO', function (data) {
             sender = data.sender;
             console.log(sender);
           });
@@ -825,11 +820,6 @@
               alert('현재 투표가 진행되지 않는 시기입니다.');
               return;
             }
-
-            if (!selectedTargetId) {
-              alert('투표할 대상을 선택하세요.');
-              return;
-            }
             var executeBtn = document.getElementById('executeBtn');
             var survivalBtn = document.getElementById('survivalBtn');
             executeBtn.disabled = true;
@@ -872,6 +862,22 @@
           chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
         }
 
+        //엔터키 입력시 전송버튼 클릭
+        document
+          .getElementById('messageInput')
+          .addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+              event.preventDefault(); // 기본 동작(새 줄 입력) 방지
+              document.getElementById('sendBtn').click(); // 전송 버튼 클릭
+            }
+          });
+        //시작 버튼 이벤트
+        document
+          .getElementById('startGameBtn')
+          .addEventListener('click', function () {
+            socket.emit('startGame', { roomId: roomId, userId: currentUserId });
+          });
+
         // 채팅 메시지 전송 함수
         function sendChatMessage() {
           var messageInputElem = document.getElementById('messageInput');
@@ -900,11 +906,7 @@
             if (messageInputElem) {
               messageInputElem.value = '';
             }
-          } else if (
-            sender.role === 'citizen' ||
-            sender.role === 'doctor' ||
-            sender.role === 'police'
-          ) {
+          } else if (sender.role !== 'player') {
             console.log('시민 채팅');
             socket.emit('chatCitizen', {
               roomId: roomId,
@@ -989,6 +991,24 @@
             myBtn.disabled = true;
             myOccupantDiv.appendChild(myBtn);
           }
+        }
+
+        function startDayBtn() {
+          isVotingPhase = true;
+          document.getElementById('firstVoteContainer').style.display = 'block';
+          voteBtn.disabled = false;
+          executeBtn.disabled = false;
+          survivalBtn.disabled = false;
+          voteBtn.classList.remove('disabled=btn');
+          survivalBtn.classList.remove('disabled-btn');
+          executeBtn.classList.remove('disabled-btn');
+          mafiaBtn.disabled = false;
+          policeBtn.disabled = false;
+          doctorBtn.disabled = false;
+          mafiaBtn.classList.remove('disabled-btn');
+          policeBtn.classList.remove('disabled-btn');
+          doctorBtn.classList.remove('disabled-btn');
+          console.log(mafiaBtn, policeBtn, doctorBtn);
         }
 
         // 선택 해제 함수
@@ -1158,6 +1178,20 @@
               }
             },
           );
+        }
+        //게임 종료시 버튼 초기화
+        function resetKilledUserButtons() {
+          var killedUserButtons =
+            document.querySelectorAll('.occupant-btn.dead');
+          killedUserButtons.forEach(function (button) {
+            button.style.backgroundColor = ''; // 배경색 초기화
+            button.style.color = ''; // 글자색 초기화
+            button.classList.remove('btn-secondary', 'dead'); // 클래스 제거
+            button.textContent = button.textContent.replace('💀', ''); // 💀 제거
+            button.style.opacity = ''; // 투명도 초기화
+            button.disabled = false; // 활성화
+            button.classList.add('btn-outline-primary'); //원래 클래스 추가
+          });
         }
       };
     </script>

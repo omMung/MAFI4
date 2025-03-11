@@ -137,7 +137,12 @@ const api = {
   deleteComment: (id) => fetchAPI(`/comments/${id}`, { method: 'DELETE' }),
   toggleLike: (postId) => fetchAPI(`/likes/${postId}`, { method: 'POST' }),
   getLikeCount: (postId) => fetchAPI(`/likes/${postId}`, { method: 'GET' }),
-  getUserRecordByUserId: () => fetchAPI(`/statistics/user`, { method: 'Get' }),
+  getUserRecordByUserId: () =>
+    fetchAPI(
+      `/statistics/user`,
+      { method: 'Get' },
+      console.log(`api.js : getUserRecordByUserId 호출`),
+    ),
   getUserRecordByJob: () => fetchAPI(`/statistics/job`, { method: 'Get' }),
 
   // 관리자 전용 API들
@@ -212,5 +217,80 @@ const api = {
         method: 'POST',
         body: JSON.stringify({ action, message }),
       }),
+  },
+
+  refreshToken: () => fetchAPI('/auth/refresh', { method: 'POST' }),
+
+  // 룸 전용 API들
+  rooms: {
+    // 방 생성: POST /rooms (JWT 필요)
+    createRoom: (data) =>
+      fetchAPI('/rooms', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+
+    // 모든 방 조회: GET /rooms
+    getRooms: () =>
+      fetchAPI(
+        '/rooms',
+        {
+          method: 'GET',
+        },
+        console.log(`getRooms API 호출`),
+      ),
+
+    // 방 검색: GET /rooms/search?roomName=...
+    searchRooms: (roomName) =>
+      fetchAPI(`/rooms/search?roomName=${encodeURIComponent(roomName)}`, {
+        method: 'GET',
+      }),
+
+    // 방 단일 조회 (방 입장 시 정보 조회): GET /rooms/:roomId
+    getRoom: (roomId) =>
+      fetchAPI(`/rooms/${roomId}`, {
+        method: 'GET',
+      }),
+  },
+  userItem: {
+    // 아이템 구매 (사용자 아이템 생성)
+    purchase: (data) =>
+      fetchAPI(
+        '/user-item',
+        {
+          method: 'POST',
+          body: JSON.stringify(data),
+        },
+        console.log(`api.js - purchase 호출`),
+      ),
+    // 내 아이템 조회
+    findMyItems: () =>
+      fetchAPI(
+        '/user-item',
+        {
+          method: 'GET',
+        },
+        console.log(`api.js - findMyItems 호출`),
+      ),
+    // 아이템 개수 업데이트 (사용 또는 추가 구매)
+    updateQuantity: (itemId, quantity) =>
+      fetchAPI(`/user-item/${itemId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ quantity }),
+      }),
+    // 아이템 삭제
+    delete: (itemId) =>
+      fetchAPI(`/user-item/${itemId}`, {
+        method: 'DELETE',
+      }),
+  },
+  items: {
+    findAll: () => fetchAPI('/items', { method: 'GET' }),
+    findOne: (id) => fetchAPI(`/items/${id}`, { method: 'GET' }),
+    create: (data) =>
+      fetchAPI('/items', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data) =>
+      fetchAPI(`/items/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    delete: (id) => fetchAPI(`/items/${id}`, { method: 'DELETE' }),
   },
 };

@@ -28,10 +28,35 @@ export class AchieveRepository {
 
   /** 특정 조건의 업적이 존재하는지 확인 */
   async existsByCondition(condition: string): Promise<boolean> {
-    const achievement = await this.achieveRepository.findOne({
-      where: { condition },
+    return !!(await this.findAchievementByCondition(condition));
+  }
+
+  /** 특정 조건과 카운트의 업적이 존재하는지 확인 */
+  async existsByConditionAndCount(
+    condition: string,
+    conditionCount: number,
+  ): Promise<boolean> {
+    return !!(await this.findAchievementByConditionAndCount(
+      condition,
+      conditionCount,
+    ));
+  }
+
+  /** 특정 조건에 맞는 업적 조회 */
+  async findAchievementByCondition(
+    condition: string,
+  ): Promise<Achieve | undefined> {
+    return await this.achieveRepository.findOne({ where: { condition } });
+  }
+
+  /** 특정 조건과 카운트가 일치하는 업적 조회 */
+  async findAchievementByConditionAndCount(
+    condition: string,
+    conditionCount: number,
+  ): Promise<Achieve | undefined> {
+    return await this.achieveRepository.findOne({
+      where: { condition, conditionCount },
     });
-    return !!achievement; // 업적이 존재하면 true, 없으면 false 반환
   }
 
   /** 업적 업데이트 */
@@ -57,32 +82,19 @@ export class AchieveRepository {
     await this.achieveRepository.delete(achieveId);
   }
 
-  /**
-   * 게임 업적을 저장할 때 특정 업적을 찾는 메서드
-   * (AchievementsService.processGameAchievements에서 사용됨)
-   */
-  async findAchievementByCondition(
-    condition: string,
-  ): Promise<Achieve | undefined> {
-    return await this.achieveRepository.findOne({ where: { condition } });
-  }
-
-  /**
-   * JSON 파일에서 업적을 불러올 때 중복을 방지하고 생성하는 메서드
-   * (AchievementsService.loadAchievementsFromJson에서 사용됨)
-   */
+  /** JSON 파일에서 업적을 불러올 때 중복을 방지하고 생성하는 메서드 */
   async createAchievementsBulk(achievements: Achieve[]): Promise<void> {
-    const existingConditions = await this.achieveRepository
-      .createQueryBuilder('achieve')
-      .select('achieve.condition')
-      .getMany();
+    const existingAchievements = await this.achieveRepository.find({
+      select: ['condition', 'conditionCount'],
+    });
 
-    const existingConditionSet = new Set(
-      existingConditions.map((a) => a.condition),
+    const existingSet = new Set(
+      existingAchievements.map((a) => `${a.condition}-${a.conditionCount}`),
     );
 
     const newAchievements = achievements.filter(
-      (achieve) => !existingConditionSet.has(achieve.condition),
+      (achieve) =>
+        !existingSet.has(`${achieve.condition}-${achieve.conditionCount}`),
     );
 
     if (newAchievements.length > 0) {

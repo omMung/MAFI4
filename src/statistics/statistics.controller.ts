@@ -9,11 +9,11 @@ export class StatisticsController {
   @UseGuards(JwtAuthGuard)
   @Get('user')
   async getUserRecordByUserId(@Request() req: any) {
-    const user = req.user;
+    const userId = req.user.id;
     try {
-      const userRecord = await this.statisticsService.getUserRecordByUserId(
-        +user.id,
-      );
+      const userRecord =
+        await this.statisticsService.getUserRecordByUserId(userId);
+      console.log(userRecord);
       return { data: userRecord };
     } catch (error) {
       // 에러 처리

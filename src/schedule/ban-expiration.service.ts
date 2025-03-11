@@ -30,9 +30,9 @@ export class BanExpirationService {
     const communityResult = await this.userRepository
       .createQueryBuilder()
       .update(User)
-      .set({ CommunityBanDate: null })
-      .where('CommunityBanDate IS NOT NULL')
-      .andWhere('CommunityBanDate <= :now', { now })
+      .set({ communityBanDate: null })
+      .where('communityBanDate IS NOT NULL')
+      .andWhere('communityBanDate <= :now', { now })
       .execute();
 
     console.log(

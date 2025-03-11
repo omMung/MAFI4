@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFI4 - 게임 가이드</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="guide.css">
+    <script src="/scripts/api.js" defer></script>
+    <script src="/components/header/header.js" defer></script>
+    <script src="/scripts/common.js" defer></script>
+    <script src="guide.js"></script>
+</head>
+
+<body>
+    <div id="header-container"></div>
+
+    <main>
+        <div class="guide-container">
+            <div class="guide-header">
+                <h1>마피아 게임 가이드</h1>
+                <p class="guide-description">MAFI4의 게임 규칙과 직업별 역할을 알아보세요!</p>
+            </div>
+
+            <div class="guide-nav">
+                <button class="guide-tab active" data-tab="game-rules">게임 규칙</button>
+                <button class="guide-tab" data-tab="roles">직업 역할</button>
+                <button class="guide-tab" data-tab="gameplay">게임 진행</button>
+                <button class="guide-tab" data-tab="tips">전략 팁</button>
+            </div>
+
+            <div class="guide-content">
+                <!-- 게임 규칙 탭 -->
+                <div class="guide-tab-content active" id="game-rules">
+                    <div class="rule-card">
+                        <div class="rule-icon">
+                            <img src="../imageFile/goal.png" alt="게임 목표">
+                        </div>
+                        <div class="rule-content">
+                            <h3>게임 목표</h3>
+                            <p><strong>마피아</strong>: 시민 수가 마피아 수 이하가 되도록 시민을 제거</p>
+                            <p><strong>시민팀(시민, 경찰, 의사)</strong>: 모든 마피아를 찾아내어 제거</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-card">
+                        <div class="rule-icon">
+                            <img src="../imageFile/game.png" alt="게임 인원">
+                        </div>
+                        <div class="rule-content">
+                            <h3>게임 인원 및 구성</h3>
+                            <p>8인 모드</p>
+                            <ul>
+                                <li>마피아 2명</li>
+                                <li>시민 4명</li>
+                                <li>경찰 1명</li>
+                                <li>의사 1명</li>
+                            </ul>
+                            <p>게임 시작 시 역할은 무작위로 분배됩니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-card">
+                        <div class="rule-icon">
+                            <img src="../imageFile/whistle.png" alt="게임 시작">
+                        </div>
+                        <div class="rule-content">
+                            <h3>게임 시작</h3>
+                            <p>방에 8명의 플레이어가 모두 입장하면 10초 후 자동으로 게임이 시작됩니다.</p>
+                            <p>각 플레이어는 게임 시작 시 자신의 역할을 확인할 수 있습니다.</p>
+                            <p>마피아 플레이어들은 서로의 정체를 알 수 있습니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-card">
+                        <div class="rule-icon">
+                            <img src="../imageFile/condition.png" alt="게임 종료">
+                        </div>
+                        <div class="rule-content">
+                            <h3>게임 종료 조건</h3>
+                            <p><strong>마피아 승리</strong>: 생존한 시민팀 인원이 마피아 인원 이하가 되면 마피아 승리</p>
+                            <p><strong>시민팀 승리</strong>: 모든 마피아가 제거되면 시민팀 승리</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 직업 역할 탭 -->
+                <div class="guide-tab-content" id="roles">
+                    <div class="roles-grid">
+                        <div class="role-card mafia">
+                            <div class="role-header">
+                                <h3>마피아</h3>
+                                <span class="role-badge">악역</span>
+                            </div>
+                            <div class="role-image">
+                                <img src="../imageFile/mafia.png" alt="마피아">
+                            </div>
+                            <div class="role-description">
+                                <p>마피아는 밤마다 한 명의 시민을 제거할 수 있습니다. 다른 마피아와 협력하여 시민들을 속이세요.</p>
+                                <h4>능력</h4>
+                                <ul>
+                                    <li>밤마다 한 명의 플레이어를 지목하여 제거</li>
+                                    <li>다른 마피아의 정체를 알 수 있음</li>
+                                    <li>밤에 마피아끼리 비밀 채팅 가능</li>
+                                </ul>
+                                <h4>승리 조건</h4>
+                                <p>생존한 시민팀 인원이 마피아 인원 이하가 되면 승리</p>
+                            </div>
+                        </div>
+
+                        <div class="role-card citizen">
+                            <div class="role-header">
+                                <h3>시민</h3>
+                                <span class="role-badge">선역</span>
+                            </div>
+                            <div class="role-image">
+                                <img src="../imageFile/citizen.png" alt="시민">
+                            </div>
+                            <div class="role-description">
+                                <p>시민은 특별한 능력은 없지만, 토론과 투표를 통해 마피아를 찾아내는 중요한 역할을 합니다.</p>
+                                <h4>능력</h4>
+                                <ul>
+                                    <li>낮 시간에 토론 참여</li>
+                                    <li>투표를 통해 의심되는 플레이어 지목</li>
+                                </ul>
+                                <h4>승리 조건</h4>
+                                <p>모든 마피아가 제거되면 승리</p>
+                            </div>
+                        </div>
+
+                        <div class="role-card police">
+                            <div class="role-header">
+                                <h3>경찰</h3>
+                                <span class="role-badge">선역</span>
+                            </div>
+                            <div class="role-image">
+                                <img src="../imageFile/police.png" alt="경찰">
+                            </div>
+                            <div class="role-description">
+                                <p>경찰은 밤마다 한 명의 플레이어가 마피아인지 조사할 수 있습니다.</p>
+                                <h4>능력</h4>
+                                <ul>
+                                    <li>밤마다 한 명의 플레이어 역할 조사</li>
+                                    <li>조사 결과는 본인에게만 공개됨</li>
+                                </ul>
+                                <h4>승리 조건</h4>
+                                <p>모든 마피아가 제거되면 승리 (시민팀)</p>
+                            </div>
+                        </div>
+
+                        <div class="role-card doctor">
+                            <div class="role-header">
+                                <h3>의사</h3>
+                                <span class="role-badge">선역</span>
+                            </div>
+                            <div class="role-image">
+                                <img src="../imageFile/doctor.png" alt="의사">
+                            </div>
+                            <div class="role-description">
+                                <p>의사는 밤마다 한 명의 플레이어를 보호하여 마피아의 공격을 막을 수 있습니다.</p>
+                                <h4>능력</h4>
+                                <ul>
+                                    <li>밤마다 한 명의 플레이어 지정</li>
+                                    <li>지정 플레이어가 마피아의 타겟이면 살해 취소</li>
+                                </ul>
+                                <h4>승리 조건</h4>
+                                <p>모든 마피아가 제거되면 승리 (시민팀)</p>
+                            </div>
+                        </div>
+
+                        <!-- 추가 직업을 위한 공간 (현재는 비활성화) -->
+                        <div class="role-card disabled">
+                            <div class="role-header">
+                                <h3>추가 예정</h3>
+                                <span class="role-badge">Coming Soon</span>
+                            </div>
+                            <div class="role-image">
+                                <img src="../imageFile/commingSoon.png" alt="추가 예정">
+                            </div>
+                            <div class="role-description">
+                                <p>추가 예정!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 게임 진행 탭 -->
+                <div class="guide-tab-content" id="gameplay">
+                    <div class="gameplay-timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <span>1</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h3>게임 시작</h3>
+                                <p>8명의 플레이어가 모두 입장하면 10초 후 게임이 시작됩니다.</p>
+                                <p>각 플레이어는 무작위로 역할을 부여받습니다.</p>
+                                <p>마피아 플레이어들은 서로의 정체를 알 수 있습니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <span>2</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h3>낮 단계 (DAY)</h3>
+                                <p>모든 생존 플레이어는 채팅을 통해 토론할 수 있습니다.</p>
+                                <p>마피아를 찾기 위한 단서와 의심을 공유하세요.</p>
+                                <p>첫 번째 낮(DAY 1)에는 전날 밤의 사건이 없습니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <span>3</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h3>1차 투표</h3>
+                                <p>토론 후, 모든 생존 플레이어는 마피아로 의심되는 한 명을 투표합니다.</p>
+                                <p>가장 많은 표를 받은 플레이어가 지목됩니다.</p>
+                                <p>동점일 경우, 투표는 무효가 되고 밤 단계로 넘어갑니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <span>4</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h3>2차 투표 (생존 여부)</h3>
+                                <p>1차 투표에서 지목된 플레이어의 생존 여부를 결정합니다.</p>
+                                <p>모든 생존 플레이어는 '사살' 또는 '생존'에 투표합니다.</p>
+                                <p>'사살' 표가 더 많으면 해당 플레이어는 게임에서 제외됩니다.</p>
+                                <p>'생존' 표가 더 많거나 동점이면 해당 플레이어는 생존합니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <span>5</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h3>밤 단계 (NIGHT)</h3>
+                                <p>모든 플레이어는 자신의 역할에 따른 특수 능력을 사용할 수 있습니다:</p>
+                                <ul>
+                                    <li><strong>마피아</strong>: 제거할 플레이어 한 명을 선택합니다.</li>
+                                    <li><strong>경찰</strong>: 조사할 플레이어 한 명을 선택하여 역할을 확인합니다.</li>
+                                    <li><strong>의사</strong>: 보호할 플레이어 한 명을 선택합니다.</li>
+                                    <li><strong>시민</strong>: 특별한 행동 없이 결과를 기다립니다.</li>
+                                </ul>
+                                <p>밤 동안 마피아끼리는 비밀 채팅이 가능합니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <span>6</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h3>다음 날 (DAY)</h3>
+                                <p>밤 동안의 결과가 발표됩니다:</p>
+                                <ul>
+                                    <li>마피아가 지목한 플레이어가 의사에게 보호받지 않았다면 사망합니다.</li>
+                                    <li>경찰은 조사한 플레이어의 역할을 확인합니다.</li>
+                                </ul>
+                                <p>사망한 플레이어는 더 이상 투표나 채팅에 참여할 수 없습니다.</p>
+                                <p>다시 토론을 시작하고 1~5단계를 반복합니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <span>7</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h3>게임 종료</h3>
+                                <p>다음 조건 중 하나가 충족되면 게임이 종료됩니다:</p>
+                                <ul>
+                                    <li><strong>마피아 승리</strong>: 생존한 시민팀 인원이 마피아 인원 이하가 되면 마피아 승리</li>
+                                    <li><strong>시민팀 승리</strong>: 모든 마피아가 제거되면 시민팀 승리</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 전략 팁 탭 -->
+                <div class="guide-tab-content" id="tips">
+                    <div class="tips-container">
+                        <div class="tip-card">
+                            <h3>마피아 플레이 팁</h3>
+                            <ul>
+                                <li>시민처럼 행동하세요. 너무 조용하거나 너무 적극적이면 의심받을 수 있습니다.</li>
+                                <li>다른 마피아를 보호하되, 너무 명백하게 하지 마세요.</li>
+                                <li>의사나 경찰을 가장하는 것도 좋은 전략입니다.</li>
+                                <li>밤에 제거할 대상은 가장 위험한 플레이어(경찰이나 의사로 의심되는)를 우선시하세요.</li>
+                                <li>다른 마피아와 협력하여 투표 전략을 세우세요.</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-card">
+                            <h3>시민 플레이 팁</h3>
+                            <ul>
+                                <li>모든 플레이어의 발언과 행동을 주의 깊게 관찰하세요.</li>
+                                <li>투표 패턴을 분석하여 마피아를 찾는 단서로 활용하세요.</li>
+                                <li>의심스러운 행동을 하는 플레이어에 대해 질문하세요.</li>
+                                <li>너무 빨리 결론을 내리지 마세요. 충분한 증거가 필요합니다.</li>
+                                <li>사망한 플레이어의 역할을 기억하고 남은 역할을 추론하세요.</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-card">
+                            <h3>경찰 플레이 팁</h3>
+                            <ul>
+                                <li>자신이 경찰임을 너무 일찍 밝히면 마피아의 타겟이 될 수 있습니다.</li>
+                                <li>조사 결과를 어떻게 공유할지 전략적으로 생각하세요.</li>
+                                <li>마피아를 발견했다면, 적절한 타이밍에 공개하세요.</li>
+                                <li>의심스러운 플레이어부터 조사하는 것이 효율적입니다.</li>
+                                <li>조사 결과를 메모해두고 패턴을 분석하세요.</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-card">
+                            <h3>의사 플레이 팁</h3>
+                            <ul>
+                                <li>자신이 의사임을 너무 일찍 밝히면 마피아의 타겟이 될 수 있습니다.</li>
+                                <li>경찰로 의심되는 플레이어를 우선적으로 보호하는 것이 좋습니다.</li>
+                                <li>자신을 보호하는 것도 가능하지만, 다른 중요한 역할을 보호하는 것이 더 가치 있을 수 있습니다.</li>
+                                <li>보호 패턴이 예측되지 않도록 하세요.</li>
+                                <li>성공적으로 누군가를 보호했다면, 그 정보를 어떻게 활용할지 전략적으로 생각하세요.</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-card">
+                            <h3>일반 팁</h3>
+                            <ul>
+                                <li>게임의 흐름을 기록하고 분석하세요.</li>
+                                <li>다른 플레이어의 주장과 모순점을 찾으세요.</li>
+                                <li>투표 시간에 충분히 토론하고 결정하세요.</li>
+                                <li>감정에 휘둘리지 말고 논리적으로 판단하세요.</li>
+                                <li>게임은 재미있게! 너무 진지해지지 마세요.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+</body>
+
+</html>

@@ -37,7 +37,17 @@ export class UsersRepository {
   async findOneUserId(userId: number) {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      select: ['id', 'email', 'nickName', 'isVerified', 'createdAt', 'file'], // 비밀번호 제외
+      select: [
+        'id',
+        'email',
+        'nickName',
+        'isVerified',
+        'createdAt',
+        'file',
+        'money',
+        'gameBanDate',
+        'communityBanDate',
+      ], // 비밀번호 제외
     });
     return user;
   }
@@ -62,5 +72,14 @@ export class UsersRepository {
 
   async deleteUser(userId: number) {
     await this.usersRepository.delete(userId);
+  }
+
+  async findByNickname(nickName: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { nickName } });
+  }
+
+  async updateNickname(userId: number, newNickname: string): Promise<User> {
+    await this.usersRepository.update(userId, { nickName: newNickname });
+    return this.findOneUserId(userId);
   }
 }

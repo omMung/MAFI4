@@ -29,7 +29,7 @@ export class AdminService {
         currentDate.getTime() + duration * 24 * 60 * 60 * 1000,
       );
     } else if (type === 'community') {
-      updateData['CommunityBanDate'] = new Date(
+      updateData['communityBanDate'] = new Date(
         currentDate.getTime() + duration * 24 * 60 * 60 * 1000,
       );
     } else {
@@ -38,7 +38,7 @@ export class AdminService {
 
     await this.adminRepository.updateUserBanStatus(userId, updateData);
 
-    // 로그 메시지 생성 (여기서는 ban은 항상 적용됨)
+    // 로그 메시지 생성 (메시지 중앙 관리)
     const logMessage = AdminLogMessages.updateUserBanStatus(
       userId,
       type,
@@ -55,13 +55,12 @@ export class AdminService {
       });
     } else if (type === 'community') {
       await this.adminRepository.updateUserBanStatus(userId, {
-        CommunityBanDate: null,
+        communityBanDate: null,
       });
     } else {
-      // type이 없거나 'all'인 경우
       await this.adminRepository.updateUserBanStatus(userId, {
         gameBanDate: null,
-        CommunityBanDate: null,
+        communityBanDate: null,
       });
     }
 
@@ -71,7 +70,6 @@ export class AdminService {
         : `사용자 ID ${userId}의 모든 기능 제한이 해제되었습니다.`;
     await this.addAdminLog('전체 제한 해제', logMessage);
   }
-
   // (5) 사용자 게시글 전체 조회
   async getUserPosts(userId: number): Promise<{ posts: Post[] }> {
     const posts = await this.adminRepository.getUserPosts(userId);
@@ -103,7 +101,7 @@ export class AdminService {
     await this.adminRepository.saveAdminLog(action, message);
   }
 
-  // (10)사용자 제재 상태 조회: gameBanDate, CommunityBanDate 여부 확인
+  // (10)사용자 제재 상태 조회: gameBanDate, communityBanDate 여부 확인
   async getUserBanStatus(
     userId: number,
   ): Promise<{ gameBan: Date | null; communityBan: Date | null }> {
@@ -113,7 +111,7 @@ export class AdminService {
     }
     return {
       gameBan: user.gameBanDate || null,
-      communityBan: user.CommunityBanDate || null,
+      communityBan: user.communityBanDate || null,
     };
   }
 }

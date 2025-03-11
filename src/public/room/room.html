@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마피아 게임룸</title>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="room.css">
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <script src="/scripts/api.js" defer></script>
+    <script src="/components/header/header.js" defer></script>
+    <script src="/scripts/common.js" defer></script>
+    <script src="room.js" defer></script>
+    <script src="./js/config.js"></script>
+</head>
+
+<body>
+    <div id="header-container"></div>
+
+    <main>
+        <div class="room-container" id="mainContainer" style="display: none">
+
+
+            <div class="game-content">
+                <!-- 채팅 영역 -->
+                <section class="chat-section card">
+                    <h2 id="roomTitle"></h2>
+                    <div id="chatMessages" class="chat-messages"></div>
+                    <div class="chat-input-container">
+                        <input type="text" id="messageInput" placeholder="메시지를 입력하세요" />
+                        <button id="sendBtn" class="btn btn-primary">전송</button>
+                    </div>
+                </section>
+
+                <!-- 게임 정보 영역 -->
+                <section class="game-info-section card">
+                    <h2>현재 접속 인원</h2>
+                    <div id="occupantList" class="occupant-list"></div>
+
+                    <div id="myOccupantDiv" class="my-occupant"></div>
+
+                    <div id="phasseTimerContainer" class="phase-timer-container">
+                        <span id="phaseTimer" class="phase-timer"></span>
+                    </div>
+
+                    <!-- 투표 확정 버튼 컨테이너 -->
+                    <div id="firstVoteContainer" class="vote-container" style="display: none;">
+                        <button id="voteBtn" class="btn btn-primary">투표 확정</button>
+                        <p id="voteStatus"></p>
+                    </div>
+
+                    <!-- 2차 투표 버튼 컨테이너 -->
+                    <div id="secondVoteContainer" class="vote-container" style="display: none;">
+                        <button id="executeBtn" class="btn btn-danger">사살</button>
+                        <button id="survivalBtn" class="btn btn-secondary">생존</button>
+                    </div>
+
+                    <!-- 역할별 능력 버튼 컨테이너 -->
+                    <div id="roleActionContainer" class="role-action-container" style="display: none;">
+                        <button id="mafiaActionBtn" class="btn btn-danger" style="display: none;">제거할 대상 선택</button>
+                        <button id="policeActionBtn" class="btn btn-primary" style="display: none;">조사할 대상 선택</button>
+                        <button id="doctorActionBtn" class="btn btn-success" style="display: none;">보호할 대상 선택</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+</body>
+
+</html>

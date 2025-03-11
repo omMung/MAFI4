@@ -7,7 +7,13 @@ export class Item {
   id: number;
 
   @Column({ type: 'varchar', length: 255 })
+  category: string;
+
+  @Column({ type: 'varchar', length: 255 })
   name: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  description: string;
 
   @Column({ type: 'int' })
   price: number;

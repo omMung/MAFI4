@@ -13,12 +13,13 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CommunityBanGuard } from '../auth/guards/community-ban.guard';
 
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CommunityBanGuard)
   @Post(':postId')
   async createComment(
     @Request() req,
@@ -54,7 +55,7 @@ export class CommentsController {
     return { data: comment };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CommunityBanGuard)
   @Patch(':id')
   async updateComment(
     @Request() req,
@@ -71,7 +72,7 @@ export class CommentsController {
     return { data: comment };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CommunityBanGuard)
   @Delete(':id')
   async deleteComment(@Request() req, @Param('id') id: number) {
     const user = req.user;
