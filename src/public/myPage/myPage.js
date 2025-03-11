@@ -560,6 +560,8 @@ async function loadGameStats() {
   try {
     // 전체 전적 로드
     const overallStats = await api.getUserRecordByUserId();
+    console.log(`MYPAGE.JS : ${overallStats[0]}`);
+
     renderOverallStats(overallStats.data);
 
     // 직업별 전적 로드

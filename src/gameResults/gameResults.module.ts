@@ -5,10 +5,11 @@ import { GameResult } from './entities/gameResults.entity';
 import { GameResultsService } from './gameResults.service';
 import { GameResultsSubscriber } from './gameResults.subscriber';
 import { GameAchievementsModule } from 'src/gameAchievements/gameAchievements.module';
+import { Statistic } from 'src/statistics/entities/statistic.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([GameResult]),
+    TypeOrmModule.forFeature([GameResult, Statistic]),
     forwardRef(() => GameAchievementsModule),
   ],
   controllers: [GameResultsController],

@@ -137,7 +137,12 @@ const api = {
   deleteComment: (id) => fetchAPI(`/comments/${id}`, { method: 'DELETE' }),
   toggleLike: (postId) => fetchAPI(`/likes/${postId}`, { method: 'POST' }),
   getLikeCount: (postId) => fetchAPI(`/likes/${postId}`, { method: 'GET' }),
-  getUserRecordByUserId: () => fetchAPI(`/statistics/user`, { method: 'Get' }),
+  getUserRecordByUserId: () =>
+    fetchAPI(
+      `/statistics/user`,
+      { method: 'Get' },
+      console.log(`api.js : getUserRecordByUserId 호출`),
+    ),
   getUserRecordByJob: () => fetchAPI(`/statistics/job`, { method: 'Get' }),
 
   // 관리자 전용 API들
