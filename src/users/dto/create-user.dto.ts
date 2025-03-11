@@ -21,5 +21,6 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
+  @IsOptional()
   title?: string;
 }

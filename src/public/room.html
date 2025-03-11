@@ -541,22 +541,8 @@
         });
 
         // 서버로부터 1차 투표 버튼 보이라는 이벤트 수신 시 처리
-        socket.on('VOTE:FIRST:ENABLE', function (data) {
-          isVotingPhase = true;
-          document.getElementById('firstVoteContainer').style.display = 'block';
-          voteBtn.disabled = false;
-          executeBtn.disabled = false;
-          survivalBtn.disabled = false;
-          voteBtn.classList.remove('disabled=btn');
-          survivalBtn.classList.remove('disabled-btn');
-          executeBtn.classList.remove('disabled-btn');
-          mafiaBtn.disabled = false;
-          policeBtn.disabled = false;
-          doctorBtn.disabled = false;
-          mafiaBtn.classList.remove('disabled-btn');
-          policeBtn.classList.remove('disabled-btn');
-          doctorBtn.classList.remove('disabled-btn');
-          console.log(mafiaBtn, policeBtn, doctorBtn);
+        socket.on('VOTE:FIRST:ENABLE', async function (data) {
+          await startDayBtn();
           socket.emit('UPDATE:MY_INFO', {
             roomId: roomId,
             userId: currentUserId,
@@ -582,7 +568,7 @@
           // 게임 종료 이벤트 수신 시, 게임 상태 영역에 결과 메시지 표시
           appendChatMessage('게임 종료: ' + data.message);
           document.getElementById('gameStatus').textContent = data.message;
-          resetKilledUserButtons();
+          console.log(roomInfo);
           console.log('게임 종료 데이터:', data);
         });
 
@@ -1005,6 +991,24 @@
             myBtn.disabled = true;
             myOccupantDiv.appendChild(myBtn);
           }
+        }
+
+        function startDayBtn() {
+          isVotingPhase = true;
+          document.getElementById('firstVoteContainer').style.display = 'block';
+          voteBtn.disabled = false;
+          executeBtn.disabled = false;
+          survivalBtn.disabled = false;
+          voteBtn.classList.remove('disabled=btn');
+          survivalBtn.classList.remove('disabled-btn');
+          executeBtn.classList.remove('disabled-btn');
+          mafiaBtn.disabled = false;
+          policeBtn.disabled = false;
+          doctorBtn.disabled = false;
+          mafiaBtn.classList.remove('disabled-btn');
+          policeBtn.classList.remove('disabled-btn');
+          doctorBtn.classList.remove('disabled-btn');
+          console.log(mafiaBtn, policeBtn, doctorBtn);
         }
 
         // 선택 해제 함수
