@@ -144,6 +144,12 @@ const api = {
       console.log(`api.js : getUserRecordByUserId 호출`),
     ),
   getUserRecordByJob: () => fetchAPI(`/statistics/job`, { method: 'Get' }),
+  getRanking: () =>
+    fetchAPI(
+      `/users/ranking`,
+      { method: 'Get' },
+      console.log(`api.js getRanking 호출`),
+    ),
 
   // 관리자 전용 API들
   admin: {

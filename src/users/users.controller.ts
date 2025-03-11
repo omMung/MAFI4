@@ -15,6 +15,7 @@ import {
   MaxFileSizeValidator,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -30,6 +31,12 @@ export class UsersController {
     const userId = req.user.id;
 
     return this.usersService.getUserById(userId);
+  }
+
+  // 랭킹 조회 API (GET /users/ranking)
+  @Get('ranking')
+  async getRanking(): Promise<User[]> {
+    return await this.usersService.getRanking();
   }
 
   @UseGuards(JwtAuthGuard)

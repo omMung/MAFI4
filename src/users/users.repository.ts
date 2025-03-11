@@ -60,6 +60,12 @@ export class UsersRepository {
     return user;
   }
 
+  async findRanking(): Promise<User[]> {
+    return this.usersRepository.find({
+      order: { score: 'DESC' },
+    });
+  }
+
   //업데이트 로직
   async updateUserInfo(userId: number, updatedData: Partial<User>) {
     await this.usersRepository.update(userId, updatedData);

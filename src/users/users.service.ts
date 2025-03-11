@@ -16,6 +16,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { S3UploaderService } from 'src/s3uploader/s3uploader.service';
 import { DataSource } from 'typeorm';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -72,6 +73,10 @@ export class UsersService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async getRanking(): Promise<User[]> {
+    return await this.usersRepository.findRanking();
   }
 
   async getUserById(userId: number) {
