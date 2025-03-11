@@ -17,8 +17,13 @@ export class ItemsController {
 
   @Post()
   async createItem(@Body() createItemDto: CreateItemDto) {
-    const { name, price } = createItemDto;
-    const item = await this.itemsService.createItem(name, price);
+    const { name, price, description, category } = createItemDto;
+    const item = await this.itemsService.createItem(
+      name,
+      price,
+      description,
+      category,
+    );
     return { data: item };
   }
 
@@ -43,6 +48,8 @@ export class ItemsController {
       id,
       updateItemDto.name,
       updateItemDto.price,
+      updateItemDto.description,
+      updateItemDto.category,
     );
     return { data: updatedItem };
   }

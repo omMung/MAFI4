@@ -60,6 +60,8 @@ export class AuthService {
       email: user.email,
       nickName: user.nickName,
       isAdmin: user.isAdmin,
+      gameBanDate: user.gameBanDate,
+      communityBanDate: user.communityBanDate,
     };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('ACCESS_SECRET_KEY'),
@@ -85,6 +87,8 @@ export class AuthService {
         email: user.email,
         nickName: user.nickName,
         isAdmin: user.isAdmin,
+        gameBanDate: user.gameBanDate,
+        communityBanDate: user.communityBanDate,
       },
     };
   }

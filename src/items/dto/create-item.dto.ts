@@ -8,4 +8,12 @@ export class CreateItemDto {
   @IsNumber()
   @IsNotEmpty({ message: '가격을 입력해주세요.' })
   price: number;
+
+  @IsString()
+  @IsNotEmpty({ message: '카테고리를 입력해주세요.' })
+  category: string;
+
+  @IsNumber()
+  @IsNotEmpty({ message: '설명을 입력해주세요.' })
+  description: string;
 }

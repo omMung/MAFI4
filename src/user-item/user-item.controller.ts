@@ -31,6 +31,7 @@ export class UserItemController {
     @Body() createUserItemDto: CreateUserItemDto,
   ) {
     const userId = req.user.id;
+    console.log(createUserItemDto);
     return await this.userItemService.createUserItem(
       createUserItemDto.itemId,
       userId,

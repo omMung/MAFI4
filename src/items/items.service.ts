@@ -6,8 +6,18 @@ import { ItemNotFoundException } from 'src/common/exceptions/item.exception';
 export class ItemsService {
   constructor(private readonly itemsRepository: ItemsRepository) {}
 
-  async createItem(name: string, price: number) {
-    return await this.itemsRepository.createItem(name, price);
+  async createItem(
+    name: string,
+    price: number,
+    description: string,
+    category: string,
+  ) {
+    return await this.itemsRepository.createItem(
+      name,
+      price,
+      description,
+      category,
+    );
   }
 
   async findAllItems() {
@@ -24,12 +34,20 @@ export class ItemsService {
     return item;
   }
 
-  async updateItem(itemId: number, name: string, price: number) {
+  async updateItem(
+    itemId: number,
+    name: string,
+    price: number,
+    description: string,
+    category: string,
+  ) {
     const item = await this.itemsRepository.findOneItem(itemId);
     if (!item) throw new ItemNotFoundException();
 
     item.name = name;
     item.price = price;
+    item.description = description;
+    item.category = category;
     return await this.itemsRepository.updateItem(item);
   }
 

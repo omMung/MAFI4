@@ -1,0 +1,462 @@
+/* 가이드 페이지 스타일 - common.css와 충돌 방지 */
+
+/* 가이드 컨테이너 */
+.guide-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* 가이드 헤더 */
+.guide-header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.guide-header h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.guide-header h1::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background-color: var(--accent-color);
+  border-radius: 2px;
+}
+
+.guide-description {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  margin-top: 1.5rem;
+}
+
+/* 가이드 탭 네비게이션 */
+.guide-nav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e0e0e0;
+  flex-wrap: wrap;
+}
+
+.guide-tab {
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.guide-tab:hover {
+  color: var(--primary-color);
+}
+
+.guide-tab.active {
+  color: var(--primary-color);
+}
+
+.guide-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary-color);
+}
+
+/* 가이드 콘텐츠 영역 */
+.guide-tab-content {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.guide-tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.guide-tab-content h2 {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(26, 46, 74, 0.1);
+}
+
+/* 규칙 카드 스타일 */
+.rule-card {
+  margin-left: auto;
+  margin-right: auto;
+  width: 800px;
+  display: flex;
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+
+.rule-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.rule-icon {
+  flex: 0 0 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.5rem;
+}
+
+.rule-icon img {
+  max-width: 100%;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  padding: 5px;
+}
+
+.rule-content {
+  margin-left: 50px;
+  padding: 0 auto 0 auto;
+  flex: 1;
+}
+
+.rule-content h3 {
+  font-size: 1.3rem;
+  color: var(--primary-color);
+  margin-bottom: 0.8rem;
+}
+
+.rule-content p,
+.rule-content ul {
+  margin-bottom: 0.8rem;
+  line-height: 1.6;
+}
+
+.rule-content ul {
+  padding-left: 1.5rem;
+}
+
+.rule-content li {
+  margin-bottom: 0.5rem;
+}
+
+/* 직업 카드 스타일 */
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.role-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.role-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.role-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.role-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.role-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.mafia .role-header {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.mafia .role-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.citizen .role-header,
+.police .role-header,
+.doctor .role-header {
+  background-color: #3498db;
+  color: white;
+}
+
+.citizen .role-badge,
+.police .role-badge,
+.doctor .role-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.disabled .role-header {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.disabled .role-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.role-image {
+  padding: 1.5rem;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.role-image img {
+  width: 150px;
+  height: 150px;
+  max-width: 100%;
+  border-radius: 50%;
+  background-color: white;
+  padding: 5px;
+  box-shadow: var(--shadow-sm);
+}
+
+.role-description {
+  padding: 1.5rem;
+  flex: 1;
+}
+
+.role-description p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.role-description h4 {
+  font-size: 1.1rem;
+  color: var(--primary-color);
+  margin: 1rem 0 0.5rem;
+}
+
+.role-description ul {
+  padding-left: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.role-description li {
+  margin-bottom: 0.5rem;
+}
+
+/* 게임 진행 타임라인 */
+.gameplay-timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.gameplay-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 30px;
+  height: 100%;
+  width: 4px;
+  background-color: var(--primary-light);
+  border-radius: 2px;
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: 70px;
+  margin-bottom: 2rem;
+}
+
+.timeline-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 60px;
+  height: 60px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  z-index: 1;
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-content h3 {
+  font-size: 1.3rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.timeline-content p,
+.timeline-content ul {
+  margin-bottom: 0.8rem;
+  line-height: 1.6;
+}
+
+.timeline-content ul {
+  padding-left: 1.5rem;
+}
+
+.timeline-content li {
+  margin-bottom: 0.5rem;
+}
+
+/* 전략 팁 스타일 */
+.tips-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.tip-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+
+.tip-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.tip-card h3 {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(26, 46, 74, 0.1);
+}
+
+.tip-card ul {
+  padding-left: 1.2rem;
+}
+
+.tip-card li {
+  margin-bottom: 0.8rem;
+  line-height: 1.6;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 992px) {
+  .rule-card {
+    flex-direction: column;
+  }
+
+  .rule-icon {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  .gameplay-timeline::before {
+    left: 20px;
+  }
+
+  .timeline-item {
+    padding-left: 60px;
+  }
+
+  .timeline-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .guide-tab {
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+  }
+
+  .roles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tips-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .guide-header h1 {
+    font-size: 2rem;
+  }
+
+  .guide-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: 0.5rem;
+  }
+
+  .guide-tab {
+    white-space: nowrap;
+    padding: 0.8rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .timeline-content {
+    padding: 1rem;
+  }
+}

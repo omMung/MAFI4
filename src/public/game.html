@@ -9,6 +9,7 @@
         margin: 20px;
         text-align: center;
       }
+
       .container {
         max-width: 600px;
         margin: auto;
@@ -16,13 +17,17 @@
         border: 1px solid #ccc;
         border-radius: 5px;
       }
+
       .room-list {
         margin-top: 20px;
       }
+
       .room-item {
         display: flex;
-        flex-direction: column; /* ✅ 방 정보를 세로 정렬 */
-        align-items: flex-start; /* ✅ 왼쪽 정렬 */
+        flex-direction: column;
+        /* ✅ 방 정보를 세로 정렬 */
+        align-items: flex-start;
+        /* ✅ 왼쪽 정렬 */
         padding: 10px;
         border: 1px solid #ddd;
         margin-bottom: 5px;
@@ -31,7 +36,8 @@
 
       .room-item span {
         font-weight: bold;
-        margin-bottom: 5px; /* ✅ 방 이름과 상태 정보 간격 조절 */
+        margin-bottom: 5px;
+        /* ✅ 방 이름과 상태 정보 간격 조절 */
       }
 
       .room-item .room-info {
@@ -40,13 +46,15 @@
       }
 
       .room-item button {
-        align-self: flex-end; /* ✅ 버튼을 오른쪽 정렬 */
+        align-self: flex-end;
+        /* ✅ 버튼을 오른쪽 정렬 */
         background-color: #28a745;
         color: white;
         border: none;
         padding: 5px 10px;
         cursor: pointer;
-        margin-top: 5px; /* ✅ 버튼과 텍스트 간격 조절 */
+        margin-top: 5px;
+        /* ✅ 버튼과 텍스트 간격 조절 */
       }
 
       .room-item button:hover {
@@ -89,24 +97,30 @@
         border: 1px solid #ddd;
         border-radius: 5px;
       }
+
       .checkbox-container {
         display: flex;
         align-items: center;
-        justify-content: space-between; /* 비밀방 왼쪽, 체크박스 오른쪽 */
+        justify-content: space-between;
+        /* 비밀방 왼쪽, 체크박스 오른쪽 */
         width: 100%;
         margin-bottom: 10px;
-        padding: 5px 0; /* 간격 조절 */
+        padding: 5px 0;
+        /* 간격 조절 */
       }
 
       .checkbox-container label {
         font-size: 16px;
         font-weight: bold;
-        white-space: nowrap; /* ✅ 두 줄로 안 나뉘게 설정 */
+        white-space: nowrap;
+        /* ✅ 두 줄로 안 나뉘게 설정 */
       }
 
       .checkbox-container input {
-        transform: scale(1.2); /* 체크박스 크기 조절 */
-        margin-left: 10px; /* 간격 조정 */
+        transform: scale(1.2);
+        /* 체크박스 크기 조절 */
+        margin-left: 10px;
+        /* 간격 조정 */
       }
 
       .modal-content button {
@@ -137,6 +151,7 @@
       }
     </style>
   </head>
+
   <body>
     <div class="container">
       <h2>게임 로비</h2>
@@ -268,8 +283,9 @@
           })
           .catch((error) => {
             console.error('❌ 리프레시 토큰 만료:', error);
-            alert('세션이 만료되었습니다. 로그인 페이지로 이동합니다.');
-            logout();
+            if (confirm('세션이 만료되었습니다. 다시 로그인하시겠습니까?')) {
+              logout(); // ✅ 사용자가 확인 버튼을 누르면 로그아웃 실행
+            }
           });
       }
 

@@ -24,7 +24,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: '42dot Sans', sans-serif;
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--bg-color);
@@ -32,7 +32,9 @@ body {
 }
 
 /* Header styles */
+
 header {
+  font-family: '42dot Sans', sans-serif;
   background-color: var(--primary-color);
   color: white;
   padding: 1rem;
@@ -158,6 +160,11 @@ nav a:hover::after {
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
+}
+
+.btn-small {
+  font-size: 14px;
+  padding: 0.4rem 0.8rem;
 }
 
 .btn::after {
@@ -326,15 +333,17 @@ footer a:hover {
 .auth-container {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 10px;
 }
 
 .user-info {
+  width: 100px;
   font-weight: 500;
   color: white;
   margin-right: 10px;
   position: relative;
   padding-left: 25px;
+  font-size: 14px;
 }
 
 .user-info::before {
@@ -346,9 +355,15 @@ footer a:hover {
   font-size: 18px;
 }
 
+.user-money {
+  font-size: 14px;
+  color: #fff;
+  margin-right: 30px;
+}
+
 #mypageBtn,
 #logoutBtn {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   font-size: 14px;
   transition: all var(--transition-speed);
 }
