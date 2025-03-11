@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsEmail, MinLength } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEmail,
+  MinLength,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -13,6 +19,7 @@ export class CreateUserDto {
   @IsNotEmpty({ message: '닉네임 설정은 필수입니다.' })
   nickName: string;
 
+  @IsOptional()
   @IsString()
   title?: string;
 }

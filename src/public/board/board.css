@@ -1,37 +1,145 @@
 .board-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 2.5rem;
   background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .board-container h1 {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: #333;
+  font-weight: 700;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0.75rem;
 }
 
 #createPostBtn {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #4a6cf7;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    transform 0.1s;
+  box-shadow: 0 2px 5px rgba(74, 108, 247, 0.2);
+}
+
+#createPostBtn:hover {
+  background-color: #3a5ce5;
+  transform: translateY(-2px);
+}
+
+#createPostBtn:active {
+  transform: translateY(0);
 }
 
 #postsTable {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 1.05rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 
 #postsTable th,
 #postsTable td {
-  padding: 0.5rem;
+  padding: 1rem 1.25rem;
   text-align: left;
-  border-bottom: 1px solid #ddd;
 }
 
 #postsTable th {
-  background-color: #f2f2f2;
-  font-weight: bold;
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #e9ecef;
+  position: relative;
 }
 
-#postsTable tr:hover {
-  background-color: #f5f5f5;
+#postsTable th:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #4a6cf7;
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+#postsTable th:hover:after {
+  transform: scaleX(1);
+}
+
+#postsTable td {
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+#postsTable tr:last-child td {
+  border-bottom: none;
+}
+
+#postsTable tbody tr {
+  transition: all 0.2s;
+}
+
+#postsTable tbody tr:hover {
+  background-color: #f8f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Column widths */
+#postsTable th:nth-child(1),
+#postsTable td:nth-child(1) {
+  width: 60%;
+}
+
+#postsTable th:nth-child(2),
+#postsTable td:nth-child(2) {
+  width: 20%;
+}
+
+#postsTable th:nth-child(3),
+#postsTable td:nth-child(3) {
+  width: 20%;
+}
+
+/* Empty state */
+#postsTable tbody:empty:before {
+  content: '게시글이 없습니다';
+  display: block;
+  padding: 2rem;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .board-container {
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  #postsTable th,
+  #postsTable td {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  #postsTable th:nth-child(3),
+  #postsTable td:nth-child(3) {
+    display: none;
+  }
 }

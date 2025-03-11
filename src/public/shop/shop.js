@@ -97,11 +97,11 @@ async function fetchUserItems() {
   try {
     // api.userItem.findMyItems 호출하여 사용자 아이템 가져오기
     const response = await api.userItem.findMyItems();
-    // console.log(
-    //   `shop.js - findMyItems 호출: ${JSON.stringify(response, null, 2)}`,
-    // );
+    console.log(
+      `shop.js - findMyItems 호출: ${JSON.stringify(response, null, 2)}`,
+    );
     const userItems = response.data || response;
-
+    console.log(userItems);
     // 아이템이 없는 경우
     if (userItems.length === 0) {
       userItemsContainer.innerHTML = `
@@ -175,8 +175,8 @@ function createUserItemCardGrouped(group) {
   userItemCard.className = 'user-item-card';
 
   // 이미지 URL 처리: 없으면 기본 텍스트로 처리
-  const imageUrl = itemInfo.imageUrl
-    ? `/imageFile/${encodeURIComponent(itemInfo.imageUrl)}`
+  const imageUrl = itemInfo.url
+    ? `/imageFile/${encodeURIComponent(itemInfo.url)}`
     : `/imageFile/placeholder.svg?height=40&width=40&text=${encodeURIComponent(itemInfo.name || '아이템')}`;
 
   userItemCard.innerHTML = `
@@ -197,8 +197,8 @@ function createUserItemCard(userItem, itemInfo) {
   userItemCard.className = 'user-item-card';
 
   // 이미지 URL이 없는 경우 기본 이미지 사용
-  const imageUrl = itemInfo.imageUrl
-    ? `/imageFile/${encodeURIComponent(itemInfo.imageUrl)}`
+  const imageUrl = itemInfo.url
+    ? `/imageFile/${encodeURIComponent(itemInfo.url)}`
     : `/placeholder.svg?height=40&width=40&text=${encodeURIComponent(itemInfo.name || '아이템')}`;
 
   userItemCard.innerHTML = `
@@ -263,10 +263,10 @@ function createItemCard(item) {
   const itemCard = document.createElement('div');
   itemCard.className = 'item-card';
   itemCard.dataset.itemId = item.id;
-
+  console.log(item.url);
   // 이미지 URL이 없는 경우 기본 이미지 URL 생성
-  const imageUrl = item.imageUrl
-    ? `/imageFile/${encodeURIComponent(itemInfo.imageUrl)}`
+  const imageUrl = item.url
+    ? `/imageFile${item.url.startsWith('/') ? '' : '/'}${item.url}`
     : `/imageFile/placeholder.svg?height=40&width=40&text=${encodeURIComponent(item.name || '아이템')}`;
 
   // 카테고리 태그 (카테고리가 있는 경우에만 표시)
@@ -488,9 +488,10 @@ function showItemModal(item) {
   };
 
   // 이미지 설정
-  const imageUrl = item.imageUrl
-    ? `/imageFile/${encodeURIComponent(item.imageUrl)}`
+  const imageUrl = item.url
+    ? `/imageFile/${encodeURIComponent(item.url)}`
     : `/imageFile/placeholder.svg?height=40&width=40&text=${encodeURIComponent(item.name || '아이템')}`;
+
   modalItemImage.src = imageUrl;
   modalItemImage.alt = item.name || '아이템 이미지';
   modalItemImage.onerror = function () {

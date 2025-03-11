@@ -18,6 +18,9 @@ export class Item {
   @Column({ type: 'int' })
   price: number;
 
+  @Column({ type: 'varchar', length: 255 })
+  url: string;
+
   @OneToMany(() => UserItem, (userItem) => userItem.item, {
     onDelete: 'CASCADE',
   })

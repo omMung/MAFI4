@@ -31,7 +31,6 @@ function setupTabs() {
       });
 
       // URL 해시 업데이트 (북마크 가능)
-      window.location.hash = tabId;
     });
   });
 

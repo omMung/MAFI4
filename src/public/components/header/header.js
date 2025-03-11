@@ -32,9 +32,9 @@ function updateAuthDisplay() {
       })
       .catch((error) => {
         console.error('사용자 정보를 가져오지 못했습니다:', error);
-        showLoginSignup(authButtons);
+        // showLoginSignup(authButtons);
       });
   } else {
-    showLoginSignup(authButtons);
+    // showLoginSignup(authButtons);
   }
 }
