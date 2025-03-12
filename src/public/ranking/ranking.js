@@ -183,10 +183,11 @@ document.addEventListener('DOMContentLoaded', () => {
         firstUser.nickName || '익명';
       firstPlace.querySelector('.user-score span').textContent =
         getUserScore(firstUser).toLocaleString();
-      // 프로필 이미지가 있는 경우
-      if (firstUser.profileImage) {
-        firstPlace.querySelector('img').src = firstUser.profileImage;
-      }
+      const firstImg = firstPlace.querySelector('img');
+      // user.file 속성이 있다면 그 값을 사용, 없으면 기본 이미지 사용
+      firstImg.src = firstUser.file
+        ? firstUser.file
+        : '/imageFile/placeholder.svg?height=100&width=100';
     }
 
     // 2등
@@ -196,9 +197,10 @@ document.addEventListener('DOMContentLoaded', () => {
         secondUser.nickName || '익명';
       secondPlace.querySelector('.user-score span').textContent =
         getUserScore(secondUser).toLocaleString();
-      if (secondUser.profileImage) {
-        secondPlace.querySelector('img').src = secondUser.profileImage;
-      }
+      const secondImg = secondPlace.querySelector('img');
+      secondImg.src = secondUser.file
+        ? secondUser.file
+        : '/imageFile/placeholder.svg?height=80&width=80';
     }
 
     // 3등
@@ -208,9 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
         thirdUser.nickName || '익명';
       thirdPlace.querySelector('.user-score span').textContent =
         getUserScore(thirdUser).toLocaleString();
-      if (thirdUser.profileImage) {
-        thirdPlace.querySelector('img').src = thirdUser.profileImage;
-      }
+      const thirdImg = thirdPlace.querySelector('img');
+      thirdImg.src = thirdUser.file
+        ? thirdUser.file
+        : '/imageFile/placeholder.svg?height=80&width=80';
     }
   }
 

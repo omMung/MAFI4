@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error('게시글 목록을 찾을 수 없습니다.');
       }
 
+      // 최신순으로 정렬 (최근 날짜가 앞쪽에 오도록)
+      postsArray.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
       postsTableBody.innerHTML = ''; // 기존 내용 초기화
 
       postsArray.forEach((post) => {
