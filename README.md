@@ -2,7 +2,7 @@
 1. [프로젝트 소개](#-프로젝트-소개-)
 2. [팀원](#팀원)
 3. [기술 스택](#기술-스택)
-4. [ERD 다이어그램](#erd-다이어그램)
+4. [프로젝트 자료](#프로젝트-자료)
 5. [프로젝트 기능](#프로젝트-기능)
 6. [게임 시작 방법](#게임-시작-방법)
 7. [프로젝트 및 회고](#프로젝트-및-회고)
@@ -25,21 +25,55 @@
 🙍김용우  
 
 ## 기술 스택
-🟢Node.js  
-🚀nest.js
-💻Typescript
+### FRONTEND
+📄HTML
+🎨CSS
+⚙️Javascript
+
+### BACKEND
+🟢Node.js
+🚀Nest.js
 🗄️TypeOrm  
+💻Typescript
+⚡WebSocket
+🚩Redis Pub/Sub
+🔀Bull Queue
+
+### DATABASE
+🛢️AWS RDS-MYSQL
+🔴REDIS 
+
+### DevOps / Infra
+☁️AWS Lambda
+⏱️AWS Cloud-watch
+🔔AWS SNS
+🚨Sentry
+⚖️AWS ALB
+🐳AWS ECS
+🗃️AWS S3
+🔒AWS HTTPS
+
+
+
 📁GIT  
 📦GITHUB  
 🛠️AWS(EC2, ECS, ALB, SNS, Lambda, Cloud Watch)
 🐋Docker  
 🐬MYSQL
 🪲Sentry
-🚩Redis
-🔀Bull Queue
 
-## ERD 다이어그램
-🧩 [확인하기](https://www.figma.com/design/NOOZIfc4SlIlGoU0vDcVML/%EC%B5%9C%EC%A2%85-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%3A-%EB%A7%88%ED%94%BC%EC%95%84-%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0?node-id=0-1&p=f&t=3voTGuDi9FMaGqiN-0)
+
+
+## 프로젝트 자료
+🧩 [피그마](https://www.figma.com/design/NOOZIfc4SlIlGoU0vDcVML/%EC%B5%9C%EC%A2%85-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%3A-%EB%A7%88%ED%94%BC%EC%95%84-%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0?node-id=0-1&p=f&t=3voTGuDi9FMaGqiN-0)
+
+📑 [다이어그램](https://drawsql.app/teams/adqqs/diagrams/mafia)
+
+🎥 [게임 소개 영상](https://www.youtube.com/watch?v=2UVN-dpqvPU)
+
+📖 [브로셔](https://teamsparta.notion.site/Node-js-7-1a72dc3ef514808e9ee0f43119a22e8d?p=1b32dc3ef51480ed8e27dad771b8203d&pm=c)
+
+
 
 ## 프로젝트 기능
 ### 🍷 1.마피아 게임방을 누구나 만들어 게임을 시작할수 있습니다. 부담없이 게임을 해보세요! 
@@ -48,24 +82,22 @@
 ### 🚬 4.게시판에 댓글이나 이미지를 올려 의견을 나눌수 있습니다. 원활한 커뮤니케이션을 경험하세요!
 ### 💸 5.AWS 에 EC2/ECS 를 통해 안정적인 게임 서버를 운영합니다. 안심하고 마피아 게임을 하세요!
 
+
 ## 🎮 게임 시작 방법
-### 1.회원가입
-마피아 게임 홈페이지에서 회원가입을 하세요
+### 1.회원가입 & 로그인
+마피아 게임 홈페이지에서 우측 상단에 회원가입 및 로그인을 하세요
 
-### 2.로그인
-회원가입을 무사히 끝내면 로그인을 하세요
+### 2.게임 시작
+홈페이지 정중앙에 있는 게임 시작 버튼을 눌러 게임 시작을 하세요
 
-### 3.게임 시작
-게임 시작 버튼을 눌러 게임시작을 하세요
+### 3.방 만들기
+6인/8인, 비공개(방 비번 생성), 제목 등 설정을 통해 원하는 방을 만드세요
 
-### 4.방 만들기
-6인/8인 중 원하는 방을 만드세요
+### 4.게임할 사람 모으기
+초대 또는 기달려서 게임 인원을 모으세요
 
-### 5.팀원들을 초대
-팀원들을 초대해서 게임 인원을 모으세요
-
-### 6.마피아를 찾아라
-직업을 할당 받고 본격적인 행동을 하세요
+### 5.마피아를 찾아라!
+인원이 다 모이면 직업을 할당 받고 본격적인 행동을 하세요
 
 ## 🤝 프로젝트 및 회고
 ### 프로젝트 과정
