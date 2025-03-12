@@ -145,6 +145,13 @@ const api = {
     ),
   getUserRecordByJob: () => fetchAPI(`/statistics/job`, { method: 'Get' }),
 
+  // 사용자 업적 조회
+  getAchievements: () =>
+    fetchAPI('/user-achievements', {
+      method: 'GET',
+      credentials: 'include', // 인증 정보 포함
+    }),
+
   // 관리자 전용 API들
   admin: {
     // 관리자 권한 확인

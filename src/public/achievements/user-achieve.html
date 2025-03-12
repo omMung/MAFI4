@@ -6,6 +6,8 @@
     <title>내 업적</title>
     <link rel="stylesheet" href="/styles/common.css" />
     <link rel="stylesheet" href="user-achieve.css" />
+    <script src="/scripts/api.js" defer></script>
+    <script src="/scripts/common.js" defer></script>
     <!-- 스타일 시트 링크 -->
   </head>
   <body>
@@ -21,19 +23,41 @@
     <div id="footer-container"></div>
     <script>
       async function loadAchievements() {
-        const response = await fetch('/user-achievements', {
-          method: 'GET',
-          credentials: 'include', // 인증 정보 포함
-        });
-        const achievements = await response.json();
-        const achievementsDiv = document.getElementById('achievements');
+        // const response = await fetch('/user-achievements', {
+        //   method: 'GET',
+        //   credentials: 'include', // 인증 정보 포함
+        // });
+        // const achievements = await api.getAchievements();
+        // const achievementsDiv = document.getElementById('achievements');
 
-        achievements.forEach((achievement) => {
-          const div = document.createElement('div');
-          div.className = 'achievement';
-          div.innerText = `업적 ID: ${achievement.achieveId}, 값: ${achievement.value}`;
-          achievementsDiv.appendChild(div);
-        });
+        // achievements.forEach((achievement) => {
+        //   const div = document.createElement('div');
+        //   div.className = 'achievement';
+        //   div.innerText = `업적 ID: ${achievement.achieveId}, 값: ${achievement.value}`;
+        //   achievementsDiv.appendChild(div);
+        // });
+        try {
+          const achievements = await api.getAchievements();
+
+          if (achievements.length === 0) {
+            achievementsList.innerHTML = '<p>업적이 없습니다.</p>';
+          } else {
+            achievements.forEach((achievement) => {
+              const achievementItem = document.createElement('div');
+              achievementItem.className = 'achievement-item';
+              achievementItem.innerHTML = `
+                    <h2>${achievement.title}</h2>
+                    <p>${achievement.description}</p>
+                    <p>획득일: ${new Date(achievement.date).toLocaleDateString()}</p>
+                `;
+              achievementsList.appendChild(achievementItem);
+            });
+          }
+        } catch (error) {
+          achievementsList.innerHTML =
+            '<p>업적을 가져오는 데 오류가 발생했습니다.</p>';
+          console.error('업적 로드 에러:', error);
+        }
       }
 
       window.onload = loadAchievements;
