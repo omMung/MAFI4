@@ -160,15 +160,15 @@ window.onload = async function () {
   });
 
   socket.on('message', function (data) {
-    appendChatMessage('[' + data.sender + '] ' + data.message);
+    appendChatMessage('[' + data.nickName + '] ' + data.message);
   });
 
   socket.on('CHAT:DEAD', function (data) {
-    appendChatMessage('[' + data.sender + '] ' + data.message, 'CHAT:DEAD');
+    appendChatMessage('[' + data.nickName + '] ' + data.message, 'CHAT:DEAD');
   });
 
   socket.on('CHAT:MAFIA', function (data) {
-    appendChatMessage('[' + data.sender + '] ' + data.message, 'CHAT:MAFIA');
+    appendChatMessage('[' + data.nickName + '] ' + data.message, 'CHAT:MAFIA');
   });
 
   socket.on('updateTimer', (data) => {
@@ -212,7 +212,7 @@ window.onload = async function () {
 
     var myBtn = document.createElement('button');
     myBtn.className = 'btn btn-secondary occupant-btn';
-    myBtn.textContent = `👤 나 (사용자 ${currentUserId}) - [${role}]`;
+    myBtn.textContent = `👤 ${currentPlayer.nickName} (사용자 ${currentUserId}) - [${role}]`;
     myBtn.disabled = true;
 
     myOccupantDiv.appendChild(myBtn);
@@ -562,6 +562,7 @@ window.onload = async function () {
       socket.emit('chatDead', {
         roomId: roomId,
         userId: currentUserId,
+        nickName: user.nickName,
         message: message,
       });
       if (messageInputElem) {
@@ -573,6 +574,7 @@ window.onload = async function () {
       socket.emit('chatMafia', {
         roomId: roomId,
         userId: currentUserId,
+        nickName: user.nickName,
         message: message,
       });
       if (messageInputElem) {
@@ -583,6 +585,7 @@ window.onload = async function () {
       socket.emit('chatCitizen', {
         roomId: roomId,
         userId: currentUserId,
+        nickName: user.nickName,
         message: message,
       });
       if (messageInputElem) {
@@ -593,6 +596,7 @@ window.onload = async function () {
       socket.emit('chatMessage', {
         roomId: roomId,
         userId: currentUserId,
+        nickName: user.nickName,
         message: message,
       });
       if (messageInputElem) {
