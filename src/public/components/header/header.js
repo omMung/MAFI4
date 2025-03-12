@@ -10,6 +10,7 @@ function updateAuthDisplay() {
       .getProfile()
       .then((user) => {
         console.log(user);
+        window.user = user;
         authButtons.innerHTML = `
           <div class="auth-container">
             <span class="user-info">
