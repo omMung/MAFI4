@@ -1,4 +1,3 @@
-// 방 ID 추출 (예: http://localhost:3000/room/1)
 function getRoomIdFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('roomId'); // 'roomId' 파라미터 값 가져오기
@@ -37,17 +36,47 @@ function updatePhaseTimer(phase, remainingTime) {
   phaseTimerElement.style.display = 'inline'; // 혹시 숨겨져 있을 경우 보이도록 설정
 }
 
+// 리플레시 함수
+function refreshAccessToken() {
+  return fetch(`${CONFIG.API_BASE_URL}/api/auth/refresh`, {
+    method: 'POST',
+    credentials: 'include', // ✅ 쿠키 포함하여 요청
+  })
+    .then((response) => {
+      console.log('✅ response:', response); // 🔍 디버깅 로그 추가
+      if (!response.ok) throw new Error('리프레시 토큰 만료');
+      return response.json();
+    })
+    .then((data) => {
+      console.log('✅ 받은 데이터:', data); // 🔍 리턴된 데이터 확인
+
+      if (!data.accessToken) {
+        throw new Error('새로운 액세스 토큰을 받지 못했습니다.');
+      }
+
+      console.log('✅ 새로운 accessToken:', data.accessToken);
+      localStorage.setItem('accessToken', data.accessToken); // 🚀 새로운 액세스 토큰 저장
+
+      return data.accessToken; // 🚀 반환하여 즉시 사용
+    })
+    .catch((error) => {
+      console.error('❌ 리프레시 토큰 만료:', error);
+      alert('세션이 만료되었습니다. 로그인 페이지로 이동합니다.');
+      logout();
+    });
+}
+
+function logout() {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  window.location.href = `${CONFIG.API_BASE_URL}/index.html`;
+}
+
 // 로그인 및 룸 입장
 
 window.onload = async function () {
-  const userId = localStorage.getItem('userId');
+  // accessToken 가져오기 (예제: 로컬스토리지에서 가져오는 방식)
   const accessToken = localStorage.getItem('accessToken'); // 또는 쿠키에서 가져올 수도 있음
-
-  if (!userId) {
-    alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
-    window.location.href = `${CONFIG.API_BASE_URL}/index.html`;
-    return; //
-  }
 
   async function getGameServer() {
     try {
@@ -74,6 +103,7 @@ window.onload = async function () {
     }
   }
 
+  // WebSocket 연결 함수 (on.emit 없이 단순 유지)
   async function connectToWebSocket() {
     const gameServer = await getGameServer();
 
@@ -99,9 +129,8 @@ window.onload = async function () {
     });
   }
 
+  // 초기 실행
   await connectToWebSocket();
-
-  currentUserId = userId;
 
   sender.role = 'player';
   sender.isAlive = true;
@@ -109,9 +138,13 @@ window.onload = async function () {
   // UI 표시
   document.getElementById('mainContainer').style.display = 'flex';
   //document.getElementById('gameSection').style.display = 'block';
-  document.getElementById('firstVoteContainer').style.display = 'block';
+  document.getElementById('firstVoteContainer').style.display = 'none';
 
-  socket.emit('joinRoom', { roomId: roomId, userId: currentUserId });
+  socket.emit('joinRoom', {
+    roomId: roomId,
+    userId: currentUserId,
+    nickName: user.nickName,
+  }); // 조인 룸 시 닉네임 추가
   socket.emit('requestRoomInfo', { roomId: roomId });
 
   socket.once('ROOM:JOINED', function (data) {
@@ -143,9 +176,9 @@ window.onload = async function () {
     updatePhaseTimer(data.phase, data.timerTime);
   });
 
-  socket.on('voteSuccess', function (data) {
-    appendChatMessage('[' + data.voterId + '] ' + data.message, 'voteSucess');
-    socket.off('voteSuccess');
+  socket.on('VOTE:SUCCESS', function (data) {
+    appendChatMessage('[' + data.voterId + '] ' + data.message, 'VOTE:SUCCESS');
+    socket.off('VOTE:SUCCESS');
   });
 
   socket.on('system_message', function (data) {
@@ -182,12 +215,6 @@ window.onload = async function () {
     myBtn.textContent = `👤 나 (사용자 ${currentUserId}) - [${role}]`;
     myBtn.disabled = true;
 
-    // 인라인 스타일을 추가해 hover 및 글자색 변경 방지
-    myBtn.style.backgroundColor = 'var(--bg-color-light)';
-    myBtn.style.color = 'inherit';
-    myBtn.style.cursor = 'default';
-    myBtn.style.pointerEvents = 'none';
-
     myOccupantDiv.appendChild(myBtn);
   }
 
@@ -201,27 +228,13 @@ window.onload = async function () {
   });
 
   // 서버로부터 1차 투표 버튼 보이라는 이벤트 수신 시 처리
-  socket.on('VOTE:FIRST:ENABLE', function (data) {
-    isVotingPhase = true;
-    document.getElementById('firstVoteContainer').style.display = 'block';
-    voteBtn.disabled = false;
-    executeBtn.disabled = false;
-    survivalBtn.disabled = false;
-    voteBtn.classList.remove('disabled=btn');
-    survivalBtn.classList.remove('disabled-btn');
-    executeBtn.classList.remove('disabled-btn');
-    mafiaBtn.disabled = false;
-    policeBtn.disabled = false;
-    doctorBtn.disabled = false;
-    mafiaBtn.classList.remove('disabled-btn');
-    policeBtn.classList.remove('disabled-btn');
-    doctorBtn.classList.remove('disabled-btn');
-    console.log(mafiaBtn, policeBtn, doctorBtn);
+  socket.on('VOTE:FIRST:ENABLE', async function (data) {
+    await startDayBtn();
     socket.emit('UPDATE:MY_INFO', {
       roomId: roomId,
       userId: currentUserId,
     });
-    socket.on('myInfo', function (data) {
+    socket.on('MY:INFO', function (data) {
       sender = data.sender;
       console.log(sender);
     });
@@ -238,10 +251,11 @@ window.onload = async function () {
   });
 
   // 추가된 부분: gameEnd 이벤트 핸들러 등록
-  socket.on('gameEnd', function (data) {
+  socket.on('GAME:END', function (data) {
     // 게임 종료 이벤트 수신 시, 게임 상태 영역에 결과 메시지 표시
     appendChatMessage('게임 종료: ' + data.message);
     document.getElementById('gameStatus').textContent = data.message;
+    console.log(roomInfo);
     console.log('게임 종료 데이터:', data);
   });
 
@@ -261,7 +275,7 @@ window.onload = async function () {
       roomId: roomId,
       userId: currentUserId,
     });
-    socket.on('myInfo', function (data) {
+    socket.on('MY:INFO', function (data) {
       sender = data.sender;
       console.log(sender);
     });
@@ -479,11 +493,6 @@ window.onload = async function () {
       alert('현재 투표가 진행되지 않는 시기입니다.');
       return;
     }
-
-    if (!selectedTargetId) {
-      alert('투표할 대상을 선택하세요.');
-      return;
-    }
     var executeBtn = document.getElementById('executeBtn');
     var survivalBtn = document.getElementById('survivalBtn');
     executeBtn.disabled = true;
@@ -525,6 +534,22 @@ window.onload = async function () {
     chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
   }
 
+  //엔터키 입력시 전송버튼 클릭
+  document
+    .getElementById('messageInput')
+    .addEventListener('keypress', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault(); // 기본 동작(새 줄 입력) 방지
+        document.getElementById('sendBtn').click(); // 전송 버튼 클릭
+      }
+    });
+  //시작 버튼 이벤트
+  document
+    .getElementById('startGameBtn')
+    .addEventListener('click', function () {
+      socket.emit('startGame', { roomId: roomId, userId: currentUserId });
+    });
+
   // 채팅 메시지 전송 함수
   function sendChatMessage() {
     var messageInputElem = document.getElementById('messageInput');
@@ -553,11 +578,7 @@ window.onload = async function () {
       if (messageInputElem) {
         messageInputElem.value = '';
       }
-    } else if (
-      sender.role === 'citizen' ||
-      sender.role === 'doctor' ||
-      sender.role === 'police'
-    ) {
+    } else if (sender.role !== 'player') {
       console.log('시민 채팅');
       socket.emit('chatCitizen', {
         roomId: roomId,
@@ -582,7 +603,7 @@ window.onload = async function () {
 
   // 접속 인원 업데이트 함수
   function updateOccupantList(roomData) {
-    console.log('접속 인원 업데이트:', roomData);
+    console.log('접속 인원 업데이트:', roomData.players);
 
     var occupantListDiv = document.getElementById('occupantList');
     var myOccupantDiv = document.getElementById('myOccupantDiv');
@@ -616,7 +637,10 @@ window.onload = async function () {
     otherPlayers.forEach(function (player) {
       var btn = document.createElement('button');
       btn.className = 'btn btn-outline-primary occupant-btn';
-      btn.textContent = '사용자 ' + player.id;
+      btn.textContent = player.nickName
+        ? player.nickName
+        : '사용자 ' + player.id;
+
       btn.dataset.userid = player.id;
       btn.addEventListener('click', function () {
         document
@@ -636,16 +660,31 @@ window.onload = async function () {
       var myBtn = document.createElement('button');
       myBtn.className = 'btn btn-secondary occupant-btn';
       var roleText = currentPlayer.role ? ` - [${currentPlayer.role}]` : ''; // 역할이 있으면 추가
-      myBtn.textContent = `👤 나 (사용자 ${currentUserId})${roleText}`;
+      myBtn.textContent = currentPlayer.nickName
+        ? `👤 ${currentPlayer.nickName} (사용자 ${currentUserId})${roleText}`
+        : `👤 나 (사용자 ${currentUserId})${roleText}`;
+
       myBtn.disabled = true;
       myOccupantDiv.appendChild(myBtn);
-
-      // 인라인 스타일을 추가해 hover 및 글자색 변경 방지
-      myBtn.style.backgroundColor = 'var(--bg-color-light)';
-      myBtn.style.color = 'inherit';
-      myBtn.style.cursor = 'default';
-      myBtn.style.pointerEvents = 'none';
     }
+  }
+
+  function startDayBtn() {
+    isVotingPhase = true;
+    document.getElementById('firstVoteContainer').style.display = 'block';
+    voteBtn.disabled = false;
+    executeBtn.disabled = false;
+    survivalBtn.disabled = false;
+    voteBtn.classList.remove('disabled=btn');
+    survivalBtn.classList.remove('disabled-btn');
+    executeBtn.classList.remove('disabled-btn');
+    mafiaBtn.disabled = false;
+    policeBtn.disabled = false;
+    doctorBtn.disabled = false;
+    mafiaBtn.classList.remove('disabled-btn');
+    policeBtn.classList.remove('disabled-btn');
+    doctorBtn.classList.remove('disabled-btn');
+    console.log(mafiaBtn, policeBtn, doctorBtn);
   }
 
   // 선택 해제 함수
@@ -808,6 +847,19 @@ window.onload = async function () {
         console.log('🔥 모든 밤 액션 완료됨. `PROCESS:NIGHT_RESULT` 요청!');
         socket.emit('PROCESS:NIGHT_RESULT', { roomId: roomId });
       }
+    });
+  }
+  //게임 종료시 버튼 초기화
+  function resetKilledUserButtons() {
+    var killedUserButtons = document.querySelectorAll('.occupant-btn.dead');
+    killedUserButtons.forEach(function (button) {
+      button.style.backgroundColor = ''; // 배경색 초기화
+      button.style.color = ''; // 글자색 초기화
+      button.classList.remove('btn-secondary', 'dead'); // 클래스 제거
+      button.textContent = button.textContent.replace('💀', ''); // 💀 제거
+      button.style.opacity = ''; // 투명도 초기화
+      button.disabled = false; // 활성화
+      button.classList.add('btn-outline-primary'); //원래 클래스 추가
     });
   }
 };

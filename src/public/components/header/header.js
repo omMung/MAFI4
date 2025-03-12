@@ -9,6 +9,7 @@ function updateAuthDisplay() {
     api
       .getProfile()
       .then((user) => {
+        console.log(user);
         authButtons.innerHTML = `
           <div class="auth-container">
             <span class="user-info">
