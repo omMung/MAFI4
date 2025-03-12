@@ -444,6 +444,7 @@
           roomId: roomId,
           userId: currentUserId,
         });
+        socket.off('MY:INFO');
         socket.on('MY:INFO', function (data) {
           sender = data.sender;
           console.log(sender);
