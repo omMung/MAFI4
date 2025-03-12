@@ -140,7 +140,11 @@ window.onload = async function () {
   //document.getElementById('gameSection').style.display = 'block';
   document.getElementById('firstVoteContainer').style.display = 'none';
 
-  socket.emit('joinRoom', { roomId: roomId, userId: currentUserId });
+  socket.emit('joinRoom', {
+    roomId: roomId,
+    userId: currentUserId,
+    nickName: user.nickName,
+  }); // 조인 룸 시 닉네임 추가
   socket.emit('requestRoomInfo', { roomId: roomId });
 
   socket.once('ROOM:JOINED', function (data) {
@@ -599,7 +603,7 @@ window.onload = async function () {
 
   // 접속 인원 업데이트 함수
   function updateOccupantList(roomData) {
-    console.log('접속 인원 업데이트:', roomData);
+    console.log('접속 인원 업데이트:', roomData.players);
 
     var occupantListDiv = document.getElementById('occupantList');
     var myOccupantDiv = document.getElementById('myOccupantDiv');
@@ -633,7 +637,10 @@ window.onload = async function () {
     otherPlayers.forEach(function (player) {
       var btn = document.createElement('button');
       btn.className = 'btn btn-outline-primary occupant-btn';
-      btn.textContent = '사용자 ' + player.id;
+      btn.textContent = player.nickName
+        ? player.nickName
+        : '사용자 ' + player.id;
+
       btn.dataset.userid = player.id;
       btn.addEventListener('click', function () {
         document
@@ -653,7 +660,10 @@ window.onload = async function () {
       var myBtn = document.createElement('button');
       myBtn.className = 'btn btn-secondary occupant-btn';
       var roleText = currentPlayer.role ? ` - [${currentPlayer.role}]` : ''; // 역할이 있으면 추가
-      myBtn.textContent = `👤 나 (사용자 ${currentUserId})${roleText}`;
+      myBtn.textContent = currentPlayer.nickName
+        ? `👤 ${currentPlayer.nickName} (사용자 ${currentUserId})${roleText}`
+        : `👤 나 (사용자 ${currentUserId})${roleText}`;
+
       myBtn.disabled = true;
       myOccupantDiv.appendChild(myBtn);
     }
