@@ -10,5 +10,5 @@
 const CONFIG = {
   // API_BASE_URL: 'http://3.39.21.161:3000',
   API_BASE_URL: 'http://localhost:3000',
-  GAME_BASE_URL: 'http://13.209.67.6:3001',
+  GAME_BASE_URL: 'http://43.203.150.227:3001',
 };

@@ -39,8 +39,9 @@ function updatePhaseTimer(phase, remainingTime) {
 
 // 로그인 및 룸 입장
 
-window.onload = function () {
+window.onload = async function () {
   const userId = localStorage.getItem('userId');
+  const accessToken = localStorage.getItem('accessToken'); // 또는 쿠키에서 가져올 수도 있음
 
   if (!userId) {
     alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
@@ -48,11 +49,59 @@ window.onload = function () {
     return; //
   }
 
-  currentUserId = userId;
+  async function getGameServer() {
+    try {
+      const response = await fetch(
+        `${CONFIG.API_BASE_URL}/api/rooms/${roomId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: accessToken,
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        },
+      );
 
-  socket = io(`${CONFIG.GAME_BASE_URL}/room`, {
-    auth: { roomId: roomId, userId: currentUserId },
-  });
+      const data = await response.json();
+      currentUserId = data.userId;
+      let gameServer = data.gameServer;
+
+      console.log('🎮 연결할 게임 서버:', gameServer);
+      return gameServer;
+    } catch (error) {
+      console.error('🚨 방 입장 중 오류:', error);
+    }
+  }
+
+  async function connectToWebSocket() {
+    const gameServer = await getGameServer();
+
+    if (!gameServer) {
+      console.error('❌ 게임 서버를 찾을 수 없습니다.');
+      return;
+    }
+
+    console.log(`✅ WebSocket 연결 시도: http://${gameServer}:3001/room`);
+    socket = io(`http://${gameServer}:3001/room`, {
+      auth: { roomId: roomId, userId: currentUserId },
+    });
+
+    // 연결 실패 시 자동으로 새로운 서버 요청 후 재연결
+    socket.on('connect_error', async () => {
+      console.warn('⚠️ WebSocket 연결 실패, 새로운 서버 요청 중...');
+      await connectToWebSocket(); // 자동 재연결
+    });
+
+    socket.on('disconnect', async () => {
+      console.warn('⚠️ WebSocket 연결 끊김! 새로운 서버로 재연결 중...');
+      await connectToWebSocket(); // 자동 재연결
+    });
+  }
+
+  await connectToWebSocket();
+
+  currentUserId = userId;
 
   sender.role = 'player';
   sender.isAlive = true;
