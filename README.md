@@ -54,16 +54,6 @@
 🔒AWS HTTPS
 
 
-
-📁GIT  
-📦GITHUB  
-🛠️AWS(EC2, ECS, ALB, SNS, Lambda, Cloud Watch)
-🐋Docker  
-🐬MYSQL
-🪲Sentry
-
-
-
 ## 프로젝트 자료
 🧩 [피그마](https://www.figma.com/design/NOOZIfc4SlIlGoU0vDcVML/%EC%B5%9C%EC%A2%85-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%3A-%EB%A7%88%ED%94%BC%EC%95%84-%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0?node-id=0-1&p=f&t=3voTGuDi9FMaGqiN-0)
 
@@ -72,7 +62,6 @@
 🎥 [게임 소개 영상](https://www.youtube.com/watch?v=2UVN-dpqvPU)
 
 📖 [브로셔](https://teamsparta.notion.site/Node-js-7-1a72dc3ef514808e9ee0f43119a22e8d?p=1b32dc3ef51480ed8e27dad771b8203d&pm=c)
-
 
 
 ## 프로젝트 기능
