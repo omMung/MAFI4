@@ -24,44 +24,104 @@
     <div id="footer-container"></div>
     <script>
       async function loadAchievements() {
-        // const response = await fetch('/user-achievements', {
-        //   method: 'GET',
-        //   credentials: 'include', // 인증 정보 포함
-        // });
-        // const achievements = await api.getAchievements();
-        // const achievementsDiv = document.getElementById('achievements');
-
-        // achievements.forEach((achievement) => {
-        //   const div = document.createElement('div');
-        //   div.className = 'achievement';
-        //   div.innerText = `업적 ID: ${achievement.achieveId}, 값: ${achievement.value}`;
-        //   achievementsDiv.appendChild(div);
-        // });
-        try {
-          const achievements = await api.getAchievements();
-
-          if (achievements.length === 0) {
-            achievementsList.innerHTML = '<p>업적이 없습니다.</p>';
-          } else {
-            achievements.forEach((achievement) => {
-              const achievementItem = document.createElement('div');
-              achievementItem.className = 'achievement-item';
-              achievementItem.innerHTML = `
-                    <h2>${achievement.title}</h2>
-                    <p>${achievement.description}</p>
-                    <p>획득일: ${new Date(achievement.date).toLocaleDateString()}</p>
-                `;
-              achievementsList.appendChild(achievementItem);
-            });
-          }
-        } catch (error) {
-          achievementsList.innerHTML =
-            '<p>업적을 가져오는 데 오류가 발생했습니다.</p>';
-          console.error('업적 로드 에러:', error);
+        async function fetchAchievements() {
+          const response = await fetch('/api/achievements'); // API 엔드포인트
+          const achievements = await response.json();
+          const userAchievements = await fetchUserAchievements(); // 사용자 업적 가져오기
+          displayAchievements(achievements, userAchievements);
         }
-      }
 
-      window.onload = loadAchievements;
+        async function fetchUserAchievements() {
+          const response = await fetch('/api/user-achievements'); // 사용자 업적 API 엔드포인트
+          return response.json();
+        }
+
+        function displayAchievements(achievements, userAchievements) {
+          const container = document.getElementById('achievements-container');
+          container.innerHTML = ''; // 기존 내용 초기화
+
+          const userAchievementIds = userAchievements.map((ua) => ua.achieveId); // 사용자 업적 ID 배열
+
+          achievements.forEach((achievement) => {
+            // hidden이 false인 업적은 항상 표시
+            if (
+              !achievement.hidden ||
+              userAchievementIds.includes(achievement.id)
+            ) {
+              const achievementDiv = document.createElement('div');
+              achievementDiv.className = 'achievement';
+
+              const title = document.createElement('h2');
+              title.textContent = achievement.title;
+              achievementDiv.appendChild(title);
+
+              const description = document.createElement('p');
+              description.textContent = achievement.description;
+              achievementDiv.appendChild(description);
+
+              const condition = document.createElement('p');
+              condition.textContent = `조건: ${achievement.condition} (${achievement.conditionCount})`;
+              achievementDiv.appendChild(condition);
+
+              const badge = document.createElement('p');
+              badge.textContent = `배지: ${achievement.badge}`;
+              achievementDiv.appendChild(badge);
+
+              const status = document.createElement('p');
+              status.textContent = userAchievementIds.includes(achievement.id)
+                ? '달성 완료'
+                : '미달성';
+              achievementDiv.appendChild(status);
+
+              container.appendChild(achievementDiv);
+            }
+          });
+        }
+
+        // 페이지 로드 시 업적 데이터를 가져옵니다.
+        window.onload = fetchAchievements;
+      }
+      // const response = await fetch('/user-achievements', {
+      //   method: 'GET',
+      //   credentials: 'include', // 인증 정보 포함
+      // });
+      // const achievements = await api.getAchievements();
+      // const achievementsDiv = document.getElementById('achievements');
+
+      // achievements.forEach((achievement) => {
+      //   const div = document.createElement('div');
+      //   div.className = 'achievement';
+      //   div.innerText = `업적 ID: ${achievement.achieveId}, 값: ${achievement.value}`;
+      //   achievementsDiv.appendChild(div);
+      // });
+      //   try {
+      //     const achievements = await api.getAchievements();
+      //     const achievementsDiv = document.getElementById('achievements');
+
+      //     if (achievements.length === 0) {
+      //       achievementsDiv.innerHTML = '<p>업적이 없습니다.</p>';
+      //     } else {
+      //       achievements.forEach((achievement) => {
+      //         const achievementItem = document.createElement('div');
+      //         achievementItem.className = 'achievement-item';
+      //         achievementItem.innerHTML = `
+      //       <h2>${achievement.title}</h2>
+      //       <p>${achievement.description}</p>
+      //       <p>획득일: ${new Date(achievement.date).toLocaleDateString()}</p>
+      //   `;
+      //         achievementsDiv.appendChild(achievementItem);
+      //       });
+      //     }
+      //   } catch (error) {
+      //     const achievementsDiv = document.getElementById('achievements');
+
+      //     achievementsDiv.innerHTML =
+      //       '<p>업적을 가져오는 데 오류가 발생했습니다.</p>';
+      //     console.error('업적 로드 에러:', error);
+      //   }
+      // }
+
+      // window.onload = loadAchievements;
     </script>
   </body>
 </html>
