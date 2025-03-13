@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', async function () {
+  window.user = await api.getProfile();
+});
+
 function getRoomIdFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('roomId'); // 'roomId' 파라미터 값 가져오기
