@@ -13,15 +13,6 @@ export class UserAchievementsService {
     return await this.userAchievementsRepository.findUserAchievements(userId);
   }
 
-  /** 새로운 유저 업적 저장 */
-  async createUserAchievement(
-    userAchievementData: Partial<UserAchievements>,
-  ): Promise<UserAchievements> {
-    return await this.userAchievementsRepository.createUserAchievement(
-      userAchievementData,
-    );
-  }
-
   /** 기존 유저 업적 업데이트 */
   async updateUserAchievement(
     userId: number,

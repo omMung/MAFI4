@@ -76,6 +76,10 @@ const typeOrmModuleOptions = {
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'src', 'public'),
       serveRoot: '/',
+      serveStaticOptions: {
+        index: false, // 기본 index 파일 제공 비활성화
+        fallthrough: true, // 파일이 없으면 다음 미들웨어로 넘김
+      },
     }),
     // ThrottlerModule.forRoot([
     //   {s

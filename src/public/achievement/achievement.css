@@ -1,0 +1,570 @@
+/* 업적 페이지 스타일 - common.css와 충돌 방지 */
+
+/* 업적 컨테이너 */
+.achievements-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* 업적 헤더 */
+.achievements-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.achievements-header h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.achievements-header h1::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background-color: var(--accent-color);
+  border-radius: 2px;
+}
+
+.achievements-description {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+/* 업적 진행 상황 */
+.achievements-progress {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.progress-bar-container {
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--secondary-color),
+    var(--accent-color)
+  );
+  border-radius: 10px;
+  width: 0%;
+  transition: width 1s ease-in-out;
+}
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+#achievementProgressText {
+  color: var(--accent-color);
+}
+
+/* 필터 영역 */
+.achievements-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+}
+
+.filter-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.filter-select {
+  padding: 0.6rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  background-color: white;
+  font-size: 0.9rem;
+  transition: all var(--transition-speed);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.search-container {
+  display: flex;
+  min-width: 250px;
+  align-items: flex-end;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
+  font-size: 0.9rem;
+  transition: all var(--transition-speed);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.search-btn {
+  padding: 0.6rem 1rem;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+}
+
+.search-btn:hover {
+  background-color: var(--secondary-hover);
+}
+
+/* 업적 그리드 */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  position: relative;
+  min-height: 400px;
+}
+
+.achievement-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-speed);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.achievement-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.achievement-card.completed {
+  border: 2px solid var(--accent-color);
+}
+
+.achievement-card.incomplete {
+  opacity: 0.7;
+  filter: grayscale(0.8);
+}
+
+.achievement-card.hidden-achievement .achievement-badge,
+.achievement-card.hidden-achievement .achievement-description {
+  filter: blur(5px);
+}
+
+.achievement-card.hidden-achievement:hover .achievement-badge,
+.achievement-card.hidden-achievement:hover .achievement-description {
+  filter: blur(0);
+}
+
+.achievement-badge-container {
+  position: relative;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+.achievement-badge {
+  width: 250px;
+  height: 250px;
+  object-fit: contain;
+}
+
+.achievement-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.achievement-status.completed {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.achievement-status.completed::after {
+  content: '✓';
+  font-weight: bold;
+}
+
+.achievement-status.incomplete {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.achievement-status.incomplete::after {
+  content: '!';
+  font-weight: bold;
+}
+
+.achievement-details {
+  padding: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.achievement-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.achievement-description {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.achievement-progress {
+  margin-top: auto;
+}
+
+.achievement-progress-bar-container {
+  height: 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.achievement-progress-bar {
+  height: 100%;
+  background-color: var(--secondary-color);
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.5s ease-in-out;
+}
+
+.achievement-progress-text {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  display: flex;
+  justify-content: space-between;
+}
+
+.achievement-date {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+/* 로딩 스피너 */
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(26, 46, 74, 0.1);
+  border-top: 5px solid var(--secondary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 모달 스타일 */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: var(--shadow-lg);
+  animation: modalFadeIn 0.3s;
+  overflow: hidden;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.modal-achievement-badge {
+  flex: 1;
+  min-width: 150px;
+  text-align: center;
+  position: relative;
+}
+
+.modal-achievement-badge img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.modal-achievement-details {
+  flex: 2;
+  min-width: 250px;
+}
+
+.achievement-description {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.achievement-condition {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.condition-progress {
+  margin-top: 0.5rem;
+}
+
+.condition-progress-bar-container {
+  height: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.condition-progress-bar {
+  height: 100%;
+  background-color: var(--secondary-color);
+  border-radius: 5px;
+  width: 0%;
+  transition: width 0.5s ease-in-out;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 업적 조건 카테고리별 색상 */
+.condition-mafia_kills {
+  color: #e74c3c;
+}
+
+.condition-detective_checks {
+  color: #3498db;
+}
+
+.condition-heal_used {
+  color: #2ecc71;
+}
+
+.condition-game_play {
+  color: #f39c12;
+}
+
+/* 업적 카드 조건별 테두리 색상 */
+.achievement-card[data-condition='mafia_kills'] {
+  border-left: 3px solid #e74c3c;
+}
+
+.achievement-card[data-condition='detective_checks'] {
+  border-left: 3px solid #3498db;
+}
+
+.achievement-card[data-condition='heal_used'] {
+  border-left: 3px solid #2ecc71;
+}
+
+.achievement-card[data-condition='game_play'] {
+  border-left: 3px solid #f39c12;
+}
+
+/* 조건 텍스트 변환 */
+.condition-text {
+  font-weight: 500;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .achievements-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .filter-group,
+  .search-container {
+    width: 100%;
+  }
+
+  .achievements-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+
+  .modal-body {
+    flex-direction: column;
+  }
+
+  .modal-achievement-badge {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .achievements-header h1 {
+    font-size: 2rem;
+  }
+
+  .achievements-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 미달성 업적 블러 처리 */
+.blurred-content {
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+/* 미달성 업적 카드 스타일 */
+.achievement-card.incomplete .achievement-badge {
+  opacity: 0.6;
+  filter: grayscale(0.8);
+}
+
+.achievement-card.incomplete .achievement-title {
+  color: var(--text-color);
+}
+
+/* 히든 업적 스타일 */
+.achievement-card.hidden-achievement .achievement-badge {
+  filter: blur(5px);
+}
+
+.achievement-card.hidden-achievement .achievement-description {
+  filter: blur(5px);
+}
+
+.achievement-card.hidden-achievement .achievement-title {
+  font-weight: bold;
+  color: #9b59b6; /* 히든 업적 제목 색상 */
+}
+
+/* 달성한 업적 강조 */
+.achievement-card.completed .achievement-title {
+  color: var(--accent-color);
+}
+
+.achievement-card.completed {
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}

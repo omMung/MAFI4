@@ -14,22 +14,16 @@ export class UserAchievements {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  userId: number; // 사용자 ID
-
   @ManyToOne(() => User, (user) => user.userAchievements, {
     onDelete: 'CASCADE',
   }) // 관계 설정
-  @JoinColumn({ name: 'userId' }) // userId 컬럼과 매핑
+  @JoinColumn({ name: 'user_id' }) // userId 컬럼과 매핑
   user: User;
-
-  @Column()
-  achieveId: number; // 업적 ID
 
   @ManyToOne(() => Achieve, (achieve) => achieve.userAchievements, {
     onDelete: 'CASCADE',
   }) // 관계 설정
-  @JoinColumn({ name: 'achieveId' })
+  @JoinColumn({ name: 'achieve_id' })
   achieve: Achieve;
 
   @Column({ default: 0 })
