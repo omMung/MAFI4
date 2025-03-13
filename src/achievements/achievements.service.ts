@@ -138,15 +138,19 @@ export class AchievementsService {
               matchedAchievement.id,
             );
 
+          let userAchievementData = {
+            userId: Number(userId),
+            achieveId: matchedAchievement.id,
+            value: matchedAchievement.conditionCount,
+            achievedAt: new Date(),
+          };
+
           if (!existingAchievement) {
             // 기존 업적이 없으면 저장
             existingAchievement =
-              await this.userAchievementsRepository.createUserAchievement({
-                userId: Number(userId),
-                achieveId: matchedAchievement.id,
-                value: matchedAchievement.conditionCount,
-                achievedAt: new Date(),
-              });
+              await this.userAchievementsRepository.createUserAchievement(
+                userAchievementData,
+              );
             userAchievementsToSave.push(existingAchievement);
           }
         }

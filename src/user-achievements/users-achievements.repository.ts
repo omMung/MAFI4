@@ -19,11 +19,11 @@ export class UserAchievementsRepository {
   ) {}
 
   /** 유저 업적 저장 (단일) */
-  async createUserAchievement(
-    userAchievementData: Partial<UserAchievements>,
-  ): Promise<UserAchievements> {
+  async createUserAchievement(userAchievementData): Promise<UserAchievements> {
     const { userId, achieveId } = userAchievementData;
-
+    console.log(
+      `users-achievements.repository.ts: ${userAchievementData}, ${userId} ,${achieveId}`,
+    );
     if (!userId || !achieveId) {
       throw new Error('userId 또는 achieveId가 누락되었습니다.');
     }
@@ -49,10 +49,8 @@ export class UserAchievementsRepository {
     if (!existingAchievement) {
       // 기존 업적이 없으면 새로 생성
       existingAchievement = this.userAchievementsRepository.create({
-        userId,
-        user,
-        achieveId,
-        achieve,
+        user: { id: userId },
+        achieve: { id: achieveId },
         value: userAchievementData.value || 0,
         achievedAt: new Date(),
       });
@@ -75,7 +73,7 @@ export class UserAchievementsRepository {
   /** 특정 유저의 업적 조회 */
   async findUserAchievements(userId: number): Promise<UserAchievements[]> {
     return await this.userAchievementsRepository.find({
-      where: { userId },
+      where: { user: { id: userId } },
       relations: ['achieve'], // 업적 정보 포함
     });
   }
@@ -87,8 +85,8 @@ export class UserAchievementsRepository {
   ): Promise<UserAchievements | null> {
     return await this.userAchievementsRepository.findOne({
       where: {
-        userId,
-        achieveId, // 기존 코드에서 `achieve: { id: achieveId }` 방식 사용했으나, achieveId 직접 사용하도록 수정
+        user: { id: userId },
+        achieve: { id: achieveId }, // 기존 코드에서 `achieve: { id: achieveId }` 방식 사용했으나, achieveId 직접 사용하도록 수정
       },
       relations: ['achieve'], // 업적 관계를 명시적으로 로드
     });
@@ -118,9 +116,8 @@ export class UserAchievementsRepository {
       }
 
       existingAchievement = this.userAchievementsRepository.create({
-        userId,
-        achieveId,
-        achieve,
+        user: { id: userId },
+        achieve: { id: achieveId },
         value,
         achievedAt: new Date(),
       });

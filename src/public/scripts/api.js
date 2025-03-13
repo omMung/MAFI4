@@ -151,6 +151,12 @@ const api = {
       console.log(`api.js getRanking 호출`),
     ),
 
+  achievements: {
+    findAll: () => fetchAPI('/achievements', { method: 'GET' }),
+    getUserAchievements: () =>
+      fetchAPI(`/user-achievements/me`, { method: 'GET' }),
+  },
+
   // 관리자 전용 API들
   admin: {
     // 관리자 권한 확인
