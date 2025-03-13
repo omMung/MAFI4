@@ -2,11 +2,13 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MAFI4 - 홈</title>
-    <link rel="stylesheet" href="/styles/common.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="/styles/common.css" />
+    <link rel="stylesheet" href="home.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" />
     <script src="/scripts/api.js" defer></script>
     <script src="/components/header/header.js" defer></script>
     <script src="/scripts/common.js" defer></script>
@@ -16,58 +18,241 @@
 <body>
     <div id="header-container"></div>
 
-    <main>
-        <div class="home-container">
+    <!-- 페이지 전용 컨테이너 추가 -->
+    <div id="homepage-container">
+        <main>
             <!-- 히어로 섹션 -->
             <section class="hero-section">
+                <div class="hero-overlay"></div>
                 <div class="hero-content">
-                    <h1 class="hero-title">MAFI4에 오신 것을 환영합니다!</h1>
-                    <p class="hero-subtitle">친구들과 함께 즐기는 추리와 전략의 마피아 게임</p>
-                    <a href="/roomList/roomList.html" class="cta-button">게임 시작하기</a>
+                    <h1 class="hero-title">
+                        MAFI4에 오신 것을<br />환영합니다!
+                    </h1>
+                    <p class="hero-subtitle">
+                        친구들과 함께 즐기는 추리와 전략의 마피아 게임
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="cta-button primary" id="startGameBtn">
+                            게임 시작하기
+                        </button>
+                        <a href="#game-info" class="cta-button secondary">게임 소개</a>
+                    </div>
+                </div>
+                <div class="hero-scroll-indicator">
+                    <span>스크롤하여 더 알아보기</span>
+                    <div class="scroll-arrow">↓</div>
+                </div>
+            </section>
+
+            <!-- 게임 소개 섹션 -->
+            <section class="game-info-section" id="game-info">
+                <div class="section-header">
+                    <h2 class="section-title">마피아 게임이란?</h2>
+                    <p class="section-subtitle">
+                        가이드 페이지에서 상세 정보를 확인하세요!
+                    </p>
+                </div>
+                <div class="game-info-content">
+                    <div class="game-info-text">
+                        <p>
+                            마피아 게임은 평화로운 마을에 잠입한 마피아를 찾아내는 심리 추리
+                            게임입니다. 게임은 낮과 밤을 반복하며 진행됩니다.
+                        </p>
+                        <ul class="game-info-list">
+                            <li>
+                                <strong>낮 단계:</strong> 모든 플레이어가 토론을 통해 마피아로 의심되는 사람을
+                                지목하고 투표로 추방합니다.
+                            </li>
+                            <li>
+                                <strong>밤 단계:</strong> 각 역할별로 특수 능력을 사용합니다. 마피아는 시민을
+                                제거하고, 의사는 치료하며, 경찰은 용의자를 조사합니다.
+                            </li>
+                        </ul>
+                        <p>
+                            모든 마피아를 찾아내면 시민 팀이, 시민 수가 마피아 수 이하로 줄어들면 마피아 팀이
+                            승리합니다!
+                        </p>
+                    </div>
+                    <div class="game-info-image">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/MAFI4%20%EB%8C%80%ED%91%9C%EC%9D%B4%EB%AF%B8%EC%A7%80-MkJ1nBivWfvXV7VelhKQKfljdF3WDC.png"
+                            alt="마피아 게임 설명" />
+                    </div>
                 </div>
             </section>
 
             <!-- 캐릭터 섹션 -->
-            <div class="character-container">
-                <section class="characters-section">
-                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/MAFI4%20%EB%8C%80%ED%91%9C%EC%9D%B4%EB%AF%B8%EC%A7%80-MkJ1nBivWfvXV7VelhKQKfljdF3WDC.png"
-                        alt="MAFI4 캐릭터" class="character-image">
-                </section>
-                <section class="characters-section">
-                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/MAFI4%20%EB%8C%80%ED%91%9C%EC%9D%B4%EB%AF%B8%EC%A7%80-MkJ1nBivWfvXV7VelhKQKfljdF3WDC.png"
-                        alt="MAFI4 캐릭터" class="character-image">
-                </section>
-                <section class="characters-section">
-                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/MAFI4%20%EB%8C%80%ED%91%9C%EC%9D%B4%EB%AF%B8%EC%A7%80-MkJ1nBivWfvXV7VelhKQKfljdF3WDC.png"
-                        alt="MAFI4 캐릭터" class="character-image">
-                </section>
-            </div>
-
+            <section class="characters-section">
+                <div class="section-header">
+                    <h2 class="section-title">게임 역할</h2>
+                    <p class="section-subtitle">다양한 역할로 게임을 더욱 흥미롭게</p>
+                </div>
+                <div class="character-slider" id="characterSlider">
+                    <div class="character-card">
+                        <div class="character-image-container">
+                            <img src="../imageFile/citizen.png" alt="시민" class="character-image" />
+                        </div>
+                        <h3 class="character-name">시민</h3>
+                        <p class="character-description">
+                            마을을 지키는 평범한 시민입니다. 토론과 투표를 통해 마피아를 찾아내야 합니다.
+                        </p>
+                    </div>
+                    <div class="character-card">
+                        <div class="character-image-container">
+                            <img src="../imageFile/mafia.png" alt="마피아" class="character-image" />
+                        </div>
+                        <h3 class="character-name">마피아</h3>
+                        <p class="character-description">
+                            밤에 시민을 제거하는 역할입니다. 자신의 정체를 숨기며 게임을 이끌어가야 합니다.
+                        </p>
+                    </div>
+                    <div class="character-card">
+                        <div class="character-image-container">
+                            <img src="../imageFile/doctor.png" alt="의사" class="character-image" />
+                        </div>
+                        <h3 class="character-name">의사</h3>
+                        <p class="character-description">
+                            밤에 한 명을 선택해 보호합니다. 마피아의 공격으로부터 시민을 구할 수 있습니다.
+                        </p>
+                    </div>
+                    <div class="character-card">
+                        <div class="character-image-container">
+                            <img src="../imageFile/police.png" alt="경찰" class="character-image" />
+                        </div>
+                        <h3 class="character-name">경찰</h3>
+                        <p class="character-description">
+                            밤에 한 명을 조사하여 마피아 여부를 확인합니다. 중요한 정보를 얻을 수 있습니다.
+                        </p>
+                    </div>
+                    <div class="character-card">
+                        <h3 class="add-plan">추가 예정!</h3>
+                    </div>
+                </div>
+            </section>
 
             <!-- 게임 특징 섹션 -->
             <section class="features-section">
-                <div class="feature-card">
-                    <div class="feature-icon">🎭</div>
-                    <h3 class="feature-title">다양한 역할</h3>
-                    <p class="feature-description">의사, 경찰, 마피아 등 각각의 특별한 능력을 가진 역할들을 경험해보세요.</p>
+                <div class="section-header">
+                    <h2 class="section-title">게임 특징</h2>
+                    <p class="section-subtitle">MAFI4만의 특별한 매력</p>
                 </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
-                    <h3 class="feature-title">추리와 전략</h3>
-                    <p class="feature-description">단서를 모으고 토론하며 진실을 밝혀내는 스릴 넘치는 게임을 즐겨보세요.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">👥</div>
-                    <h3 class="feature-title">실시간 소통</h3>
-                    <p class="feature-description">다른 플레이어들과 실시간으로 대화하고 협력하며 게임을 즐기세요.</p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎭</div>
+                        <h3 class="feature-title">다양한 역할</h3>
+                        <p class="feature-description">
+                            의사, 경찰, 마피아 등 각 역할별 특별한 능력을 경험해보세요.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3 class="feature-title">추리와 전략</h3>
+                        <p class="feature-description">
+                            단서를 모으고 토론하며 진실을 밝혀내는 스릴 넘치는 게임을 즐기세요.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">👥</div>
+                        <h3 class="feature-title">실시간 소통</h3>
+                        <p class="feature-description">
+                            다른 플레이어들과 실시간 대화로 전략을 공유하고 협력해보세요.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏆</div>
+                        <h3 class="feature-title">랭킹 시스템</h3>
+                        <p class="feature-description">
+                            게임 결과에 따라 점수를 획득하고 랭킹에 도전할 수 있습니다.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎮</div>
+                        <h3 class="feature-title">직관적인 UI</h3>
+                        <p class="feature-description">
+                            누구나 쉽게 이해하고 플레이할 수 있는 사용자 친화적인 인터페이스를 제공합니다.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3 class="feature-title">안전한 플레이</h3>
+                        <p class="feature-description">
+                            보안 시스템으로 안전하게 게임을 즐길 수 있습니다.
+                        </p>
+                    </div>
                 </div>
             </section>
-        </div>
-    </main>
+
+            <!-- 게임 시작 섹션 -->
+            <section class="start-game-section">
+                <div class="start-game-content">
+                    <h2 class="start-game-title">지금 바로 게임을 시작해보세요!</h2>
+                    <p class="start-game-description">
+                        친구들과 함께 마피아 게임의 스릴과 재미를 경험해보세요.
+                    </p>
+                    <button class="cta-button primary large" id="startGameBtnBottom">
+                        게임 시작하기
+                    </button>
+                </div>
+                <div class="start-game-decoration">
+                    <div class="decoration-circle"></div>
+                    <div class="decoration-circle"></div>
+                    <div class="decoration-circle"></div>
+                </div>
+            </section>
+
+            <!-- 최근 업데이트 섹션 -->
+            <section class="updates-section">
+                <div class="section-header">
+                    <h2 class="section-title">최근 업데이트</h2>
+                    <p class="section-subtitle">
+                        더 나은 게임 경험을 위한 지속적인 개선
+                    </p>
+                </div>
+                <div class="updates-timeline">
+                    <div class="update-item">
+                        <div class="update-date">2025.xx.xx</div>
+                        <div class="update-content">
+                            <h3 class="update-title">런칭</h3>
+                            <p class="update-description">
+                                MAFI4 웹사이트를 런칭하였습니다!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="update-item">
+                        <div class="update-date">2025.xx.xx</div>
+                        <div class="update-content">
+                            <h3 class="update-title">UI 개선</h3>
+                            <p class="update-description">
+                                게임 인터페이스가 더 직관적으로 개선되었습니다. 투표 시스템과 역할 사용 방법이 더 쉬워졌습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 로그인 유도 모달 -->
+            <div class="modal" id="loginModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>로그인이 필요합니다</h2>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>게임을 시작하려면 로그인이 필요합니다.</p>
+                        <p>로그인하고 친구들과 함께 마피아 게임을 즐겨보세요!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-button secondary" id="closeModalBtn">취소</button>
+                        <button class="modal-button primary" id="goToLoginBtn">로그인하기</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <div id="footer-container"></div>
+
+    <!-- 페이지 상단으로 이동 버튼 -->
+    <button id="scrollToTopBtn" class="scroll-to-top">↑</button>
 </body>
 
 </html>
