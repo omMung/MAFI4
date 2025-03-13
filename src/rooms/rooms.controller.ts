@@ -15,13 +15,14 @@ import { RoomsService } from './rooms.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { Response } from 'express';
+import { GameBanGuard } from 'src/auth/guards/game-ban.guard';
 
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 
   // ✅ 방 생성 (인증 필요)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, GameBanGuard)
   @Post()
   async createRoom(@Request() req, @Body() createRoomDto: CreateRoomDto) {
     const userId = req.user.id;
@@ -57,7 +58,7 @@ export class RoomsController {
   }
 
   // ✅ 특정 방 조회 + 게임 서버 주소 응답 (입장 시)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, GameBanGuard)
   @Get(':roomId')
   async getRoom(@Param('roomId') roomId: number, @Request() req) {
     const userId = req.user.id;
