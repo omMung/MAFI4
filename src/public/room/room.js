@@ -254,9 +254,11 @@ window.onload = async function () {
   socket.on('GAME:END', function (data) {
     // 게임 종료 이벤트 수신 시, 게임 상태 영역에 결과 메시지 표시
     appendChatMessage('게임 종료: ' + data.message);
-    document.getElementById('gameStatus').textContent = data.message;
+    // document.getElementById('gameStatus').textContent = data.message;
     console.log(roomInfo);
     console.log('게임 종료 데이터:', data);
+    console.log(data);
+    resetOccupantList(roomInfo);
   });
 
   socket.on('NIGHT:BACKGROUND', function (data) {
@@ -301,6 +303,12 @@ window.onload = async function () {
     var targetBtn = document.querySelector(
       `.occupant-btn[data-userid="${targetId}"]`,
     );
+    // var myBtn = document.querySelector('#myOccupantDiv button'); // 본인 버튼 선택
+    // if (targetId === currentUserId) {
+    //   if (myBtn) {
+    //     myBtn.textContent += '💀'; // 본인 버튼에 해골 추가
+    //   }
+    // }
     if (targetBtn) {
       targetBtn.classList.remove('blink'); // 깜빡임 제거
       targetBtn.classList.remove('btn-outline-primary');
@@ -344,6 +352,7 @@ window.onload = async function () {
     console.log('🌌 ROOM:NIGHT_START 이벤트 수신:', data);
     appendChatMessage('[SYSTEM] ' + data.message, true);
     document.body.style.backgroundColor = 'black';
+    showRoleActionContainer();
     // 단순 안내 메시지, 역할 버튼은 NIGHT:START:SIGNAL에서 처리
   });
 
@@ -361,12 +370,18 @@ window.onload = async function () {
       var killedUserBtn = document.querySelector(
         `.occupant-btn[data-userid="${killedUserId}"]`,
       );
+      // var myBtn = document.querySelector('#myOccupantDiv button');
+      // if (killedUserId === currentUserId) {
+      //   if (myBtn) {
+      //     myBtn.textContent += '💀'; // 본인 버튼에  추가
+      //   }
+      // }
       if (killedUserBtn) {
-        killedUserBtn.style.backgroundColor = '#e74c3c';
-        killedUserBtn.style.color = 'white';
+        killedUserBtn.classList.remove('blink'); // 깜빡임 제거
+        killedUserBtn.classList.remove('btn-outline-primary');
         killedUserBtn.classList.add('btn-secondary');
+        killedUserBtn.classList.add('dead'); // dead 클래스 추가
         killedUserBtn.textContent += '💀';
-        killedUserBtn.style.opacity = '0.5'; // opacity 0.5 설정
         killedUserBtn.disabled = true;
       }
       appendChatMessage(
@@ -854,16 +869,10 @@ window.onload = async function () {
     });
   }
   //게임 종료시 버튼 초기화
-  function resetKilledUserButtons() {
-    var killedUserButtons = document.querySelectorAll('.occupant-btn.dead');
-    killedUserButtons.forEach(function (button) {
-      button.style.backgroundColor = ''; // 배경색 초기화
-      button.style.color = ''; // 글자색 초기화
-      button.classList.remove('btn-secondary', 'dead'); // 클래스 제거
-      button.textContent = button.textContent.replace('💀', ''); // 💀 제거
-      button.style.opacity = ''; // 투명도 초기화
-      button.disabled = false; // 활성화
-      button.classList.add('btn-outline-primary'); //원래 클래스 추가
-    });
+  function resetOccupantList(roomInfo) {
+    document.getElementById('occupantList').innerHTML = '';
+    document.getElementById('myOccupantDiv').innerHTML = '';
+
+    updateOccupantList(roomInfo);
   }
 };
