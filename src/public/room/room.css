@@ -1,7 +1,7 @@
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f0f4f8;
-  margin: 20px;
+  background-color: #f5ecd7;
+  /* margin: 20px; */
   color: #333;
   line-height: 1.6;
   transition: background-color 4s ease;
@@ -10,6 +10,52 @@ body {
 h1,
 h2 {
   color: #2c3e50;
+}
+
+.input-group {
+  display: flex; /* Flexbox 레이아웃 사용 */
+  align-items: center; /* 세로 방향 가운데 정렬 */
+  margin-top: 2px; /* 기존 mt-2 대신 간격 조절 */
+  margin-bottom: 10px; /* 아래쪽 마진 추가 */
+}
+
+#messageInput {
+  flex: 1; /* 입력창이 가능한 공간을 모두 차지하도록 설정 */
+  margin-bottom: 0; /* 입력창 아래쪽 마진 제거 */
+  border-radius: 5px 0 0 5px; /* 왼쪽 모서리 둥글게 */
+}
+
+#sendBtn {
+  border-radius: 0 5px 5px 0; /* 오른쪽 모서리 둥글게 */
+  margin-left: 2px; /* 입력창과의 간격 조절 */
+  /* 필요한 경우 너비 지정 */
+  /* width: 80px; */
+}
+
+#myOccupantDiv button {
+  background-color: #1a2e4a;
+  color: #ffffff;
+  width: 100%; /* 가로 길이 100%로 설정 */
+  height: 2.5em; /* 세로 길이 1.5배로 설정 (원래 높이에 따라 조정) */
+  box-sizing: border-box; /* 패딩, 테두리 포함하여 크기 계산 */
+  display: flex; /* 내부 요소 가운데 정렬을 위해 flexbox 사용 */
+  justify-content: center; /* 가로 가운데 정렬 */
+  align-items: center; /* 세로 가운데 정렬 */
+  padding: 0; /* 내부 패딩 제거 (필요에 따라 조정) */
+}
+
+#myOccupantDiv button.dead {
+  background-color: #a31f1f; /* 죽었을 때 배경색 변경 */
+  color: #cacaca; /* 죽었을 때 글자색 변경 */
+  opacity: 0.5;
+  width: 100%; /* 가로 길이 100%로 설정 */
+  height: 2.5em; /* 세로 길이 1.5배로 설정 (원래 높이에 따라 조정) */
+  box-sizing: border-box; /* 패딩, 테두리 포함하여 크기 계산 */
+  display: flex; /* 내부 요소 가운데 정렬을 위해 flexbox 사용 */
+  justify-content: center; /* 가로 가운데 정렬 */
+  align-items: center; /* 세로 가운데 정렬 */
+  padding: 0; /* 내부 패딩 제거 (필요에 따라 조정) */
+  /* 추가적인 스타일 (예: opacity, text-decoration 등) */
 }
 
 .container-custom {
@@ -57,13 +103,13 @@ h2 {
   padding: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #ecf0f1;
+  background-color: #f39c12;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .occupant-btn:hover {
-  background-color: #d5dbdb;
+  background-color: #5e6445;
 }
 
 .occupant-btn.selected {
@@ -73,6 +119,7 @@ h2 {
 
 .occupant-btn.dead {
   background-color: #e74c3c;
+  opacity: 0.5;
   color: white;
 }
 

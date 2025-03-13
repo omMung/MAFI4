@@ -142,6 +142,14 @@ window.onload = async function () {
   socket.off('MY:INFO');
   socket.on('MY:INFO', function (data) {
     sender = data.sender;
+    if (sender.isAlive === 'false') {
+      const myBtn = document.querySelector(
+        `#myOccupantDiv button[data-userid="${userId}"]`,
+      );
+      if (myBtn) {
+        myBtn.classList.add('dead');
+      }
+    }
     console.log(sender);
   });
   // UI 표시
@@ -221,7 +229,7 @@ window.onload = async function () {
 
     var myBtn = document.createElement('button');
     myBtn.className = 'btn btn-secondary occupant-btn';
-    myBtn.textContent = `👤 ${user.nickName} - ${role}`;
+    myBtn.textContent = `${user.nickName} - ${role}`;
     myBtn.disabled = true;
 
     myOccupantDiv.appendChild(myBtn);
@@ -246,6 +254,14 @@ window.onload = async function () {
     socket.off('MY:INFO');
     socket.on('MY:INFO', function (data) {
       sender = data.sender;
+      if (sender.isAlive === 'false') {
+        const myBtn = document.querySelector(
+          `#myOccupantDiv button[data-userid="${userId}"]`,
+        );
+        if (myBtn) {
+          myBtn.classList.add('dead');
+        }
+      }
       console.log(sender);
     });
   });
@@ -291,6 +307,15 @@ window.onload = async function () {
     socket.on('MY:INFO', function (data) {
       sender = data.sender;
       console.log(sender);
+      if (sender.isAlive === 'false') {
+        const myBtn = document.querySelector(
+          `#myOccupantDiv button[data-userid="${userId}"]`,
+        );
+        if (myBtn) {
+          myBtn.classList.add('dead');
+        }
+      }
+      console.log(sender);
     });
   });
 
@@ -314,12 +339,7 @@ window.onload = async function () {
     var targetBtn = document.querySelector(
       `.occupant-btn[data-userid="${targetId}"]`,
     );
-    // var myBtn = document.querySelector('#myOccupantDiv button'); // 본인 버튼 선택
-    // if (targetId === currentUserId) {
-    //   if (myBtn) {
-    //     myBtn.textContent += '💀'; // 본인 버튼에 해골 추가
-    //   }
-    // }
+
     if (targetBtn) {
       targetBtn.classList.remove('blink'); // 깜빡임 제거
       targetBtn.classList.remove('btn-outline-primary');
@@ -691,8 +711,8 @@ window.onload = async function () {
       myBtn.className = 'btn btn-secondary occupant-btn';
       var roleText = currentPlayer.role ? ` - [${currentPlayer.role}]` : ''; // 역할이 있으면 추가
       myBtn.textContent = currentPlayer.nickName
-        ? `👤 ${currentPlayer.nickName}`
-        : `👤 나 (사용자 ${currentUserId})${roleText}`;
+        ? `${currentPlayer.nickName}`
+        : `나 (사용자 ${currentUserId})${roleText}`;
 
       myBtn.disabled = true;
       myOccupantDiv.appendChild(myBtn);
