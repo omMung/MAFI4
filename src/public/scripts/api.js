@@ -1,4 +1,5 @@
 // src/public/scripts/api.js
+// const API_URL = 'https://yangs.site/api';
 const API_URL = 'http://localhost:3000/api';
 
 async function fetchAPI(endpoint, options = {}) {

@@ -135,6 +135,15 @@ window.onload = async function () {
   sender.role = 'player';
   sender.isAlive = true;
 
+  socket.emit('UPDATE:MY_INFO', {
+    roomId: roomId,
+    userId: currentUserId,
+  });
+  socket.off('MY:INFO');
+  socket.on('MY:INFO', function (data) {
+    sender = data.sender;
+    console.log(sender);
+  });
   // UI 표시
   document.getElementById('mainContainer').style.display = 'flex';
   //document.getElementById('gameSection').style.display = 'block';
@@ -234,6 +243,7 @@ window.onload = async function () {
       roomId: roomId,
       userId: currentUserId,
     });
+    socket.off('MY:INFO');
     socket.on('MY:INFO', function (data) {
       sender = data.sender;
       console.log(sender);
@@ -277,6 +287,7 @@ window.onload = async function () {
       roomId: roomId,
       userId: currentUserId,
     });
+    socket.off('MY:INFO');
     socket.on('MY:INFO', function (data) {
       sender = data.sender;
       console.log(sender);
