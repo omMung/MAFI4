@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // CSS 파일 로드 및 경로 변경
+  loadAndReplaceCSS('home/home.css', 'home.css');
+
+  // JavaScript 파일 로드 및 경로 변경
+  loadAndReplaceScript('home/home.js', 'home.js');
+
   // 게임 시작 버튼 이벤트 리스너
   const startGameBtn = document.getElementById('startGameBtn');
   const startGameBtnBottom = document.getElementById('startGameBtnBottom');
@@ -286,4 +292,38 @@ function animateCounter(element, start, end, duration) {
     }
   };
   window.requestAnimationFrame(step);
+}
+
+// CSS경로 수정 로직
+function loadAndReplaceCSS(originalHref, replacementHref) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = originalHref;
+
+  link.onerror = function () {
+    console.warn(
+      `${originalHref} 파일을 로드할 수 없습니다. ${replacementHref} 파일을 대신 로드합니다.`,
+    );
+    link.href = replacementHref;
+    link.onerror = null;
+  };
+
+  document.head.appendChild(link);
+}
+
+// JS 경로 수정 로직
+
+function loadAndReplaceScript(originalSrc, replacementSrc) {
+  const script = document.createElement('script');
+  script.src = originalSrc;
+
+  script.onerror = function () {
+    console.warn(
+      `${originalSrc} 파일을 로드할 수 없습니다. ${replacementSrc} 파일을 대신 로드합니다.`,
+    );
+    script.src = replacementSrc;
+    script.onerror = null;
+  };
+
+  document.head.appendChild(script);
 }
