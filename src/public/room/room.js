@@ -212,7 +212,7 @@ window.onload = async function () {
 
     var myBtn = document.createElement('button');
     myBtn.className = 'btn btn-secondary occupant-btn';
-    myBtn.textContent = `👤 ${currentPlayer.nickName} (사용자 ${currentUserId}) - [${role}]`;
+    myBtn.textContent = `👤 ${user.nickName} - ${role}`;
     myBtn.disabled = true;
 
     myOccupantDiv.appendChild(myBtn);
@@ -665,7 +665,7 @@ window.onload = async function () {
       myBtn.className = 'btn btn-secondary occupant-btn';
       var roleText = currentPlayer.role ? ` - [${currentPlayer.role}]` : ''; // 역할이 있으면 추가
       myBtn.textContent = currentPlayer.nickName
-        ? `👤 ${currentPlayer.nickName} (사용자 ${currentUserId})${roleText}`
+        ? `👤 ${currentPlayer.nickName}`
         : `👤 나 (사용자 ${currentUserId})${roleText}`;
 
       myBtn.disabled = true;
