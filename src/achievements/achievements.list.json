@@ -11,7 +11,7 @@
     {
       "id": 2,
       "title": "완벽한 범죄",
-      "description": "마피아로서 3회 연속 시민을 죽이세요.",
+      "description": "마피아로서 3회 시민을 총살하세요.",
       "condition": "mafia_kills",
       "conditionCount": 3,
       "badge": "mafia_godfather"
@@ -43,10 +43,28 @@
     {
       "id": 6,
       "title": "죽음을 막는 자",
-      "description": "의사로서 3회 연속 시민을 보호하세요.",
+      "description": "의사로서 3회 시민을 보호하세요.",
       "condition": "heal_used",
       "conditionCount": 3,
-      "badge": "doctor_master"
+      "badge": "doctor_senior"
+    },
+    {
+      "id": 7,
+      "title": "허준",
+      "description": "의사로서 5회 시민을 보호하세요.",
+      "condition": "heal_used",
+      "conditionCount": 5,
+      "badge": "doctor_master",
+      "hidden": true
+    },
+    {
+      "id": 8,
+      "title": "1만 시간의 법칙",
+      "description": "게임을 10000판 하세요.",
+      "condition": "game_play",
+      "conditionCount": 10000,
+      "badge": "game_master",
+      "hidden": true
     }
   ]
 }
