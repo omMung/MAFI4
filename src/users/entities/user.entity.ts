@@ -21,7 +21,7 @@ export class User {
   email: string;
   @Column({ type: 'varchar', length: 255 })
   password: string;
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 12 })
   nickName: string;
   @Column({ type: 'boolean', default: false })
   isVerified: boolean;

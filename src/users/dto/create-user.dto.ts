@@ -4,6 +4,7 @@ import {
   IsEmail,
   MinLength,
   IsOptional,
+  MaxLength,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -17,6 +18,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty({ message: '닉네임 설정은 필수입니다.' })
+  @MaxLength(12, { message: '닉네임은 12 글자 이하로 입력해주세요.' })
   nickName: string;
 
   @IsOptional()
