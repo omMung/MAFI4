@@ -218,7 +218,25 @@ window.onload = async function () {
     document.getElementById('secondVoteContainer').style.display = 'block';
   });
 
-  document.getElementById('sendBtn').addEventListener('click', sendChatMessage);
+  let isSending = false;
+
+  document.getElementById('messageInput').addEventListener('input', () => {
+    const messageInput = document.getElementById('messageInput');
+    const maxLength = 80; // 최대 입력 길이
+
+    if (messageInput.value.length > maxLength) {
+      messageInput.value = messageInput.value.slice(0, maxLength);
+      alert(`최대 ${maxLength}자까지 입력할 수 있습니다.`);
+    }
+  });
+
+  document.getElementById('sendBtn').addEventListener('click', () => {
+    if (isSending) {
+      alert('잠시 후에 다시 시도해주세요.');
+      return;
+    }
+    sendChatMessage();
+  });
 
   socket.on('YOUR_ROLE', function (data) {
     //currentUserRole = data.role;
@@ -653,6 +671,11 @@ window.onload = async function () {
         messageInputElem.value = '';
       }
     }
+    isSending = true;
+
+    setTimeout(() => {
+      isSending = false;
+    }, 1000);
   }
 
   // 접속 인원 업데이트 함수
