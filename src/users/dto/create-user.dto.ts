@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsEmail, MinLength } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEmail,
+  MinLength,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -6,13 +12,15 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  @MinLength(6)
+  @MinLength(6, { message: '비밀번호는 6 글자 이상 입력해주세요.' }) // 메시지 설정 확인
   password: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: '닉네임 설정은 필수입니다.' })
   nickName: string;
 
+  @IsOptional()
   @IsString()
+  @IsOptional()
   title?: string;
 }

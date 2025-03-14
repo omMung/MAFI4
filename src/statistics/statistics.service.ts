@@ -1,29 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Game, Role } from 'src/games/entities/game.entity';
-import { userRecordNotFoundException } from '../common/exceptions/statistics.exception';
+import { GameResult, Role } from 'src/gameResults/entities/gameResults.entity';
 
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectRepository(Game)
-    private gameRepository: Repository<Game>,
+    @InjectRepository(GameResult)
+    private gameResultRepository: Repository<GameResult>,
   ) {}
 
   async getUserRecordByUserId(userId: number) {
     // 전체 게임 수
-    const totalGames = await this.gameRepository.count({
-      where: { user: { id: userId } },
+    const totalGames = await this.gameResultRepository.count({
+      where: { userId },
     });
+    console.log(`서비스 : ${totalGames}`);
 
-    if (!totalGames) {
-      throw new userRecordNotFoundException();
+    // 게임 기록이 없으면 기본값 반환
+    if (totalGames === 0) {
+      return { totalGames: 0, wins: 0, losses: 0, winRate: 0 };
     }
 
     // 승리 횟수
-    const wins = await this.gameRepository.count({
-      where: { user: { id: userId }, isWin: true },
+    const wins = await this.gameResultRepository.count({
+      where: { userId, result: 'win' },
     });
 
     // 패배 횟수
@@ -42,39 +43,37 @@ export class StatisticsService {
     const rawWinRate = totalGames ? (wins / totalGames) * 100 : 0;
     // 소수점 한 자리까지 반올림
     const winRate = Math.round(rawWinRate * 10) / 10;
+    console.log(totalGames, wins, losses, winRate);
     return { totalGames, wins, losses, winRate };
   }
 
   async getUserRecordByJob(userId: number) {
-    // Role enum의 값들을 배열로 추출합
+    // Role enum의 값들을 배열로 추출
     const roles = Object.values(Role);
-
-    // 각 직업별 결과를 저장할 객체를 초기화
+    console.log(`roles : ${roles}`);
     const result = {};
 
     for (const role of roles) {
       // 해당 직업(role)에서의 전체 게임 수
-      const totalGames = await this.gameRepository.count({
-        where: { user: { id: userId }, role },
+      const totalGames = await this.gameResultRepository.count({
+        where: { userId, role },
       });
+      console.log(totalGames);
 
+      // 게임 기록이 없으면 기본값 할당 (예외 던지지 않음)
       if (!totalGames) {
-        throw new userRecordNotFoundException();
+        result[role] = { totalGames: 0, wins: 0, losses: 0, winRate: 0 };
+        continue;
       }
 
       // 해당 직업(role)에서 승리한 게임 수
-      const wins = await this.gameRepository.count({
-        where: { user: { id: userId }, role, isWin: true },
+      const wins = await this.gameResultRepository.count({
+        where: { userId, role, result: 'win' },
       });
-
-      // 패배 횟수 계산
       const losses = totalGames - wins;
-
-      // 승률 계산 (소수점 한 자리까지)
       const rawWinRate = totalGames ? (wins / totalGames) * 100 : 0;
       const winRate = Math.round(rawWinRate * 10) / 10;
 
-      // 결과 객체에 해당 직업별 데이터를 추가
       result[role] = { totalGames, wins, losses, winRate };
     }
     console.log(result);

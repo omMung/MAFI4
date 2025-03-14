@@ -1,0 +1,70 @@
+{
+  "achievements": [
+    {
+      "id": 1,
+      "title": "어둠 속의 사냥꾼",
+      "description": "마피아로서 시민을 1회 총살하세요.",
+      "condition": "mafia_kills",
+      "conditionCount": 1,
+      "badge": "mafia_master"
+    },
+    {
+      "id": 2,
+      "title": "완벽한 범죄",
+      "description": "마피아로서 3회 시민을 총살하세요.",
+      "condition": "mafia_kills",
+      "conditionCount": 3,
+      "badge": "mafia_godfather"
+    },
+    {
+      "id": 3,
+      "title": "진실을 밝혀내겠어",
+      "description": "경찰로서 마피아를 1회 조사하세요.",
+      "condition": "detective_checks",
+      "conditionCount": 1,
+      "badge": "detective"
+    },
+    {
+      "id": 4,
+      "title": "이 녀석이 진범이다!",
+      "description": "경찰로서 마피아를 3회 조사하세요.",
+      "condition": "detective_checks",
+      "conditionCount": 3,
+      "badge": "super_detective"
+    },
+    {
+      "id": 5,
+      "title": "생명의 수호자",
+      "description": "의사로서 시민을 1회 보호하세요.",
+      "condition": "heal_used",
+      "conditionCount": 1,
+      "badge": "doctor"
+    },
+    {
+      "id": 6,
+      "title": "죽음을 막는 자",
+      "description": "의사로서 3회 시민을 보호하세요.",
+      "condition": "heal_used",
+      "conditionCount": 3,
+      "badge": "doctor_senior"
+    },
+    {
+      "id": 7,
+      "title": "허준",
+      "description": "의사로서 5회 시민을 보호하세요.",
+      "condition": "heal_used",
+      "conditionCount": 5,
+      "badge": "doctor_master",
+      "hidden": true
+    },
+    {
+      "id": 8,
+      "title": "1만 시간의 법칙",
+      "description": "게임을 10000판 하세요.",
+      "condition": "game_play",
+      "conditionCount": 10000,
+      "badge": "game_master",
+      "hidden": true
+    }
+  ]
+}

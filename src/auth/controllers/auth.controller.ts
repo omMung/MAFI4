@@ -1,4 +1,14 @@
-import { Controller, Post, Req, Body, UseGuards, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Req,
+  Body,
+  UseGuards,
+  Res,
+  UsePipes,
+  ValidationPipe,
+  Get,
+} from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dto/login.dto';
@@ -15,8 +25,10 @@ export class AuthController {
   ) {}
 
   @Post('signup')
+  // @UsePipes(ValidationPipe)
   async signUp(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    const { email, password, nickName } = createUserDto;
+    return this.usersService.create(email, password, nickName);
   }
 
   @Post('verify-email')
@@ -55,7 +67,6 @@ export class AuthController {
   // 리프레시 토큰 API
   @Post('refresh')
   async refreshToken(@Req() req: Request, @Res() res: Response) {
-    console.log('리플레쉬');
     const data = await this.authService.refreshToken(req);
     const { accessToken, refreshToken } = data;
     res.setHeader('Authorization', `Bearer ${accessToken}`);

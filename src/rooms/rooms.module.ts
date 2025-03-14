@@ -4,9 +4,10 @@ import { RoomsController } from './rooms.controller';
 import { RoomsRepository } from './rooms.repository';
 import { RedisService } from 'src/redis/redis.service';
 import { RedisModule } from 'src/redis/redis.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [RedisModule],
+  imports: [ConfigModule, RedisModule],
   controllers: [RoomsController],
   providers: [RoomsService, RedisService, RoomsRepository],
 })

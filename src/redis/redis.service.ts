@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Redis } from '@upstash/redis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class RedisService {
@@ -8,15 +8,17 @@ export class RedisService {
 
   constructor(private configService: ConfigService) {
     this.client = new Redis({
-      url: this.configService.get<string>('UPSTASH_REDIS_REST_URL'),
-      token: this.configService.get<string>('UPSTASH_REDIS_REST_TOKEN'),
+      host: this.configService.get('REDIS_HOST'),
+      port: this.configService.get('REDIS_PORT'),
     });
   }
 
   async set(key: string, value: string, expireSeconds?: number): Promise<void> {
-    await this.client.set(key, value, { ex: expireSeconds });
+    await this.client.set(key, value); // 기본 값 저장
+    if (expireSeconds) {
+      await this.client.expire(key, expireSeconds); // 만료 시간 설정
+    }
   }
-
   async get(key: string): Promise<string | null> {
     return await this.client.get(key);
   }
@@ -46,6 +48,6 @@ export class RedisService {
   }
 
   async scan(cursor: number, pattern: string, count: number) {
-    return await this.client.scan(cursor, { match: pattern, count });
+    return await this.client.scan(cursor, 'MATCH', pattern, 'COUNT', count);
   }
 }

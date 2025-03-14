@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFI4 - 회원가입</title>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="signup.css">
+    <script src="/scripts/api.js" defer></script>
+    <script src="/components/header/header.js" defer></script>
+    <script src="/scripts/common.js" defer></script>
+    <script src="signup.js" defer></script>
+</head>
+
+<body>
+    <div id="header-container"></div>
+
+    <main>
+        <div class="signup-container">
+            <h1>회원가입</h1>
+            <!-- 회원가입 폼 -->
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="nickName">닉네임</label>
+                    <input type="text" id="nickName" name="nickName" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">비밀번호 확인</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">회원가입</button>
+            </form>
+            <p>이미 계정이 있으신가요? <a href="/login/login.html">로그인</a></p>
+            <div id="verificationDiv" style="display:none;">
+                <h2>이메일 인증</h2>
+                <div class="form-group">
+                    <label for="verifyCode">인증 코드</label>
+                    <input type="text" id="verifyCode" name="verifyCode" required>
+                </div>
+                <button type="button" id="verifyCodeBtn" class="btn btn-secondary">인증 확인</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+</body>
+
+</html>

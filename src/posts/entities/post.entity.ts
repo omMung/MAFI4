@@ -23,6 +23,8 @@ export class Post {
   // content는 길이가 길어질 수 있으므로 text 타입으로 변경
   @Column({ type: 'text' })
   content: string;
+  @Column({ type: 'varchar', length: 255 })
+  file?: string;
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })

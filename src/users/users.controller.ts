@@ -8,10 +8,17 @@ import {
   Delete,
   UseGuards,
   Request,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  FileTypeValidator,
+  MaxFileSizeValidator,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController {
@@ -26,13 +33,43 @@ export class UsersController {
     return this.usersService.getUserById(userId);
   }
 
+  // 랭킹 조회 API (GET /users/ranking)
+  @Get('ranking')
+  async getRanking(): Promise<User[]> {
+    return await this.usersService.getRanking();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Patch('me')
-  async updateMyInfo(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+  @UseInterceptors(FileInterceptor('file'))
+  async updateMyInfo(
+    @Request() req,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|gif)$/ }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }), // 5MB 제한
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
     const userId = req.user.id;
-
-    const { password, nickName, title } = updateUserDto;
-    return this.usersService.update(userId, password, nickName, title);
+    const { password, nickName } = updateUserDto;
+    try {
+      const result = await this.usersService.update(
+        userId,
+        password,
+        nickName,
+        file,
+      );
+      return result;
+    } catch (err) {
+      console.error('Error creating profile:', err);
+      throw err;
+    }
   }
 
   @UseGuards(JwtAuthGuard)

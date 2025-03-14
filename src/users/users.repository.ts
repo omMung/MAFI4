@@ -37,9 +37,33 @@ export class UsersRepository {
   async findOneUserId(userId: number) {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      select: ['id', 'email', 'nickName', 'isVerified', 'createdAt'], // 비밀번호 제외
+      select: [
+        'id',
+        'email',
+        'nickName',
+        'isVerified',
+        'createdAt',
+        'file',
+        'money',
+        'gameBanDate',
+        'communityBanDate',
+      ], // 비밀번호 제외
     });
     return user;
+  }
+  //id검색 돈만 검색
+  async findUserMoney(userId: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      select: ['money'],
+    });
+    return user;
+  }
+
+  async findRanking(): Promise<User[]> {
+    return this.usersRepository.find({
+      order: { score: 'DESC' },
+    });
   }
 
   //업데이트 로직
@@ -48,7 +72,20 @@ export class UsersRepository {
     return this.usersRepository.findOne({ where: { id: userId } });
   }
 
+  async updateUserMoney(userId: number, remainingMoney: number) {
+    await this.usersRepository.update(userId, { money: remainingMoney });
+  }
+
   async deleteUser(userId: number) {
     await this.usersRepository.delete(userId);
+  }
+
+  async findByNickname(nickName: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { nickName } });
+  }
+
+  async updateNickname(userId: number, newNickname: string): Promise<User> {
+    await this.usersRepository.update(userId, { nickName: newNickname });
+    return this.findOneUserId(userId);
   }
 }

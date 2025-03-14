@@ -1,0 +1,253 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f5ecd7;
+  /* margin: 20px; */
+  color: #333;
+  line-height: 1.6;
+  transition: background-color 4s ease;
+}
+
+h1,
+h2 {
+  color: #2c3e50;
+}
+
+.input-group {
+  display: flex; /* Flexbox 레이아웃 사용 */
+  align-items: center; /* 세로 방향 가운데 정렬 */
+  margin-top: 2px; /* 기존 mt-2 대신 간격 조절 */
+  margin-bottom: 10px; /* 아래쪽 마진 추가 */
+}
+
+#messageInput {
+  flex: 1; /* 입력창이 가능한 공간을 모두 차지하도록 설정 */
+  margin-bottom: 0; /* 입력창 아래쪽 마진 제거 */
+  border-radius: 5px 0 0 5px; /* 왼쪽 모서리 둥글게 */
+}
+
+#sendBtn {
+  border-radius: 0 5px 5px 0; /* 오른쪽 모서리 둥글게 */
+  margin-left: 2px; /* 입력창과의 간격 조절 */
+  /* 필요한 경우 너비 지정 */
+  /* width: 80px; */
+}
+
+#myOccupantDiv button {
+  background-color: #1a2e4a;
+  color: #ffffff;
+  width: 100%; /* 가로 길이 100%로 설정 */
+  height: 2.5em; /* 세로 길이 1.5배로 설정 (원래 높이에 따라 조정) */
+  box-sizing: border-box; /* 패딩, 테두리 포함하여 크기 계산 */
+  display: flex; /* 내부 요소 가운데 정렬을 위해 flexbox 사용 */
+  justify-content: center; /* 가로 가운데 정렬 */
+  align-items: center; /* 세로 가운데 정렬 */
+  padding: 0; /* 내부 패딩 제거 (필요에 따라 조정) */
+}
+
+#myOccupantDiv button.dead {
+  background-color: #a31f1f; /* 죽었을 때 배경색 변경 */
+  color: #cacaca; /* 죽었을 때 글자색 변경 */
+  opacity: 0.5;
+  width: 100%; /* 가로 길이 100%로 설정 */
+  height: 2.5em; /* 세로 길이 1.5배로 설정 (원래 높이에 따라 조정) */
+  box-sizing: border-box; /* 패딩, 테두리 포함하여 크기 계산 */
+  display: flex; /* 내부 요소 가운데 정렬을 위해 flexbox 사용 */
+  justify-content: center; /* 가로 가운데 정렬 */
+  align-items: center; /* 세로 가운데 정렬 */
+  padding: 0; /* 내부 패딩 제거 (필요에 따라 조정) */
+  /* 추가적인 스타일 (예: opacity, text-decoration 등) */
+}
+
+.container-custom {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.chat-container,
+.occupant-container,
+.login-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: background-color 4s ease;
+}
+
+.chat-container {
+  flex: 7;
+}
+
+.occupant-container {
+  flex: 3;
+}
+
+#chatMessages {
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+  scroll-behavior: smooth;
+}
+
+#occupantList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.occupant-btn {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f39c12;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.occupant-btn:hover {
+  background-color: #5e6445;
+}
+
+.occupant-btn.selected {
+  background-color: #3498db;
+  color: white;
+}
+
+.occupant-btn.dead {
+  background-color: #e74c3c;
+  opacity: 0.5;
+  color: white;
+}
+
+input[type='text'],
+input[type='number'] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.system-message {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.role-message {
+  color: #2980b9;
+  font-weight: bold;
+}
+
+.red-message {
+  color: red;
+}
+
+.purple-message {
+  color: purple;
+}
+
+#voteBtn,
+#executeBtn,
+#survivalBtn {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.blink {
+  animation: blink 1s infinite;
+}
+
+@media (max-width: 768px) {
+  .container-custom {
+    flex-direction: column;
+  }
+
+  .chat-container,
+  .occupant-container {
+    width: 100%;
+  }
+}
+
+#roleActionContainer {
+  margin-top: 10px;
+  text-align: center;
+}
+
+#roleActionContainer button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+#roleActionContainer button.btn-danger {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#roleActionContainer button.btn-danger:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
+
+#roleActionContainer button.btn-primary {
+  background-color: #3498db;
+  color: #fff;
+}
+
+#roleActionContainer button.btn-primary:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+#roleActionContainer button.btn-success {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+#roleActionContainer button.btn-success:hover {
+  background-color: #27ae60;
+  transform: scale(1.05);
+}

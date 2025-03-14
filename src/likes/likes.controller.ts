@@ -6,42 +6,28 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { LikesService } from './likes.service';
-import { CreateLikeDto } from './dto/create-like.dto';
-import { SwitchLikeDto } from './dto/switch-like.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('likes')
 export class LikesController {
   constructor(private readonly likesService: LikesService) {}
 
   // 좋아요 상태 전환
+  @UseGuards(JwtAuthGuard)
   @Post(':postId')
-  async toggleLike(
-    @Param('postId') postId: number,
-    //이거 유저아이디만 받을 거면 dto 필요 없는데?
-    @Body() switchLikeDto: SwitchLikeDto,
-  ) {
-    return await this.likesService.toggleLike(postId, switchLikeDto);
+  async toggleLike(@Request() req, @Param('postId') postId: number) {
+    const user = req.user;
+    return await this.likesService.toggleLike(postId, user.id);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.likesService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.likesService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateLikeDto: UpdateLikeDto) {
-  //   return this.likesService.update(+id, updateLikeDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.likesService.remove(+id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Get(':postId')
+  async getLikeCount(@Request() req, @Param('postId') postId: number) {
+    const user = req.user;
+    return await this.likesService.getLikeCount(postId, user.id);
+  }
 }

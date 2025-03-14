@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFI4 - 랭킹</title>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="ranking.css">
+    <script src="/scripts/api.js" defer></script>
+    <script src="/scripts/common.js" defer></script>
+    <script src="/components/header/header.js" defer></script>
+    <script src="ranking.js" defer></script>
+</head>
+
+<body>
+    <div id="header-container"></div>
+    <main>
+        <div class="ranking-container">
+            <div class="ranking-header">
+                <h1>유저 랭킹</h1>
+                <div class="ranking-info">
+                </div>
+            </div>
+
+            <div class="ranking-content">
+                <div class="top-rankers">
+                    <div id="second-place" class="top-rank-card">
+                        <div class="rank-badge">2</div>
+                        <div class="user-avatar">
+                            <img src="/imageFile/placeholder.svg?height=80&width=80" alt="2등 유저">
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">로딩중...</div>
+                            <div class="user-score">점수: <span>0</span></div>
+                        </div>
+                    </div>
+                    <div id="first-place" class="top-rank-card first">
+                        <div class="rank-badge">1</div>
+                        <div class="crown">👑</div>
+                        <div class="user-avatar">
+                            <img src="/imageFile/placeholder.svg?height=100&width=100" alt="1등 유저">
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">로딩중...</div>
+                            <div class="user-score">점수: <span>0</span></div>
+                        </div>
+                    </div>
+                    <div id="third-place" class="top-rank-card">
+                        <div class="rank-badge">3</div>
+                        <div class="user-avatar">
+                            <img src="/imageFile/placeholder.svg?height=80&width=80" alt="3등 유저">
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">로딩중...</div>
+                            <div class="user-score">점수: <span>0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ranking-table-container">
+                    <table id="rankingTable">
+                        <thead>
+                            <tr>
+                                <th>순위</th>
+                                <th>유저</th>
+                                <th>점수</th>
+                                <th>가입일</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 랭킹 데이터가 여기에 동적으로 추가됩니다 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="ranking-empty" style="display: none;">
+                    <p>랭킹 데이터가 없습니다.</p>
+                </div>
+
+                <div class="pagination-container">
+                    <button id="prevPage" class="pagination-btn" disabled>&lt; 이전</button>
+                    <div id="pageNumbers" class="page-numbers">
+                        <!-- 페이지 번호가 여기에 동적으로 추가됩니다 -->
+                    </div>
+                    <button id="nextPage" class="pagination-btn">다음 &gt;</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div id="footer-container"></div>
+</body>
+
+</html>

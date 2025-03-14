@@ -9,10 +9,11 @@ export class StatisticsController {
   @UseGuards(JwtAuthGuard)
   @Get('user')
   async getUserRecordByUserId(@Request() req: any) {
-    const userId = req.user;
+    const userId = req.user.id;
     try {
       const userRecord =
-        await this.statisticsService.getUserRecordByUserId(+userId);
+        await this.statisticsService.getUserRecordByUserId(userId);
+      console.log(userRecord);
       return { data: userRecord };
     } catch (error) {
       // 에러 처리
@@ -24,10 +25,11 @@ export class StatisticsController {
   @UseGuards(JwtAuthGuard)
   @Get('job')
   async getUserRecordByJob(@Request() req: any) {
-    const userId = req.user;
+    const user = req.user;
     try {
-      const userJobRecord =
-        await this.statisticsService.getUserRecordByJob(+userId);
+      const userJobRecord = await this.statisticsService.getUserRecordByJob(
+        +user.id,
+      );
       return { data: userJobRecord };
     } catch (error) {
       console.error('조회 에러:', error);
